@@ -8,17 +8,9 @@ namespace Dominio
 {
     public class Cancha
     {
-        public int IdCancha { get; set; }
-        public string Nombre { get; set; }
-        public bool EstaActiva { get; set; } // Para deshabilitar sin borrar de la BD
-
-        // Composición: Una cancha conoce qué deportes se pueden practicar en ella
-        public List<Deporte> DeportesDisponibles { get; set; }
-
-        // Constructor para asegurar que la lista de deportes se inicialice y no tire NullReferenceException
-        public Cancha()
-        {
-            DeportesDisponibles = new List<Deporte>();
-        }
+        public int IdCancha { get; set; } // ID interno único (PK en la BBDD)
+        public int NumeroCancha { get; set; } // El número físico (1, 2, 3...)
+        public bool EstaActiva { get; set; }
+        public int IdDeporte { get; set; } // FK al deporte que se practica en esa cancha
     }
 }
