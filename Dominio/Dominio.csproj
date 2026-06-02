@@ -46,6 +46,7 @@
     <Compile Include="Enums\EstadoPago.cs" />
     <Compile Include="Enums\FormaPago.cs" />
     <Compile Include="Enums\RolUsuario.cs" />
+    <Compile Include="Pago.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuario.cs" />
   </ItemGroup>
