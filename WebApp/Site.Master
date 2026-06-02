@@ -1,0 +1,36 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="WebApp.Site" %>
+
+<!DOCTYPE html>
+<html>
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</head>
+<body class="bg-light">
+    <form id="form1" runat="server" class="min-vh-100">
+        <div class="container-fluid min-vh-100">
+            <div class="row min-vh-100">
+                <aside class="col-12 col-md-3 col-lg-2 bg-dark text-white p-0 d-flex flex-column">
+                    <div class="p-3 border-bottom border-secondary">
+                        <asp:HyperLink ID="lnkHome" runat="server" NavigateUrl="~/Panel.aspx" CssClass="text-white text-decoration-none fw-semibold fs-5">Mi Aplicación</asp:HyperLink>
+                    </div>
+                    <nav class="nav nav-pills flex-column gap-1 p-3">
+                        <asp:HyperLink ID="lnkPanel" runat="server" NavigateUrl="~/Panel.aspx" CssClass="nav-link text-white">Panel</asp:HyperLink>
+                        <asp:HyperLink ID="lnkCanchas" runat="server" NavigateUrl="~/Canchas.aspx" CssClass="nav-link text-white">Canchas</asp:HyperLink>
+                        <asp:HyperLink ID="lnkReservas" runat="server" NavigateUrl="~/Reservas.aspx" CssClass="nav-link text-white">Reservas</asp:HyperLink>
+                        <asp:HyperLink ID="lnkCupones" runat="server" NavigateUrl="~/Cupones.aspx" CssClass="nav-link text-white">Cupones</asp:HyperLink>
+                        <asp:HyperLink ID="lnkCalendario" runat="server" NavigateUrl="~/Calendario.aspx" CssClass="nav-link text-white">Calendario</asp:HyperLink>
+                    </nav>
+                </aside>
+                <main class="col-12 col-md-9 col-lg-10 p-4">
+                    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+                </main>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
