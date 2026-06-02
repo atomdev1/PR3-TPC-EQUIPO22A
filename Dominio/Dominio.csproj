@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="Cancha.cs" />
     <Compile Include="Deporte.cs" />
+    <Compile Include="Enums\EstadoPago.cs" />
+    <Compile Include="Enums\FormaPago.cs" />
     <Compile Include="Enums\RolUsuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuario.cs" />
