@@ -1,6 +1,51 @@
 <%@ Page Title="Canchas" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Canchas.aspx.cs" Inherits="WebApp.Canchas" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
+    <style>
+        .cancha-card {
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            background: #fff;
+        }
+        .cancha-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+        }
+        .cancha-sport-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            background: #f8f9fa;
+            flex-shrink: 0;
+        }
+        .cancha-card h6 {
+            font-size: 1rem;
+        }
+        .cancha-precio {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #2d9e6b;
+        }
+        .cancha-meta {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+        .cancha-divider {
+            border-top: 1px solid #f1f3f5;
+        }
+        .btn-accion {
+            border-radius: 7px;
+            font-size: 0.8rem;
+            padding: 0.3rem 0.75rem;
+        }
+    </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
@@ -22,35 +67,57 @@
         <asp:Repeater ID="rptCanchas" runat="server" OnItemCommand="rptCanchas_ItemCommand">
             <ItemTemplate>
                 <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title mb-0"><%# Eval("NombreFantasia") %></h5>
-                                <span class='badge <%# (bool)Eval("Activa") ? "bg-success" : "bg-warning text-dark" %>'>
-                                    <%# (bool)Eval("Activa") ? "Disponible" : "En mantenimiento" %>
-                                </span>
+                    <div class="card h-100 cancha-card">
+                        <div class="card-body d-flex flex-column p-3">
+
+                            <%-- Encabezado: ícono + nombre + badge --%>
+                            <div class="d-flex align-items-start gap-3 mb-3">
+                                <asp:Panel runat="server" CssClass="cancha-sport-icon"
+                                    Style='<%# "border-left: 3px solid " + GetDeporteAccent(Eval("Deporte.Nombre")) %>'>
+                                    <asp:Label runat="server" Text='<%# GetDeporteEmoji(Eval("Deporte.Nombre")) %>' />
+                                </asp:Panel>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <asp:Label runat="server" CssClass="mb-0 fw-semibold text-truncate me-2"
+                                            Text='<%# Eval("NombreFantasia") %>' />
+                                        <asp:Label runat="server"
+                                            CssClass='<%# "badge fw-normal flex-shrink-0 " + ((bool)Eval("Activa") ? "text-success bg-success-subtle" : "text-warning bg-warning-subtle") %>'
+                                            Text='<%# (bool)Eval("Activa") ? "Disponible" : "Mantenimiento" %>' />
+                                    </div>
+                                    <asp:Label runat="server" CssClass="cancha-meta d-block"
+                                        Text='<%# Eval("Deporte.Nombre") %>' />
+                                </div>
                             </div>
-                            <p class="text-primary fw-bold mb-1">$<%# Eval("Precio") %>/h</p>
-                            <p class="text-muted small mb-1"><%# Eval("Deporte.Nombre") %></p>
-                            <p class="card-text small mb-2"><%# Eval("Descripcion") %></p>
-                            <p class="small text-secondary mb-3">
-                                <i class="bi bi-people"></i> <%# Eval("CapacidadJugadores") %> jugadores
-                            </p>
+
+                            <%-- Descripción --%>
+                            <asp:Label runat="server" CssClass="cancha-meta d-block mb-3"
+                                Style="line-height:1.5" Text='<%# Eval("Descripcion") %>' />
+
+                            <%-- Precio + capacidad --%>
+                            <div class="d-flex justify-content-between align-items-center pt-2 cancha-divider mt-auto mb-3">
+                                <asp:Label runat="server" CssClass="cancha-precio mt-2"
+                                    Text='<%# FormatearPrecio(Eval("Precio")) %>' />
+                                <asp:Label runat="server" CssClass="cancha-meta mt-2"
+                                    Text='<%# Eval("CapacidadJugadores") + " jugadores" %>' />
+                            </div>
+
+                            <%-- Acciones --%>
                             <div class="d-flex gap-2">
                                 <asp:LinkButton ID="btnEditar" runat="server"
                                     CommandName="Editar"
                                     CommandArgument='<%# Eval("IdCancha") %>'
-                                    CssClass="btn btn-sm btn-outline-primary w-100">
+                                    CssClass="btn btn-sm btn-light btn-accion w-100">
                                     Editar
                                 </asp:LinkButton>
                                 <asp:LinkButton ID="btnEliminar" runat="server"
                                     CommandName="Eliminar"
                                     CommandArgument='<%# Eval("IdCancha") %>'
-                                    CssClass="btn btn-sm btn-outline-danger"
+                                    CssClass="btn btn-sm btn-outline-danger btn-accion"
                                     OnClientClick="return confirm('¿Eliminar esta cancha?');">
                                     Eliminar
                                 </asp:LinkButton>
                             </div>
+
                         </div>
                     </div>
                 </div>

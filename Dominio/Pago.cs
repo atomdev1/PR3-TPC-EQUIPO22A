@@ -13,6 +13,6 @@ namespace Dominio
         public decimal Monto { get; set; }
         public DateTime FechaHora { get; set; }
         public int IdReserva { get; set; }
-        public FormaPago FormaDePago { get; set; } // Uso del Enum
+        public FormaPago FormaDePago { get; set; } 
     }
 }
