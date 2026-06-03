@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="Dominio/Dominio.csproj" Id="39818d86-b819-4308-8770-b314792092da" />
-  <Project Path="Negocio/Negocio.csproj" Id="b29b2ee9-774d-42c0-9872-aa1eda0d97a1" />
-  <Project Path="WebApp/WebApp.csproj" Id="fadf87a9-1f29-4976-854c-4a05e7ee9561" />
+  <Project Path="Negocio/Negocio.csproj" Id="be039fad-21fa-4d38-a5d6-212ec457c25b" />
+  <Project Path="WebApp/WebApp.csproj" Id="ea071dff-7b5d-4ebf-96b5-229f45a3b6b3" />
 </Solution>
