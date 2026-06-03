@@ -1,0 +1,121 @@
+erDiagram
+    ROLES {
+        int IDRol PK
+        varchar NombreRol
+    }
+
+    USUARIOS {
+        int IDUsuario PK
+        varchar DNI
+        varchar Nombre
+        varchar Apellido
+        varchar Telefono
+        varchar Email
+        varchar Password
+        datetime FechaNacimiento
+        datetime FechaRegistro
+        bool Activo
+        int CantidadAsistencias
+        int IDRol FK
+    }
+
+    DEPORTES {
+        int IDDeporte PK
+        varchar Nombre
+        int DuracionMinutos
+    }
+
+    CANCHAS {
+        int IDCancha PK
+        int Numero
+        varchar NombreFantasia
+        varchar Descripcion
+        int CapacidadJugadores
+        decimal Precio
+        decimal MontoSena
+        bool Activa
+        int IDDeporte FK
+    }
+
+    DISPONIBILIDAD_CANCHAS {
+        int IDDisponibilidad PK
+        int IDCancha FK
+        tinyint DiaSemana
+        time HoraApertura
+        time HoraCierre
+        bool Activa
+    }
+
+    ESTADO_RESERVA {
+        int IDEstado PK
+        varchar NombreEstado
+    }
+
+    ESTADO_PAGO {
+        int IDEstadoPago PK
+        varchar NombreEstadoPago
+    }
+
+    RESERVAS {
+        int IDReserva PK
+        date Fecha
+        time HoraInicio
+        time HoraFin
+        decimal PrecioTotal
+        varchar Observaciones
+        int IDUsuario_Cliente FK
+        int IDUsuario_Staff FK
+        int IDCancha FK
+        int IDEstado FK
+        int IDEstadoPago FK
+        int IDCupon FK
+    }
+
+    FORMAS_PAGO {
+        int IDFormaPago PK
+        varchar NombreFormaPago
+    }
+
+    PAGOS {
+        int IDPago PK
+        decimal Monto
+        datetime FechaHora
+        int IDReserva FK
+        int IDFormaPago FK
+    }
+
+    TIPO_CUPON {
+        int IDTipoCupon PK
+        varchar Nombre
+        varchar Descripcion
+    }
+
+    CUPONES {
+        int IDCupon PK
+        varchar Codigo
+        varchar Descripcion
+        varchar Estado
+        varchar TipoDescuento
+        decimal ValorDescuento
+        int ReservasRequeridas
+        date ValidoDesde
+        date ValidoHasta
+        int LimiteUsos
+        int UsosActuales
+        int IDUsuario FK
+        int IDTipoCupon FK
+    }
+
+    ROLES ||--o{ USUARIOS : "agrupa"
+    USUARIOS ||--o{ RESERVAS : "solicita (cliente)"
+    USUARIOS ||--o{ RESERVAS : "gestiona (staff)"
+    USUARIOS ||--o{ CUPONES : "posee"
+    DEPORTES ||--o{ CANCHAS : "clasifica"
+    CANCHAS ||--o{ DISPONIBILIDAD_CANCHAS : "tiene"
+    CANCHAS ||--o{ RESERVAS : "tiene"
+    ESTADO_RESERVA ||--o{ RESERVAS : "define"
+    ESTADO_PAGO ||--o{ RESERVAS : "clasifica"
+    CUPONES ||--o{ RESERVAS : "aplica en"
+    TIPO_CUPON ||--o{ CUPONES : "categoriza"
+    RESERVAS ||--o{ PAGOS : "recibe"
+    FORMAS_PAGO ||--o{ PAGOS : "utiliza"
