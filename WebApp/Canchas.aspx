@@ -29,7 +29,7 @@
                                 </span>
                             </div>
                             <p class="text-primary fw-bold mb-1">$<%# Eval("Precio") %>/h</p>
-                            <p class="text-muted small mb-1"><%# Eval("DeporteNombre") %></p>
+                            <p class="text-muted small mb-1"><%# Eval("Deporte.Nombre") %></p>
                             <p class="card-text small mb-2"><%# Eval("Descripcion") %></p>
                             <p class="small text-secondary mb-3">
                                 <i class="bi bi-people"></i> <%# Eval("CapacidadJugadores") %> jugadores

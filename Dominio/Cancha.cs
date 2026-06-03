@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dominio.Enums;
 
 namespace Dominio
 {
@@ -18,10 +13,6 @@ namespace Dominio
         public decimal MontoSena { get; set; }
         public bool Activa { get; set; }
         public int IdDeporte { get; set; }
-
-        public string DeporteNombre
-        {
-            get { return ((TipoDeporte)IdDeporte).ToString(); }
-        }
+        public Deporte Deporte { get; set; }
     }
 }

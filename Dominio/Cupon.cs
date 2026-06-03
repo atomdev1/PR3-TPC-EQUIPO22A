@@ -15,7 +15,7 @@ namespace Dominio
         public EstadoCupon Estado { get; set; }
         public int IdCliente { get; set; }
         public int IdTipoCupon { get; set; }
-        public string TipoDescuento{ get; set; }
+        public TipoDescuento TipoDescuento { get; set; }
         public decimal? ValorDescuento { get; set; }
         public int ReservasRequeridas { get; set; }
         public DateTime? ValidoDesde { get; set;  }

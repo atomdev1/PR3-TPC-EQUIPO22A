@@ -16,6 +16,6 @@ namespace Dominio
         public int IdCancha { get; set; }
         public EstadoReservaEnum Estado { get; set; }
         public EstadoPago EstadoPago { get; set; }
-        public int IdCupon { get; set; }
+        public int? IdCupon { get; set; } // Una reserva puede no tener cupon, asique la hacemos nullable
     }
 }
