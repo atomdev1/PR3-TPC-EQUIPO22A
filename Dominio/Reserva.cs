@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Dominio.Enums;
 
 namespace Dominio
 {
@@ -17,8 +14,8 @@ namespace Dominio
         public int IdUsuarioCliente { get; set; }
         public int IdUsuarioStaff { get; set; }
         public int IdCancha { get; set; }
-        public int IdEstado { get; set; }
-        public int IdEstadoPago { get; set; }
+        public EstadoReservaEnum Estado { get; set; }
+        public EstadoPago EstadoPago { get; set; }
         public int IdCupon { get; set; }
     }
 }
