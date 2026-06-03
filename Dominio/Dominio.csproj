@@ -44,10 +44,13 @@
     <Compile Include="Cancha.cs" />
     <Compile Include="Deporte.cs" />
     <Compile Include="Enums\EstadoPago.cs" />
+    <Compile Include="Enums\EstadoReservaEnum.cs" />
     <Compile Include="Enums\FormaPago.cs" />
     <Compile Include="Enums\RolUsuario.cs" />
+    <Compile Include="EstadoReserva.cs" />
     <Compile Include="Pago.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reserva.cs" />
     <Compile Include="Usuario.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

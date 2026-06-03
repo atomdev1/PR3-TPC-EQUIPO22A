@@ -10,6 +10,9 @@ namespace Dominio.Enums
     {
         Pendiente = 1,
         Senada = 2,
-        PagadaCompleta = 3
+        PagadaCompleta = 3,
+        Rechazado = 4,
+        Reembolsado = 5
+
     }
 }
