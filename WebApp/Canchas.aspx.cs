@@ -31,7 +31,7 @@ namespace WebApp
         private void CargarCanchas()
         {
             NegocioCanchas nCanchas = new NegocioCanchas();
-            List<Cancha> canchas = negocio.ObtenerTodas();
+            List<Cancha> canchas = nCanchas.ObtenerTodas();
 
             rptCanchas.DataSource = canchas;
             rptCanchas.DataBind();
@@ -58,7 +58,7 @@ namespace WebApp
         {
             NegocioCanchas nCanchas = new NegocioCanchas();
 
-            ddlDeporte.DataSource = nCanchas.ObtenerCanchas();
+            ddlDeporte.DataSource = nCanchas.ObtenerDeportes();
             ddlDeporte.DataTextField = "Nombre";
             ddlDeporte.DataValueField = "IdDeporte";
             ddlDeporte.DataBind();

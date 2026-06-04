@@ -15,37 +15,46 @@ namespace Negocio
             List<Cancha> lista = new List<Cancha>();
             AccesoDatos datos = new AccesoDatos();
 
-            datos.SetearConsulta(@"
-                SELECT c.IDCancha, c.Numero, c.NombreFantasia, c.Descripcion,
-                       c.CapacidadJugadores, c.Precio, c.MontoSena, c.Activa,
-                       c.IDDeporte, d.Nombre AS NombreDeporte, d.DuracionMinutos
-                FROM Canchas c
-                INNER JOIN Deportes d ON d.IDDeporte = c.IDDeporte");
-            datos.EjecutarLectura();
-            
-            
-            while (datos.Lector.Read())
+            try
             {
-                Cancha c = new Cancha();
-                c.IdCancha = (int)datos.Lector["IDCancha"];
-                c.Numero = (int)datos.Lector["Numero"];
-                c.NombreFantasia = (string)datos.Lector["NombreFantasia"];
-                c.Descripcion = datos.Lector["Descripcion"] is System.DBNull? "" : (string)datos.Lector["Descripcion"];
-                c.CapacidadJugadores = (int)datos.Lector["CapacidadJugadores"];
-                c.Precio = (decimal)datos.Lector["Precio"];
-                c.MontoSena = (decimal)datos.Lector["MontoSena"];
-                c.Activa = (bool)datos.Lector["Activa"];
-                c.IdDeporte = (int)datos.Lector["IDDeporte"];
-                c.Deporte = new Deporte
+                datos.SetearConsulta(@"
+                    SELECT c.IDCancha, c.Numero, c.NombreFantasia, c.Descripcion,
+                           c.CapacidadJugadores, c.Precio, c.MontoSena, c.Activa,
+                           c.IDDeporte, d.Nombre AS NombreDeporte, d.DuracionMinutos
+                    FROM Canchas c
+                    INNER JOIN Deportes d ON d.IDDeporte = c.IDDeporte");
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
                 {
-                    IdDeporte = (int)datos.Lector["IDDeporte"],
-                    Nombre = (string)datos.Lector["NombreDeporte"],
-                    DuracionMinutos = (int)datos.Lector["DuracionMinutos"]
-                };
-                lista.Add(c);
+                    Cancha c = new Cancha();
+                    c.IdCancha = (int)datos.Lector["IDCancha"];
+                    c.Numero = (int)datos.Lector["Numero"];
+                    c.NombreFantasia = (string)datos.Lector["NombreFantasia"];
+                    c.Descripcion = datos.Lector["Descripcion"] is System.DBNull ? "" : (string)datos.Lector["Descripcion"];
+                    c.CapacidadJugadores = (int)datos.Lector["CapacidadJugadores"];
+                    c.Precio = (decimal)datos.Lector["Precio"];
+                    c.MontoSena = (decimal)datos.Lector["MontoSena"];
+                    c.Activa = (bool)datos.Lector["Activa"];
+                    c.IdDeporte = (int)datos.Lector["IDDeporte"];
+                    c.Deporte = new Deporte
+                    {
+                        IdDeporte = (int)datos.Lector["IDDeporte"],
+                        Nombre = (string)datos.Lector["NombreDeporte"],
+                        DuracionMinutos = (int)datos.Lector["DuracionMinutos"]
+                    };
+                    lista.Add(c);
+                }
+                return lista;
             }
-            datos.CerrarConexion();
-            return lista;
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
 
         public List<Deporte> ObtenerDeportes()
@@ -53,20 +62,30 @@ namespace Negocio
             List<Deporte> lista = new List<Deporte>();
             AccesoDatos datos = new AccesoDatos();
 
-            datos.SetearConsulta("SELECT IDDeporte, Nombre, DuracionMinutos FROM Deportes");
-            datos.EjecutarLectura();
-            
-            while (datos.Lector.Read())
+            try
             {
-                lista.Add(new Deporte
+                datos.SetearConsulta("SELECT IDDeporte, Nombre, DuracionMinutos FROM Deportes");
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
                 {
-                    IdDeporte = (int)datos.Lector["IDDeporte"],
-                    Nombre = (string)datos.Lector["Nombre"],
-                    DuracionMinutos = (int)datos.Lector["DuracionMinutos"]
-                });
+                    lista.Add(new Deporte
+                    {
+                        IdDeporte = (int)datos.Lector["IDDeporte"],
+                        Nombre = (string)datos.Lector["Nombre"],
+                        DuracionMinutos = (int)datos.Lector["DuracionMinutos"]
+                    });
+                }
+                return lista;
             }
-            datos.CerrarConexion();
-            return lista;
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
         }
 
         public void Agregar(Cancha c)

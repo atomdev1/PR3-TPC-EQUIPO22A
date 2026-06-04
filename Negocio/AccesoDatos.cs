@@ -45,23 +45,51 @@ namespace Negocio
 
         public void EjecutarLectura()
         {
-            conexion.Open();
-            Lector = conexionCommand.ExecuteReader();
+            try
+            {
+                conexion.Open();
+                Lector = conexionCommand.ExecuteReader();
+            }
+            catch (Exception)
+            {
+                // si falla cierro aca asi no queda abierta, sino la cierra el que hace el mapeo
+                CerrarConexion();
+                throw;
+            }
         }
 
         public void EjecutarAccion()
         {
-            conexion.Open();
-            conexionCommand.ExecuteNonQuery();
-            conexion.Close();
+            try
+            {
+                conexion.Open();
+                conexionCommand.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                conexion.Close();
+            }
         }
 
         public int EjecutarAccionScalar()
         {
-            conexion.Open();
-            int resultado = (int)conexionCommand.ExecuteScalar();
-            conexion.Close();
-            return resultado;
+            try
+            {
+                conexion.Open();
+                return (int)conexionCommand.ExecuteScalar();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                conexion.Close();
+            }
         }
 
         public void CerrarConexion()
