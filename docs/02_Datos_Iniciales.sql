@@ -18,7 +18,7 @@ INSERT INTO FormasPago (NombreFormaPago) VALUES
     ('Efectivo'), ('Transferencia'), ('Tarjeta de Débito'), ('Tarjeta de Crédito'), ('MercadoPago');
 
 INSERT INTO EstadoCupon (NombreEstado) VALUES
-    ('Activo'), ('Canjeado'), ('Vencido'), ('Agotado');
+    ('Activo'), ('Canjeado'), ('Vencido'), ('Agotado'), ('Anulado');
 
 INSERT INTO TipoDescuento (Nombre) VALUES
     ('Porcentaje'), ('MontoFijo'), ('Reserva gratis');

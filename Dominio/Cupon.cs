@@ -13,7 +13,8 @@ namespace Dominio
         public string Codigo { get; set; }
         public string Descripcion { get; set; }
         public EstadoCupon Estado { get; set; }
-        public int IdCliente { get; set; }
+        public int IdUsuario { get; set; }
+        public Usuario Usuario { get; set; }
         public TipoDescuento TipoDescuento { get; set; }
         public decimal? ValorDescuento { get; set; }
         public int ReservasRequeridas { get; set; }

@@ -112,7 +112,8 @@
             <small class="text-muted">Recompensá a tus clientes frecuentes</small>
         </div>
         <button type="button" class="btn btn-success ms-auto"
-            data-bs-toggle="modal" data-bs-target="#modalNuevoCupon">
+            data-bs-toggle="modal" data-bs-target="#modalNuevoCupon"
+            onclick="nuevoCupon()">
             + Nuevo cupón
         </button>
     </div>
@@ -171,6 +172,8 @@
 
                             <%-- Metadatos --%>
                             <div class="d-flex flex-column gap-1 mb-3 cupon-meta">
+                                <asp:Label runat="server" CssClass="fw-semibold text-dark"
+                                    Text='<%# "👤 " + Eval("Usuario.Nombre") + " " + Eval("Usuario.Apellido") %>' />
                                 <asp:Label runat="server" Text='<%# FormatearMeta("reservas", Eval("ReservasRequeridas")) %>' />
                                 <asp:Label runat="server" Text='<%# FormatearMeta("fecha", Eval("ValidoHasta")) %>' />
                                 <asp:Label runat="server" Text='<%# FormatearMeta("usos", Eval("UsosActuales"), Eval("LimiteUsos")) %>' />
@@ -178,12 +181,19 @@
 
                             <%-- Acciones --%>
                             <div class="d-flex gap-2 mt-auto cupon-divider pt-3">
-                                <asp:LinkButton ID="btnEditar" runat="server"
-                                    CommandName="Editar"
-                                    CommandArgument='<%# Eval("IdCupon") %>'
-                                    CssClass="btn btn-sm btn-light btn-accion w-100">
+                                <button type="button" class="btn btn-sm btn-light btn-accion w-100"
+                                    onclick="editarCupon(this)"
+                                    data-id='<%# Eval("IdCupon") %>'
+                                    data-codigo='<%# AttrText(Eval("Codigo")) %>'
+                                    data-tipo='<%# TipoValor(Eval("TipoDescuento")) %>'
+                                    data-valor='<%# AttrNum(Eval("ValorDescuento")) %>'
+                                    data-reservas='<%# Eval("ReservasRequeridas") %>'
+                                    data-hasta='<%# AttrFecha(Eval("ValidoHasta")) %>'
+                                    data-limite='<%# AttrNum(Eval("LimiteUsos")) %>'
+                                    data-desc='<%# AttrText(Eval("Descripcion")) %>'
+                                    data-usuario='<%# Eval("IdUsuario") %>'>
                                     Editar
-                                </asp:LinkButton>
+                                </button>
                                 <asp:LinkButton ID="btnEliminar" runat="server"
                                     CommandName="Eliminar"
                                     CommandArgument='<%# Eval("IdCupon") %>'
@@ -209,6 +219,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
+                    <asp:HiddenField ID="hfIdCupon" runat="server" />
+                    <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
                     <div class="row g-3">
 
                         <div class="col-md-6">
@@ -224,15 +236,14 @@
                             <asp:DropDownList ID="ddlTipoDescuento" runat="server" CssClass="form-select">
                                 <asp:ListItem Value="1">Porcentaje (%)</asp:ListItem>
                                 <asp:ListItem Value="2">Monto fijo ($)</asp:ListItem>
+                                <asp:ListItem Value="3">Reserva gratis</asp:ListItem>
                             </asp:DropDownList>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Valor del descuento</label>
                             <asp:TextBox ID="txtValorDescuento" runat="server" CssClass="form-control" TextMode="Number" placeholder="10" />
-                            <asp:RequiredFieldValidator ID="rfvValor" runat="server"
-                                ControlToValidate="txtValorDescuento" ValidationGroup="NuevoCupon"
-                                CssClass="text-danger small" ErrorMessage="El valor es obligatorio." Display="Dynamic" />
+                            <small class="text-muted d-block">Dejalo vacío si el tipo es "Reserva gratis".</small>
                         </div>
 
                         <div class="col-md-4">
@@ -251,6 +262,14 @@
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Límite de usos</label>
                             <asp:TextBox ID="txtLimiteUsos" runat="server" CssClass="form-control" TextMode="Number" placeholder="50" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Cliente (dueño del cupón)</label>
+                            <asp:DropDownList ID="ddlUsuario" runat="server" CssClass="form-select" />
+                            <asp:RequiredFieldValidator ID="rfvUsuario" runat="server"
+                                ControlToValidate="ddlUsuario" InitialValue="0" ValidationGroup="NuevoCupon"
+                                CssClass="text-danger small" ErrorMessage="Seleccioná un cliente." Display="Dynamic" />
                         </div>
 
                         <div class="col-12">
@@ -276,6 +295,48 @@
                 btn.textContent = 'Copiado';
                 setTimeout(function () { btn.textContent = 'Copiar'; }, 1500);
             });
+        }
+
+        function setVal(id, v) {
+            var el = document.getElementById(id);
+            if (el) el.value = v;
+        }
+
+        function ocultarError() {
+            var err = document.getElementById('<%= lblError.ClientID %>');
+            if (err) err.style.display = 'none';
+        }
+
+        // Alta: limpia el formulario y deja el hidden vacío
+        function nuevoCupon() {
+            setVal('<%= hfIdCupon.ClientID %>', '');
+            setVal('<%= txtCodigo.ClientID %>', '');
+            setVal('<%= ddlTipoDescuento.ClientID %>', '1');
+            setVal('<%= txtValorDescuento.ClientID %>', '');
+            setVal('<%= txtReservasRequeridas.ClientID %>', '');
+            setVal('<%= txtValidoHasta.ClientID %>', '');
+            setVal('<%= txtLimiteUsos.ClientID %>', '');
+            setVal('<%= txtDescripcion.ClientID %>', '');
+            setVal('<%= ddlUsuario.ClientID %>', '0');
+            ocultarError();
+            document.getElementById('modalNuevoCuponLabel').textContent = 'Nuevo cupón';
+        }
+
+        // Edición: prefill desde los data-* del botón (los datos ya están en la página)
+        function editarCupon(btn) {
+            var d = btn.dataset;
+            setVal('<%= hfIdCupon.ClientID %>', d.id);
+            setVal('<%= txtCodigo.ClientID %>', d.codigo);
+            setVal('<%= ddlTipoDescuento.ClientID %>', d.tipo);
+            setVal('<%= txtValorDescuento.ClientID %>', d.valor);
+            setVal('<%= txtReservasRequeridas.ClientID %>', d.reservas);
+            setVal('<%= txtValidoHasta.ClientID %>', d.hasta);
+            setVal('<%= txtLimiteUsos.ClientID %>', d.limite);
+            setVal('<%= txtDescripcion.ClientID %>', d.desc);
+            setVal('<%= ddlUsuario.ClientID %>', d.usuario);
+            ocultarError();
+            document.getElementById('modalNuevoCuponLabel').textContent = 'Editar cupón';
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevoCupon')).show();
         }
     </script>
 

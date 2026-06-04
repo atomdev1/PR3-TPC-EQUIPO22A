@@ -12,5 +12,6 @@ namespace Dominio.Enums
         Canjeado= 2,
         Vencido= 3,
         Agotado = 4,
+        Anulado = 5,
     }
 }
