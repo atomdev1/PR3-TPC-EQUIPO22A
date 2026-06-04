@@ -84,18 +84,20 @@ erDiagram
         int IDFormaPago FK
     }
 
-    TIPO_CUPON {
-        int IDTipoCupon PK
+    ESTADO_CUPON {
+        int IDEstadoCupon PK
+        varchar NombreEstado
+    }
+
+    TIPO_DESCUENTO {
+        int IDTipoDescuento PK
         varchar Nombre
-        varchar Descripcion
     }
 
     CUPONES {
         int IDCupon PK
         varchar Codigo
         varchar Descripcion
-        varchar Estado
-        varchar TipoDescuento
         decimal ValorDescuento
         int ReservasRequeridas
         date ValidoDesde
@@ -103,7 +105,8 @@ erDiagram
         int LimiteUsos
         int UsosActuales
         int IDUsuario FK
-        int IDTipoCupon FK
+        int IDEstadoCupon FK
+        int IDTipoDescuento FK
     }
 
     ROLES ||--o{ USUARIOS : "agrupa"
@@ -116,6 +119,7 @@ erDiagram
     ESTADO_RESERVA ||--o{ RESERVAS : "define"
     ESTADO_PAGO ||--o{ RESERVAS : "clasifica"
     CUPONES ||--o{ RESERVAS : "aplica en"
-    TIPO_CUPON ||--o{ CUPONES : "categoriza"
+    ESTADO_CUPON ||--o{ CUPONES : "define estado"
+    TIPO_DESCUENTO ||--o{ CUPONES : "tipifica"
     RESERVAS ||--o{ PAGOS : "recibe"
     FORMAS_PAGO ||--o{ PAGOS : "utiliza"

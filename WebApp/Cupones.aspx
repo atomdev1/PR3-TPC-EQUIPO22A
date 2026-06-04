@@ -156,7 +156,7 @@
                                             Text='<%# Eval("Estado").ToString() %>' />
                                     </div>
                                     <asp:Label runat="server" CssClass="cupon-tipo-label d-block mt-1"
-                                        Text='<%# GetTipoNombre(Eval("IdTipoCupon")) %>' />
+                                        Text='<%# GetTipoNombre(Eval("TipoDescuento")) %>' />
                                 </div>
                             </div>
 

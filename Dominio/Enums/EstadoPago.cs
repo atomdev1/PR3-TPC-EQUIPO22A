@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Dominio.Enums
 {
+    // cada valor coincide con el IDEstadoPago que cargamos en la BD
     public enum EstadoPago
     {
         Pendiente = 1,
-        Senada = 2,
-        PagadaCompleta = 3,
-        Rechazado = 4,
-        Reembolsado = 5
-
+        Senado = 2,
+        Pagado = 3,
+        Reembolsado = 4
     }
 }

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Dominio.Enums
 {
+    // mismo orden que los IDFormaPago de la tabla FormasPago
     public enum FormaPago
     {
         Efectivo = 1,
-        MercadoPago = 2,
-        Transferencia = 3,
-        Tarjeta = 4
+        Transferencia = 2,
+        TarjetaDebito = 3,
+        TarjetaCredito = 4,
+        MercadoPago = 5
     }
 }

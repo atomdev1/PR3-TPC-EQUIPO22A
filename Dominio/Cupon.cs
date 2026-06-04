@@ -14,7 +14,6 @@ namespace Dominio
         public string Descripcion { get; set; }
         public EstadoCupon Estado { get; set; }
         public int IdCliente { get; set; }
-        public int IdTipoCupon { get; set; }
         public TipoDescuento TipoDescuento { get; set; }
         public decimal? ValorDescuento { get; set; }
         public int ReservasRequeridas { get; set; }

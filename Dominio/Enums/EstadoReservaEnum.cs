@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Dominio.Enums
 {
+    // los numeros van igual que los IDEstado de la tabla EstadoReserva, no los cambies
     public enum EstadoReservaEnum
     {
         Nueva = 1,
-        Confirmada = 2,
-        Reprogramada = 3,
-        Cancelada = 4,
-        Finalizada = 5,
-        NoAsistio = 6
+        Reprogramada = 2,
+        Cancelada = 3,
+        NoAsistio = 4,
+        Finalizada = 5
     }
 }

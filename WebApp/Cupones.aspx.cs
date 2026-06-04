@@ -31,10 +31,10 @@ namespace WebApp
         {
             List<Cupon> cupones = new List<Cupon>
             {
-                new Cupon { IdCupon = 1, Codigo = "TP-PROMO010", IdTipoCupon = 1, TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 10, Descripcion = "10% off para clientes con 3+ reservas", ReservasRequeridas = 3, ValidoHasta = new DateTime(2026, 6, 30), LimiteUsos = 50, UsosActuales = 0, Estado = EstadoCupon.Activo },
-                new Cupon { IdCupon = 2, Codigo = "TP-GRATIS", IdTipoCupon = 1, TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 100, Descripcion = "Una reserva completamente gratis por acumular 20 reservas", ReservasRequeridas = 20, ValidoHasta = new DateTime(2026, 12, 31), LimiteUsos = 50, UsosActuales = 3, Estado = EstadoCupon.Activo },
-                new Cupon { IdCupon = 3, Codigo = "TP-FIDELIDAD15", IdTipoCupon = 1, TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 15, Descripcion = "15% de descuento en tu próxima reserva por ser cliente fiel", ReservasRequeridas = 10, ValidoHasta = new DateTime(2026, 12, 31), LimiteUsos = 100, UsosActuales = 12, Estado = EstadoCupon.Activo },
-                new Cupon { IdCupon = 4, Codigo = "TP-TURNO200", IdTipoCupon = 1, TipoDescuento = TipoDescuento.MontoFijo, ValorDescuento = 200, Descripcion = "$200 de descuento en tu próximo turno", ReservasRequeridas = 5, ValidoHasta = new DateTime(2026, 12, 31), LimiteUsos = 200, UsosActuales = 45, Estado = EstadoCupon.Activo },
+                new Cupon { IdCupon = 1, Codigo = "TP-PROMO010", TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 10, Descripcion = "10% off para clientes con 3+ reservas", ReservasRequeridas = 3, ValidoHasta = new DateTime(2026, 6, 30), LimiteUsos = 50, UsosActuales = 0, Estado = EstadoCupon.Activo },
+                new Cupon { IdCupon = 2, Codigo = "TP-GRATIS", TipoDescuento = TipoDescuento.ReservaGratis, ValorDescuento = null, Descripcion = "Una reserva completamente gratis por acumular 20 reservas", ReservasRequeridas = 20, ValidoHasta = new DateTime(2026, 12, 31), LimiteUsos = 50, UsosActuales = 3, Estado = EstadoCupon.Activo },
+                new Cupon { IdCupon = 3, Codigo = "TP-FIDELIDAD15", TipoDescuento = TipoDescuento.Porcentaje, ValorDescuento = 15, Descripcion = "15% de descuento en tu próxima reserva por ser cliente fiel", ReservasRequeridas = 10, ValidoHasta = new DateTime(2026, 12, 31), LimiteUsos = 100, UsosActuales = 12, Estado = EstadoCupon.Activo },
+                new Cupon { IdCupon = 4, Codigo = "TP-TURNO200", TipoDescuento = TipoDescuento.MontoFijo, ValorDescuento = 200, Descripcion = "$200 de descuento en tu próximo turno", ReservasRequeridas = 5, ValidoHasta = new DateTime(2026, 12, 31), LimiteUsos = 200, UsosActuales = 45, Estado = EstadoCupon.Activo },
             };
 
             rptCupones.DataSource = cupones;
@@ -61,7 +61,6 @@ namespace WebApp
             Cupon cupon = new Cupon
             {
                 Codigo = txtCodigo.Text.Trim().ToUpper(),
-                IdTipoCupon = 1,
                 TipoDescuento = (TipoDescuento)int.Parse(ddlTipoDescuento.SelectedValue),
                 ValorDescuento = decimal.Parse(txtValorDescuento.Text),
                 ReservasRequeridas = int.Parse(txtReservasRequeridas.Text),
@@ -88,9 +87,10 @@ namespace WebApp
             return tipo == TipoDescuento.MontoFijo ? "monto-fijo" : "";
         }
 
-        protected string GetTipoNombre(object idTipoCuponObj)
+        protected string GetTipoNombre(object tipoDescuentoObj)
         {
-            return "Descuento en reserva";
+            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
+            return tipo == TipoDescuento.ReservaGratis ? "Reserva gratis" : "Descuento en reserva";
         }
 
         protected string GetEstadoBadgeClass(object estadoObj)
