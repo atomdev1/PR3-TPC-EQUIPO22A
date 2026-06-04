@@ -108,6 +108,73 @@ namespace Negocio
             datos.EjecutarAccion();
         }
 
+        public Cancha ObtenerPorId(int idCancha)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT c.IDCancha, c.Numero, c.NombreFantasia, c.Descripcion,
+                           c.CapacidadJugadores, c.Precio, c.MontoSena, c.Activa,
+                           c.IDDeporte, d.Nombre AS NombreDeporte, d.DuracionMinutos
+                    FROM Canchas c
+                    INNER JOIN Deportes d ON d.IDDeporte = c.IDDeporte
+                    WHERE c.IDCancha = @id");
+                datos.AgregarParametro("@id", idCancha);
+                datos.EjecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    Cancha c = new Cancha();
+                    c.IdCancha = (int)datos.Lector["IDCancha"];
+                    c.Numero = (int)datos.Lector["Numero"];
+                    c.NombreFantasia = (string)datos.Lector["NombreFantasia"];
+                    c.Descripcion = datos.Lector["Descripcion"] is System.DBNull ? "" : (string)datos.Lector["Descripcion"];
+                    c.CapacidadJugadores = (int)datos.Lector["CapacidadJugadores"];
+                    c.Precio = (decimal)datos.Lector["Precio"];
+                    c.MontoSena = (decimal)datos.Lector["MontoSena"];
+                    c.Activa = (bool)datos.Lector["Activa"];
+                    c.IdDeporte = (int)datos.Lector["IDDeporte"];
+                    return c;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public void Modificar(Cancha c)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            datos.SetearConsulta(@"
+                UPDATE Canchas SET
+                    Numero              = @num,
+                    NombreFantasia      = @nombre,
+                    Descripcion         = @desc,
+                    CapacidadJugadores  = @cap,
+                    Precio              = @precio,
+                    MontoSena           = @sena,
+                    IDDeporte           = @dep
+                WHERE IDCancha = @id");
+            datos.AgregarParametro("@num",    c.Numero);
+            datos.AgregarParametro("@nombre", c.NombreFantasia);
+            datos.AgregarParametro("@desc",   c.Descripcion ?? "");
+            datos.AgregarParametro("@cap",    c.CapacidadJugadores);
+            datos.AgregarParametro("@precio", c.Precio);
+            datos.AgregarParametro("@sena",   c.MontoSena);
+            datos.AgregarParametro("@dep",    c.IdDeporte);
+            datos.AgregarParametro("@id",     c.IdCancha);
+            datos.EjecutarAccion();
+        }
+
         public void BajaLogica(int idCancha)
         {
             AccesoDatos datos = new AccesoDatos();

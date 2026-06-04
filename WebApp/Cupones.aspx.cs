@@ -57,7 +57,27 @@ namespace WebApp
         {
             int idCupon = int.Parse(e.CommandArgument.ToString());
 
-            if (e.CommandName == "Eliminar")
+            if (e.CommandName == "Editar")
+            {
+                Cupon c = new NegocioCupones().ObtenerPorId(idCupon);
+                if (c == null) return;
+
+                hfIdCupon.Value                    = c.IdCupon.ToString();
+                txtCodigo.Text                     = c.Codigo;
+                ddlTipoDescuento.SelectedValue     = ((int)c.TipoDescuento).ToString();
+                txtValorDescuento.Text             = c.ValorDescuento.HasValue ? c.ValorDescuento.Value.ToString() : "";
+                txtReservasRequeridas.Text         = c.ReservasRequeridas.ToString();
+                txtValidoHasta.Text                = c.ValidoHasta.HasValue ? c.ValidoHasta.Value.ToString("yyyy-MM-dd") : "";
+                txtLimiteUsos.Text                 = c.LimiteUsos.HasValue ? c.LimiteUsos.Value.ToString() : "";
+                txtDescripcion.Text                = c.Descripcion;
+                ddlUsuario.SelectedValue           = c.IdUsuario.ToString();
+
+                string script =
+                    "document.getElementById('modalNuevoCuponLabel').textContent = 'Editar cupón';" +
+                    "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevoCupon')).show();";
+                ClientScript.RegisterStartupScript(GetType(), "abrirModalCupon", script, true);
+            }
+            else if (e.CommandName == "Eliminar")
             {
                 new NegocioCupones().BajaLogica(idCupon);
                 CargarCupones();
@@ -132,31 +152,6 @@ namespace WebApp
                 "var lbl = document.getElementById('modalNuevoCuponLabel'); if (lbl) lbl.textContent = '" + titulo + "';" +
                 "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevoCupon')).show();";
             ClientScript.RegisterStartupScript(GetType(), "reabrirModalCupon", script, true);
-        }
-
-        // ---- Helpers de presentación (data-* del botón Editar) ----
-
-        protected int TipoValor(object tipoObj)
-        {
-            return (int)(TipoDescuento)tipoObj;
-        }
-
-        protected string AttrText(object o)
-        {
-            string s = o == null || o == DBNull.Value ? "" : o.ToString();
-            // delimitamos los data-* con comillas simples → escapamos también la comilla simple
-            return Server.HtmlEncode(s).Replace("'", "&#39;");
-        }
-
-        protected string AttrNum(object o)
-        {
-            return o == null || o == DBNull.Value ? "" : o.ToString();
-        }
-
-        protected string AttrFecha(object o)
-        {
-            if (o == null || o == DBNull.Value) return "";
-            return Convert.ToDateTime(o).ToString("yyyy-MM-dd");
         }
 
         // ---- Helpers de presentación (cards del Repeater) ----

@@ -10,6 +10,9 @@ namespace WebApp
     {
         protected Repeater rptCanchas;
         protected Label lblTotal;
+        protected HiddenField hfIdCancha;
+        protected Label lblErrorCancha;
+        protected Label lblTituloModalCancha;
         protected TextBox txtNombre;
         protected TextBox txtNumero;
         protected DropDownList ddlDeporte;
@@ -45,7 +48,20 @@ namespace WebApp
 
             if (e.CommandName == "Editar")
             {
-                Response.Redirect("EditarCancha.aspx?id=" + idCancha);
+                Cancha c = new NegocioCanchas().ObtenerPorId(idCancha);
+                if (c == null) return;
+
+                hfIdCancha.Value         = c.IdCancha.ToString();
+                txtNombre.Text           = c.NombreFantasia;
+                txtNumero.Text           = c.Numero.ToString();
+                txtCapacidad.Text        = c.CapacidadJugadores.ToString();
+                txtPrecio.Text           = c.Precio.ToString();
+                txtSena.Text             = c.MontoSena.ToString();
+                txtDescripcion.Text      = c.Descripcion;
+                ddlDeporte.SelectedValue = c.IdDeporte.ToString();
+
+                lblTituloModalCancha.Text = "Editar cancha";
+                AbrirModal("modalNuevaCancha", "Nueva cancha", "Editar cancha");
             }
             else if (e.CommandName == "Eliminar")
             {
@@ -94,20 +110,41 @@ namespace WebApp
 
         protected void btnGuardarCancha_Click(object sender, EventArgs e)
         {
+            if (!Page.IsValid) return;
+
             Cancha cancha = new Cancha
             {
-                NombreFantasia = txtNombre.Text.Trim(),
-                Numero = int.Parse(txtNumero.Text),
-                IdDeporte = int.Parse(ddlDeporte.SelectedValue),
+                NombreFantasia     = txtNombre.Text.Trim(),
+                Numero             = int.Parse(txtNumero.Text),
+                IdDeporte          = int.Parse(ddlDeporte.SelectedValue),
                 CapacidadJugadores = int.Parse(txtCapacidad.Text),
-                Precio = decimal.Parse(txtPrecio.Text),
-                MontoSena = decimal.Parse(txtSena.Text),
-                Descripcion = txtDescripcion.Text.Trim(),
-                Activa = true
+                Precio             = decimal.Parse(txtPrecio.Text),
+                MontoSena          = decimal.Parse(txtSena.Text),
+                Descripcion        = txtDescripcion.Text.Trim(),
+                Activa             = true
             };
 
-            new NegocioCanchas().Agregar(cancha);
+            NegocioCanchas nCanchas = new NegocioCanchas();
+            if (string.IsNullOrEmpty(hfIdCancha.Value))
+            {
+                nCanchas.Agregar(cancha);
+            }
+            else
+            {
+                cancha.IdCancha = int.Parse(hfIdCancha.Value);
+                nCanchas.Modificar(cancha);
+            }
+
             Response.Redirect("Canchas.aspx");
+        }
+
+        private void AbrirModal(string modalId, string tituloNuevo, string tituloEditar)
+        {
+            bool esEdicion = !string.IsNullOrEmpty(hfIdCancha.Value);
+            string titulo = esEdicion ? tituloEditar : tituloNuevo;
+            string script =
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('" + modalId + "')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModal", script, true);
         }
     }
 }

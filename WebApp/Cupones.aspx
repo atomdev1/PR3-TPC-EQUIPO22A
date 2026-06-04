@@ -181,19 +181,12 @@
 
                             <%-- Acciones --%>
                             <div class="d-flex gap-2 mt-auto cupon-divider pt-3">
-                                <button type="button" class="btn btn-sm btn-light btn-accion w-100"
-                                    onclick="editarCupon(this)"
-                                    data-id='<%# Eval("IdCupon") %>'
-                                    data-codigo='<%# AttrText(Eval("Codigo")) %>'
-                                    data-tipo='<%# TipoValor(Eval("TipoDescuento")) %>'
-                                    data-valor='<%# AttrNum(Eval("ValorDescuento")) %>'
-                                    data-reservas='<%# Eval("ReservasRequeridas") %>'
-                                    data-hasta='<%# AttrFecha(Eval("ValidoHasta")) %>'
-                                    data-limite='<%# AttrNum(Eval("LimiteUsos")) %>'
-                                    data-desc='<%# AttrText(Eval("Descripcion")) %>'
-                                    data-usuario='<%# Eval("IdUsuario") %>'>
+                                <asp:LinkButton ID="btnEditar" runat="server"
+                                    CommandName="Editar"
+                                    CommandArgument='<%# Eval("IdCupon") %>'
+                                    CssClass="btn btn-sm btn-light btn-accion w-100">
                                     Editar
-                                </button>
+                                </asp:LinkButton>
                                 <asp:LinkButton ID="btnEliminar" runat="server"
                                     CommandName="Eliminar"
                                     CommandArgument='<%# Eval("IdCupon") %>'
@@ -322,22 +315,6 @@
             document.getElementById('modalNuevoCuponLabel').textContent = 'Nuevo cupón';
         }
 
-        // Edición: prefill desde los data-* del botón (los datos ya están en la página)
-        function editarCupon(btn) {
-            var d = btn.dataset;
-            setVal('<%= hfIdCupon.ClientID %>', d.id);
-            setVal('<%= txtCodigo.ClientID %>', d.codigo);
-            setVal('<%= ddlTipoDescuento.ClientID %>', d.tipo);
-            setVal('<%= txtValorDescuento.ClientID %>', d.valor);
-            setVal('<%= txtReservasRequeridas.ClientID %>', d.reservas);
-            setVal('<%= txtValidoHasta.ClientID %>', d.hasta);
-            setVal('<%= txtLimiteUsos.ClientID %>', d.limite);
-            setVal('<%= txtDescripcion.ClientID %>', d.desc);
-            setVal('<%= ddlUsuario.ClientID %>', d.usuario);
-            ocultarError();
-            document.getElementById('modalNuevoCuponLabel').textContent = 'Editar cupón';
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevoCupon')).show();
-        }
     </script>
 
 </asp:Content>

@@ -94,6 +94,50 @@ namespace Negocio
             }
         }
 
+        public Cupon ObtenerPorId(int idCupon)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT IDCupon, Codigo, Descripcion, IDEstadoCupon,
+                           IDTipoDescuento, ValorDescuento, ReservasRequeridas,
+                           ValidoDesde, ValidoHasta, LimiteUsos, UsosActuales, IDUsuario
+                    FROM Cupones
+                    WHERE IDCupon = @id");
+                datos.AgregarParametro("@id", idCupon);
+                datos.EjecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    Cupon c = new Cupon();
+                    c.IdCupon = (int)datos.Lector["IDCupon"];
+                    c.Codigo = (string)datos.Lector["Codigo"];
+                    c.Descripcion = (string)datos.Lector["Descripcion"];
+                    c.Estado = (EstadoCupon)(int)datos.Lector["IDEstadoCupon"];
+                    c.TipoDescuento = (TipoDescuento)(int)datos.Lector["IDTipoDescuento"];
+                    c.ValorDescuento = datos.Lector["ValorDescuento"] is DBNull ? (decimal?)null : (decimal)datos.Lector["ValorDescuento"];
+                    c.ReservasRequeridas = (int)datos.Lector["ReservasRequeridas"];
+                    c.ValidoDesde = datos.Lector["ValidoDesde"] is DBNull ? (DateTime?)null : (DateTime)datos.Lector["ValidoDesde"];
+                    c.ValidoHasta = datos.Lector["ValidoHasta"] is DBNull ? (DateTime?)null : (DateTime)datos.Lector["ValidoHasta"];
+                    c.LimiteUsos = datos.Lector["LimiteUsos"] is DBNull ? (int?)null : (int)datos.Lector["LimiteUsos"];
+                    c.UsosActuales = (int)datos.Lector["UsosActuales"];
+                    c.IdUsuario = (int)datos.Lector["IDUsuario"];
+                    return c;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
         public void Agregar(Cupon c)
         {
             AccesoDatos datos = new AccesoDatos();

@@ -58,7 +58,8 @@
             </small>
         </div>
         <button type="button" class="btn btn-success ms-auto"
-            data-bs-toggle="modal" data-bs-target="#modalNuevaCancha">
+            data-bs-toggle="modal" data-bs-target="#modalNuevaCancha"
+            onclick="nuevaCancha()">
             + Nueva cancha
         </button>
     </div>
@@ -125,15 +126,35 @@
         </asp:Repeater>
     </div>
 
+    <script>
+        function nuevaCancha() {
+            function setVal(id, v) { var el = document.getElementById(id); if (el) el.value = v; }
+            setVal('<%= hfIdCancha.ClientID %>', '');
+            setVal('<%= txtNombre.ClientID %>', '');
+            setVal('<%= txtNumero.ClientID %>', '');
+            setVal('<%= ddlDeporte.ClientID %>', '0');
+            setVal('<%= txtCapacidad.ClientID %>', '');
+            setVal('<%= txtPrecio.ClientID %>', '');
+            setVal('<%= txtSena.ClientID %>', '');
+            setVal('<%= txtDescripcion.ClientID %>', '');
+            var lbl = document.getElementById('<%= lblTituloModalCancha.ClientID %>');
+            if (lbl) lbl.textContent = 'Nueva cancha';
+            var err = document.getElementById('<%= lblErrorCancha.ClientID %>');
+            if (err) err.style.display = 'none';
+        }
+    </script>
+
     <%-- Modal Nueva Cancha --%>
     <div class="modal fade" id="modalNuevaCancha" tabindex="-1" aria-labelledby="modalNuevaCanchaLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalNuevaCanchaLabel">Nueva cancha</h5>
+                    <asp:Label ID="lblTituloModalCancha" runat="server" CssClass="modal-title h5" Text="Nueva cancha" />
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
+                    <asp:HiddenField ID="hfIdCancha" runat="server" />
+                    <asp:Label ID="lblErrorCancha" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
                     <div class="row g-3">
 
                         <div class="col-md-8">
