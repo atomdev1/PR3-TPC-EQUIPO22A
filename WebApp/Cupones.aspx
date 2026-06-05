@@ -1,107 +1,6 @@
 <%@ Page Title="Cupones" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Cupones.aspx.cs" Inherits="WebApp.Cupones" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
-    <style>
-        .cupon-card {
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-            background: #fff;
-        }
-        .cupon-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.10);
-        }
-        .cupon-descuento-badge {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            font-weight: 800;
-            flex-shrink: 0;
-            background: #d1fae5;
-            color: #2d9e6b;
-        }
-        .cupon-descuento-badge.monto-fijo {
-            background: #dbeafe;
-            color: #1d6fa8;
-        }
-        .cupon-codigo {
-            font-size: 0.82rem;
-            font-weight: 600;
-            font-family: monospace;
-            background: #f1f3f5;
-            border-radius: 6px;
-            padding: 2px 8px;
-            color: #495057;
-            letter-spacing: 0.5px;
-        }
-        .cupon-tipo-label {
-            font-size: 0.875rem;
-            color: #9ca3af;
-            font-weight: 400;
-        }
-        .cupon-valor {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #2d9e6b;
-            line-height: 1.2;
-        }
-        .cupon-valor.monto-fijo {
-            color: #1d6fa8;
-        }
-        .cupon-descripcion {
-            font-size: 0.875rem;
-            color: #9ca3af;
-            line-height: 1.5;
-        }
-        .cupon-meta {
-            font-size: 0.875rem;
-            color: #9ca3af;
-        }
-        .cupon-divider {
-            border-top: 1px solid #f1f3f5;
-        }
-        .btn-accion {
-            border-radius: 7px;
-            font-size: 0.8rem;
-            padding: 0.3rem 0.75rem;
-        }
-        .btn-copy-code {
-            background: none;
-            border: none;
-            padding: 0;
-            color: #adb5bd;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: 500;
-            text-decoration: underline;
-            text-underline-offset: 2px;
-        }
-        .btn-copy-code:hover { color: #495057; }
-        .fidelidad-banner {
-            background: #f8fffe;
-            border: 1px solid #d1fae5;
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-        }
-        .fidelidad-icon {
-            width: 42px;
-            height: 42px;
-            background: #d1fae5;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            flex-shrink: 0;
-        }
-    </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
@@ -135,7 +34,7 @@
         <asp:Repeater ID="rptCupones" runat="server" OnItemCommand="rptCupones_ItemCommand">
             <ItemTemplate>
                 <div class="col">
-                    <div class="card h-100 cupon-card">
+                    <div class="card h-100 app-card app-card-hover">
                         <div class="card-body d-flex flex-column p-3">
 
                             <%-- Header: badge descuento + código + badge estado --%>

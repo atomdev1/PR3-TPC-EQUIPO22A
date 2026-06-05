@@ -1,51 +1,6 @@
 <%@ Page Title="Canchas" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Canchas.aspx.cs" Inherits="WebApp.Canchas" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
-    <style>
-        .cancha-card {
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-            background: #fff;
-        }
-        .cancha-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.10);
-        }
-        .cancha-sport-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.7rem;
-            background: #f8f9fa;
-            flex-shrink: 0;
-        }
-        .cancha-card h6 {
-            font-size: 1rem;
-        }
-        .cancha-precio {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #2d9e6b;
-        }
-        .cancha-meta {
-            font-size: 0.875rem;
-            color: #9ca3af;
-        }
-        .cancha-divider {
-            border-top: 1px solid #f1f3f5;
-        }
-        .btn-accion {
-            border-radius: 7px;
-            font-size: 0.8rem;
-            padding: 0.3rem 0.75rem;
-        }
-    </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
@@ -68,7 +23,7 @@
         <asp:Repeater ID="rptCanchas" runat="server" OnItemCommand="rptCanchas_ItemCommand">
             <ItemTemplate>
                 <div class="col">
-                    <div class="card h-100 cancha-card">
+                    <div class="card h-100 app-card app-card-hover">
                         <div class="card-body d-flex flex-column p-3">
 
                             <%-- Encabezado: ícono + nombre + badge --%>

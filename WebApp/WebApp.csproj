@@ -75,6 +75,7 @@
     <Content Include="Reservas.aspx" />
     <Content Include="Cupones.aspx" />
     <Content Include="Calendario.aspx" />
+    <Content Include="Site.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
