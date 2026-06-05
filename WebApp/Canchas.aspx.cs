@@ -58,7 +58,7 @@ namespace WebApp
                 txtPrecio.Text           = c.Precio.ToString();
                 txtSena.Text             = c.MontoSena.ToString();
                 txtDescripcion.Text      = c.Descripcion;
-                ddlDeporte.SelectedValue = c.IdDeporte.ToString();
+                ddlDeporte.SelectedValue = c.Deporte.IdDeporte.ToString();
 
                 lblTituloModalCancha.Text = "Editar cancha";
                 AbrirModal("modalNuevaCancha", "Nueva cancha", "Editar cancha");
@@ -116,7 +116,7 @@ namespace WebApp
             {
                 NombreFantasia     = txtNombre.Text.Trim(),
                 Numero             = int.Parse(txtNumero.Text),
-                IdDeporte          = int.Parse(ddlDeporte.SelectedValue),
+                Deporte            = new Deporte { IdDeporte = int.Parse(ddlDeporte.SelectedValue) },
                 CapacidadJugadores = int.Parse(txtCapacidad.Text),
                 Precio             = decimal.Parse(txtPrecio.Text),
                 MontoSena          = decimal.Parse(txtSena.Text),

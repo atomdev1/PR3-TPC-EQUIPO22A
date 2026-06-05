@@ -42,7 +42,6 @@ namespace Negocio
                     c.ValidoHasta = datos.Lector["ValidoHasta"] is DBNull ? (DateTime?)null : (DateTime)datos.Lector["ValidoHasta"];
                     c.LimiteUsos = datos.Lector["LimiteUsos"] is DBNull ? (int?)null : (int)datos.Lector["LimiteUsos"];
                     c.UsosActuales = (int)datos.Lector["UsosActuales"];
-                    c.IdUsuario = (int)datos.Lector["IDUsuario"];
                     c.Usuario = new Usuario
                     {
                         IdUsuario = (int)datos.Lector["IDUsuario"],
@@ -123,7 +122,8 @@ namespace Negocio
                     c.ValidoHasta = datos.Lector["ValidoHasta"] is DBNull ? (DateTime?)null : (DateTime)datos.Lector["ValidoHasta"];
                     c.LimiteUsos = datos.Lector["LimiteUsos"] is DBNull ? (int?)null : (int)datos.Lector["LimiteUsos"];
                     c.UsosActuales = (int)datos.Lector["UsosActuales"];
-                    c.IdUsuario = (int)datos.Lector["IDUsuario"];
+                    // solo necesito el id para preseleccionar el cliente en el combo al editar
+                    c.Usuario = new Usuario { IdUsuario = (int)datos.Lector["IDUsuario"] };
                     return c;
                 }
                 return null;
@@ -194,7 +194,7 @@ namespace Negocio
             datos.AgregarParametro("@desde", (object)c.ValidoDesde ?? DBNull.Value);
             datos.AgregarParametro("@hasta", (object)c.ValidoHasta ?? DBNull.Value);
             datos.AgregarParametro("@limite", (object)c.LimiteUsos ?? DBNull.Value);
-            datos.AgregarParametro("@usuario", c.IdUsuario);
+            datos.AgregarParametro("@usuario", c.Usuario.IdUsuario);
         }
     }
 }

@@ -70,7 +70,7 @@ namespace WebApp
                 txtValidoHasta.Text                = c.ValidoHasta.HasValue ? c.ValidoHasta.Value.ToString("yyyy-MM-dd") : "";
                 txtLimiteUsos.Text                 = c.LimiteUsos.HasValue ? c.LimiteUsos.Value.ToString() : "";
                 txtDescripcion.Text                = c.Descripcion;
-                ddlUsuario.SelectedValue           = c.IdUsuario.ToString();
+                ddlUsuario.SelectedValue           = c.Usuario.IdUsuario.ToString();
 
                 string script =
                     "document.getElementById('modalNuevoCuponLabel').textContent = 'Editar cupón';" +
@@ -115,7 +115,7 @@ namespace WebApp
                 ValidoHasta = string.IsNullOrEmpty(txtValidoHasta.Text) ? (DateTime?)null : DateTime.Parse(txtValidoHasta.Text),
                 LimiteUsos = string.IsNullOrEmpty(txtLimiteUsos.Text) ? (int?)null : int.Parse(txtLimiteUsos.Text),
                 Descripcion = txtDescripcion.Text.Trim(),
-                IdUsuario = int.Parse(ddlUsuario.SelectedValue)
+                Usuario = new Usuario { IdUsuario = int.Parse(ddlUsuario.SelectedValue) }
             };
 
             try

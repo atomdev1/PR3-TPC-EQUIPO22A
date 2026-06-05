@@ -36,7 +36,6 @@ namespace Negocio
                     c.Precio = (decimal)datos.Lector["Precio"];
                     c.MontoSena = (decimal)datos.Lector["MontoSena"];
                     c.Activa = (bool)datos.Lector["Activa"];
-                    c.IdDeporte = (int)datos.Lector["IDDeporte"];
                     c.Deporte = new Deporte
                     {
                         IdDeporte = (int)datos.Lector["IDDeporte"],
@@ -104,7 +103,7 @@ namespace Negocio
             datos.AgregarParametro("@cap", c.CapacidadJugadores);
             datos.AgregarParametro("@precio", c.Precio);
             datos.AgregarParametro("@sena", c.MontoSena);
-            datos.AgregarParametro("@dep", c.IdDeporte);
+            datos.AgregarParametro("@dep", c.Deporte.IdDeporte);
             datos.EjecutarAccion();
         }
 
@@ -135,7 +134,12 @@ namespace Negocio
                     c.Precio = (decimal)datos.Lector["Precio"];
                     c.MontoSena = (decimal)datos.Lector["MontoSena"];
                     c.Activa = (bool)datos.Lector["Activa"];
-                    c.IdDeporte = (int)datos.Lector["IDDeporte"];
+                    c.Deporte = new Deporte
+                    {
+                        IdDeporte = (int)datos.Lector["IDDeporte"],
+                        Nombre = (string)datos.Lector["NombreDeporte"],
+                        DuracionMinutos = (int)datos.Lector["DuracionMinutos"]
+                    };
                     return c;
                 }
                 return null;
@@ -170,7 +174,7 @@ namespace Negocio
             datos.AgregarParametro("@cap",    c.CapacidadJugadores);
             datos.AgregarParametro("@precio", c.Precio);
             datos.AgregarParametro("@sena",   c.MontoSena);
-            datos.AgregarParametro("@dep",    c.IdDeporte);
+            datos.AgregarParametro("@dep",    c.Deporte.IdDeporte);
             datos.AgregarParametro("@id",     c.IdCancha);
             datos.EjecutarAccion();
         }

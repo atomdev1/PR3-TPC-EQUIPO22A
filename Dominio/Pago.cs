@@ -12,7 +12,6 @@ namespace Dominio
         public int IdPago { get; set; }
         public decimal Monto { get; set; }
         public DateTime FechaHora { get; set; }
-        public int IdReserva { get; set; }
-        public FormaPago FormaDePago { get; set; } 
+        public FormaPago FormaDePago { get; set; }
     }
 }
