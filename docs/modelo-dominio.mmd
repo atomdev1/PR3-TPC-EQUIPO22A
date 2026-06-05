@@ -1,0 +1,147 @@
+classDiagram
+    class Usuario {
+        +int IdUsuario
+        +string DNI
+        +string Nombre
+        +string Apellido
+        +string Telefono
+        +string Email
+        +string PasswordHash
+        +DateTime FechaNacimiento
+        +DateTime FechaRegistro
+        +bool Activo
+        +int CantidadAsistencias
+        +RolUsuario Rol
+    }
+
+    class Cancha {
+        +int IdCancha
+        +int Numero
+        +string NombreFantasia
+        +string Descripcion
+        +int CapacidadJugadores
+        +decimal Precio
+        +decimal MontoSena
+        +bool Activa
+        +Deporte Deporte
+        +List~DisponibilidadCancha~ Disponibilidades
+    }
+
+    class Deporte {
+        +int IdDeporte
+        +string Nombre
+        +int DuracionMinutos
+    }
+
+    class DisponibilidadCancha {
+        +int IdDisponibilidad
+        +DayOfWeek DiaSemana
+        +TimeSpan HoraApertura
+        +TimeSpan HoraCierre
+        +bool Activa
+    }
+
+    class Reserva {
+        +int IdReserva
+        +DateTime Fecha
+        +TimeSpan HoraInicio
+        +TimeSpan HoraFin
+        +decimal PrecioTotal
+        +string Observaciones
+        +Usuario Cliente
+        +Usuario Staff
+        +Cancha Cancha
+        +Cupon Cupon
+        +EstadoReserva Estado
+        +EstadoPago EstadoPago
+        +List~Pago~ Pagos
+    }
+
+    class Cupon {
+        +int IdCupon
+        +string Codigo
+        +string Descripcion
+        +EstadoCupon Estado
+        +Usuario Usuario
+        +TipoDescuento TipoDescuento
+        +decimal? ValorDescuento
+        +int ReservasRequeridas
+        +DateTime? ValidoDesde
+        +DateTime? ValidoHasta
+        +int? LimiteUsos
+        +int UsosActuales
+    }
+
+    class Pago {
+        +int IdPago
+        +decimal Monto
+        +DateTime FechaHora
+        +FormaPago FormaDePago
+    }
+
+    class RolUsuario {
+        <<enumeration>>
+        Administrador
+        Recepcionista
+        EncargadoCancha
+        Cliente
+    }
+
+    class EstadoReserva {
+        <<enumeration>>
+        Nueva
+        Reprogramada
+        Cancelada
+        NoAsistio
+        Finalizada
+    }
+
+    class EstadoPago {
+        <<enumeration>>
+        Pendiente
+        Senado
+        Pagado
+        Reembolsado
+    }
+
+    class FormaPago {
+        <<enumeration>>
+        Efectivo
+        Transferencia
+        TarjetaDebito
+        TarjetaCredito
+        MercadoPago
+    }
+
+    class TipoDescuento {
+        <<enumeration>>
+        Porcentaje
+        MontoFijo
+        ReservaGratis
+    }
+
+    class EstadoCupon {
+        <<enumeration>>
+        Activo
+        Canjeado
+        Vencido
+        Agotado
+        Anulado
+    }
+
+    Cancha "1" *-- "*" DisponibilidadCancha : Disponibilidades
+    Reserva "1" *-- "*" Pago : Pagos
+
+    Cancha --> "1" Deporte
+    Reserva --> "1" Usuario : Cliente
+    Reserva --> "1" Usuario : Staff
+    Reserva --> "1" Cancha
+    Reserva --> "0..1" Cupon
+    Cupon --> "1" Usuario
+
+    Usuario ..> RolUsuario
+    Reserva ..> EstadoReserva
+    Reserva ..> EstadoPago
+    Cupon ..> EstadoCupon
+    Cupon ..> TipoDescuento
+    Pago ..> FormaPago
