@@ -1,3 +1,5 @@
+using Dominio;
+using Dominio.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,10 +14,29 @@ namespace WebApp
         protected HyperLink lnkReservas;
         protected HyperLink lnkCupones;
         protected HyperLink lnkCalendario;
+        protected System.Web.UI.WebControls.Label lblUsuario; 
+        protected System.Web.UI.WebControls.LinkButton btnCerrarSesion;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            MarcarSeccionActiva();
+            if (Session["usuario"] == null)
+            {
+                Response.Redirect("~/Login.aspx");
+                return;
+            }
+
+            if (!IsPostBack)
+            {
+                Usuario u = (Usuario)Session["usuario"];
+                lblUsuario.Text = u.Nombre + " " + u.Apellido;
+                MarcarSeccionActiva();
+            }
+        }
+
+        protected void btnCerrarSesion_Click(object sender, EventArgs e)
+        {
+            Session.Abandon();
+            Response.Redirect("~/Login.aspx");
         }
 
         // Resalta en el sidebar el link de la sección que se está viendo.
