@@ -47,7 +47,7 @@ namespace WebApp
 
             var links = new Dictionary<string, HyperLink>(StringComparer.OrdinalIgnoreCase)
             {
-                { "Panel.aspx", lnkPanel },
+                { "Dashboard.aspx", lnkPanel },
                 { "Canchas.aspx", lnkCanchas },
                 { "CanchasCliente.aspx", lnkReservar },
                 { "Reservas.aspx", lnkReservas },

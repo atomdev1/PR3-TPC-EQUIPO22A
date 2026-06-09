@@ -16,13 +16,13 @@
 
         <%-- Navbar solo visible en mobile --%>
         <nav class="navbar navbar-dark bg-dark d-md-none px-3">
-            <a class="navbar-brand fw-semibold" href="Panel.aspx">Mi Aplicación</a>
+            <a class="navbar-brand fw-semibold" href="Dashboard.aspx">Mi Aplicación</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-expanded="false">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mobileNav">
                 <div class="nav flex-column py-2 gap-1">
-                    <a class="nav-link text-white" href="Panel.aspx">Panel</a>
+                    <a class="nav-link text-white" href="Dashboard.aspx">Panel</a>
                     <a class="nav-link text-white" href="Canchas.aspx">Canchas</a>
                     <a class="nav-link text-white" href="CanchasCliente.aspx">Reservar cancha</a>
                     <a class="nav-link text-white" href="Reservas.aspx">Reservas</a>
@@ -38,10 +38,10 @@
                 <%-- Sidebar solo visible en desktop --%>
                 <aside class="col-md-3 col-lg-2 bg-dark text-white p-0 d-none d-md-flex flex-column" style="min-height: 100vh;">
                     <div class="p-3 border-bottom border-secondary">
-                        <asp:HyperLink ID="lnkHome" runat="server" NavigateUrl="~/Panel.aspx" CssClass="text-white text-decoration-none fw-semibold fs-5">Mi Aplicación</asp:HyperLink>
+                        <asp:HyperLink ID="lnkHome" runat="server" NavigateUrl="~/Dashboard.aspx" CssClass="text-white text-decoration-none fw-semibold fs-5">Mi Aplicación</asp:HyperLink>
                     </div>
                     <nav class="nav nav-pills flex-column gap-1 p-3 flex-grow-1">
-                        <asp:HyperLink ID="lnkPanel" runat="server" NavigateUrl="~/Panel.aspx" CssClass="nav-link text-white">Panel</asp:HyperLink>
+                        <asp:HyperLink ID="lnkPanel" runat="server" NavigateUrl="~/Dashboard.aspx" CssClass="nav-link text-white">Panel</asp:HyperLink>
                         <asp:HyperLink ID="lnkCanchas" runat="server" NavigateUrl="~/Canchas.aspx" CssClass="nav-link text-white">Canchas</asp:HyperLink>
                         <asp:HyperLink ID="lnkReservar" runat="server" NavigateUrl="~/CanchasCliente.aspx" CssClass="nav-link text-white">Reservar cancha</asp:HyperLink>
                         <asp:HyperLink ID="lnkReservas" runat="server" NavigateUrl="~/Reservas.aspx" CssClass="nav-link text-white">Reservas</asp:HyperLink>

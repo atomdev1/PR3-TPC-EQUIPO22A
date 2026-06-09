@@ -71,7 +71,7 @@
   <ItemGroup>
     <Content Include="Login.aspx" />
     <Content Include="Global.asax" />
-    <Content Include="Panel.aspx" />
+    <Content Include="Dashboard.aspx" />
     <Content Include="Canchas.aspx" />
     <Content Include="CanchasCliente.aspx" />
     <Content Include="Reservas.aspx" />
@@ -93,8 +93,8 @@
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Panel.aspx.cs">
-      <DependentUpon>Panel.aspx</DependentUpon>
+    <Compile Include="Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Canchas.aspx.cs">

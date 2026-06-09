@@ -5,7 +5,7 @@ using System.Web.UI.WebControls;
 
 namespace WebApp
 {
-    public partial class Panel : System.Web.UI.Page
+    public partial class Dashboard : System.Web.UI.Page
     {
         protected Label lblFecha;
         protected Label lblTurnosHoy;

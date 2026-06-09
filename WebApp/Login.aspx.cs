@@ -14,7 +14,7 @@ namespace WebApp
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["usuario"] != null)
-                Response.Redirect("~/Panel.aspx");
+                Response.Redirect("~/Dashboard.aspx");
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
@@ -27,7 +27,7 @@ namespace WebApp
             if (usuario != null)
             {
                 Session["usuario"] = usuario;
-                Response.Redirect("~/Panel.aspx");
+                Response.Redirect("~/Dashboard.aspx");
             }
             else
             {
