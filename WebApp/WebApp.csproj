@@ -73,6 +73,7 @@
     <Content Include="Global.asax" />
     <Content Include="Panel.aspx" />
     <Content Include="Canchas.aspx" />
+    <Content Include="CanchasCliente.aspx" />
     <Content Include="Reservas.aspx" />
     <Content Include="Cupones.aspx" />
     <Content Include="Calendario.aspx" />
@@ -98,6 +99,10 @@
     </Compile>
     <Compile Include="Canchas.aspx.cs">
       <DependentUpon>Canchas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CanchasCliente.aspx.cs">
+      <DependentUpon>CanchasCliente.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reservas.aspx.cs">

@@ -24,6 +24,7 @@
                 <div class="nav flex-column py-2 gap-1">
                     <a class="nav-link text-white" href="Panel.aspx">Panel</a>
                     <a class="nav-link text-white" href="Canchas.aspx">Canchas</a>
+                    <a class="nav-link text-white" href="CanchasCliente.aspx">Reservar cancha</a>
                     <a class="nav-link text-white" href="Reservas.aspx">Reservas</a>
                     <a class="nav-link text-white" href="Cupones.aspx">Cupones</a>
                     <a class="nav-link text-white" href="Calendario.aspx">Calendario</a>
@@ -42,6 +43,7 @@
                     <nav class="nav nav-pills flex-column gap-1 p-3 flex-grow-1">
                         <asp:HyperLink ID="lnkPanel" runat="server" NavigateUrl="~/Panel.aspx" CssClass="nav-link text-white">Panel</asp:HyperLink>
                         <asp:HyperLink ID="lnkCanchas" runat="server" NavigateUrl="~/Canchas.aspx" CssClass="nav-link text-white">Canchas</asp:HyperLink>
+                        <asp:HyperLink ID="lnkReservar" runat="server" NavigateUrl="~/CanchasCliente.aspx" CssClass="nav-link text-white">Reservar cancha</asp:HyperLink>
                         <asp:HyperLink ID="lnkReservas" runat="server" NavigateUrl="~/Reservas.aspx" CssClass="nav-link text-white">Reservas</asp:HyperLink>
                         <asp:HyperLink ID="lnkCupones" runat="server" NavigateUrl="~/Cupones.aspx" CssClass="nav-link text-white">Cupones</asp:HyperLink>
                         <asp:HyperLink ID="lnkCalendario" runat="server" NavigateUrl="~/Calendario.aspx" CssClass="nav-link text-white">Calendario</asp:HyperLink>

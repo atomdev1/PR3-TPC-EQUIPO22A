@@ -4,12 +4,85 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dominio;
+using Dominio.Enums;
 
 
 namespace Negocio
 {
     public class NegocioCanchas
     {
+        public List<Cancha> ObtenerCanchasActivasConDisponibilidad()
+        {
+            List<Cancha> lista = new List<Cancha>();
+            Dictionary<int, Cancha> mapa = new Dictionary<int, Cancha>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT c.IDCancha, c.Numero, c.NombreFantasia, c.Descripcion,
+                           c.CapacidadJugadores, c.Precio, c.MontoSena, c.Activa,
+                           c.IDDeporte, d.Nombre AS NombreDeporte, d.DuracionMinutos,
+                           disp.IDDisponibilidad, disp.DiaSemana, disp.HoraApertura,
+                           disp.HoraCierre, disp.Activa AS DispActiva
+                    FROM Canchas c
+                    INNER JOIN Deportes d ON d.IDDeporte = c.IDDeporte
+                    LEFT JOIN DisponibilidadCanchas disp
+                           ON disp.IDCancha = c.IDCancha AND disp.Activa = 1
+                    WHERE c.Activa = 1
+                    ORDER BY c.IDCancha, disp.DiaSemana");
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    int idCancha = (int)datos.Lector["IDCancha"];
+
+                    Cancha cancha;
+                    if (!mapa.TryGetValue(idCancha, out cancha))
+                    {
+                        cancha = new Cancha();
+                        cancha.IdCancha = idCancha;
+                        cancha.Numero = (int)datos.Lector["Numero"];
+                        cancha.NombreFantasia = (string)datos.Lector["NombreFantasia"];
+                        cancha.Descripcion = datos.Lector["Descripcion"] is System.DBNull ? "" : (string)datos.Lector["Descripcion"];
+                        cancha.CapacidadJugadores = (int)datos.Lector["CapacidadJugadores"];
+                        cancha.Precio = (decimal)datos.Lector["Precio"];
+                        cancha.MontoSena = (decimal)datos.Lector["MontoSena"];
+                        cancha.Activa = (bool)datos.Lector["Activa"];
+                        cancha.Deporte = new Deporte
+                        {
+                            IdDeporte = (int)datos.Lector["IDDeporte"],
+                            Nombre = (string)datos.Lector["NombreDeporte"],
+                            DuracionMinutos = (int)datos.Lector["DuracionMinutos"]
+                        };
+                        mapa[idCancha] = cancha;
+                        lista.Add(cancha);
+                    }
+
+                    if (!(datos.Lector["IDDisponibilidad"] is System.DBNull))
+                    {
+                        DisponibilidadCancha franja = new DisponibilidadCancha();
+                        franja.IdDisponibilidad = (int)datos.Lector["IDDisponibilidad"];
+                        franja.DiaSemana = (DiaSemana)(byte)datos.Lector["DiaSemana"];
+                        franja.HoraApertura = (TimeSpan)datos.Lector["HoraApertura"];
+                        franja.HoraCierre = (TimeSpan)datos.Lector["HoraCierre"];
+                        franja.Activa = (bool)datos.Lector["DispActiva"];
+                        cancha.Disponibilidades.Add(franja);
+                    }
+                }
+                return lista;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+
         public List<Cancha> ObtenerTodas()
         {
             List<Cancha> lista = new List<Cancha>();

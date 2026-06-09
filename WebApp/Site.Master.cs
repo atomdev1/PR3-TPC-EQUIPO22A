@@ -11,6 +11,7 @@ namespace WebApp
     {
         protected HyperLink lnkPanel;
         protected HyperLink lnkCanchas;
+        protected HyperLink lnkReservar;
         protected HyperLink lnkReservas;
         protected HyperLink lnkCupones;
         protected HyperLink lnkCalendario;
@@ -48,6 +49,7 @@ namespace WebApp
             {
                 { "Panel.aspx", lnkPanel },
                 { "Canchas.aspx", lnkCanchas },
+                { "CanchasCliente.aspx", lnkReservar },
                 { "Reservas.aspx", lnkReservas },
                 { "Cupones.aspx", lnkCupones },
                 { "Calendario.aspx", lnkCalendario },
