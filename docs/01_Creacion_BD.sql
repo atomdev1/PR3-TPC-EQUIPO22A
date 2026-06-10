@@ -103,7 +103,7 @@ CREATE TABLE Cupones (
     Codigo              VARCHAR(50)    UNIQUE NOT NULL,
     Descripcion         VARCHAR(255)   NOT NULL,
     IDEstadoCupon       INT            NOT NULL DEFAULT 1,   -- 1=Activo (ver tabla EstadoCupon)
-    IDTipoDescuento     INT            NOT NULL,             -- Porcentaje | MontoFijo | ReservaGratis
+    IDTipoDescuento     INT            NOT NULL,             -- Porcentaje | ReservaGratis
     ValorDescuento      DECIMAL(10,2)  NULL,                 -- NULL cuando IDTipoDescuento = ReservaGratis
     ReservasRequeridas  INT            NOT NULL DEFAULT 10,
     ValidoDesde         DATE           NULL,
@@ -114,6 +114,25 @@ CREATE TABLE Cupones (
     CONSTRAINT FK_Cupones_Usuarios       FOREIGN KEY (IDUsuario)       REFERENCES Usuarios(IDUsuario),
     CONSTRAINT FK_Cupones_EstadoCupon    FOREIGN KEY (IDEstadoCupon)   REFERENCES EstadoCupon(IDEstadoCupon),
     CONSTRAINT FK_Cupones_TipoDescuento  FOREIGN KEY (IDTipoDescuento) REFERENCES TipoDescuento(IDTipoDescuento)
+);
+
+-- =========================================
+-- BENEFICIOS DE FIDELIDAD
+-- Catálogo fijo del complejo: la REGLA "a las X reservas, tal beneficio".
+-- No es el cupón emitido — el trigger genera el cupón al alcanzar el umbral.
+-- =========================================
+
+CREATE TABLE BeneficiosFidelidad (
+    IDBeneficio         INT            IDENTITY(1,1) PRIMARY KEY,
+    Nombre              VARCHAR(100)   NOT NULL,
+    Descripcion         VARCHAR(255)   NOT NULL,
+    ReservasRequeridas  INT            NOT NULL,             -- el umbral a alcanzar
+    IDTipoDescuento     INT            NOT NULL,             -- Porcentaje | ReservaGratis
+    ValorDescuento      DECIMAL(10,2)  NULL,                 -- NULL cuando es Reserva gratis
+    DiasValidez         INT            NULL,                 -- vigencia del cupón generado (NULL = sin vencimiento)
+    Activo              BIT            NOT NULL DEFAULT 1,
+    CONSTRAINT FK_Beneficios_TipoDescuento FOREIGN KEY (IDTipoDescuento) REFERENCES TipoDescuento(IDTipoDescuento),
+    CONSTRAINT UQ_Beneficios_Umbral        UNIQUE (ReservasRequeridas)   -- un beneficio por umbral
 );
 
 -- =========================================

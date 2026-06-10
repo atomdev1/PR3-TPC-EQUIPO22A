@@ -39,7 +39,7 @@
 
                             <%-- Header: badge descuento + código + badge estado --%>
                             <div class="d-flex align-items-start gap-3 mb-3">
-                                <asp:Panel runat="server" CssClass='<%# "cupon-descuento-badge " + GetBadgeClass(Eval("TipoDescuento")) %>'>
+                                <asp:Panel runat="server" CssClass="cupon-descuento-badge">
                                     <asp:Label runat="server" Text='<%# GetBadgeSymbol(Eval("TipoDescuento")) %>' />
                                 </asp:Panel>
                                 <div class="flex-grow-1 min-w-0">
@@ -62,7 +62,7 @@
 
                             <%-- Valor --%>
                             <asp:Label runat="server"
-                                CssClass='<%# "cupon-valor d-block mb-1 " + GetBadgeClass(Eval("TipoDescuento")) %>'
+                                CssClass="cupon-valor d-block mb-1"
                                 Text='<%# FormatearValor(Eval("TipoDescuento"), Eval("ValorDescuento")) %>' />
 
                             <%-- Descripción --%>
@@ -127,8 +127,7 @@
                             <label class="form-label fw-semibold">Tipo de descuento</label>
                             <asp:DropDownList ID="ddlTipoDescuento" runat="server" CssClass="form-select">
                                 <asp:ListItem Value="1">Porcentaje (%)</asp:ListItem>
-                                <asp:ListItem Value="2">Monto fijo ($)</asp:ListItem>
-                                <asp:ListItem Value="3">Reserva gratis</asp:ListItem>
+                                <asp:ListItem Value="2">Reserva gratis</asp:ListItem>
                             </asp:DropDownList>
                         </div>
 

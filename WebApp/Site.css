@@ -84,11 +84,6 @@
     color: var(--brand-success);
 }
 
-.cupon-descuento-badge.monto-fijo {
-    background: var(--brand-info-subtle);
-    color: var(--brand-info);
-}
-
 .cupon-codigo {
     font-size: 0.82rem;
     font-weight: 600;
@@ -111,10 +106,6 @@
     font-weight: 700;
     color: var(--brand-success);
     line-height: 1.2;
-}
-
-.cupon-valor.monto-fijo {
-    color: var(--brand-info);
 }
 
 .cupon-descripcion {
@@ -143,6 +134,29 @@
 .cupon-card-inactivo {
     opacity: 0.65;
     background: var(--surface-hover);
+}
+
+/* Tarjetas de objetivos "en camino": un beneficio que el cliente todavía no desbloqueó.
+   Se ve atenuada y con borde punteado para diferenciarla del cupón real. */
+.cupon-card-objetivo {
+    background: var(--surface-hover);
+    border: 1px dashed var(--divider);
+}
+
+.cupon-descuento-badge.objetivo-badge {
+    background: var(--divider);
+    color: var(--text-muted-soft);
+}
+
+.objetivo-progress {
+    height: 8px;
+    border-radius: 6px;
+    background: var(--divider);
+}
+
+.objetivo-progress .progress-bar {
+    background: var(--brand-success);
+    border-radius: 6px;
 }
 
 .fidelidad-banner {

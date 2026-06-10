@@ -5,7 +5,6 @@ namespace Dominio.Enums
     public enum TipoDescuento
     {
         Porcentaje = 1,
-        MontoFijo = 2,
-        ReservaGratis = 3
+        ReservaGratis = 2
     }
 }

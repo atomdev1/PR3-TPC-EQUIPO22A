@@ -60,6 +60,24 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.Repeater rptDisponibles;
 
         /// <summary>
+        /// pnlObjetivos control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlObjetivos;
+
+        /// <summary>
+        /// rptObjetivos control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptObjetivos;
+
+        /// <summary>
         /// pnlHistorial control.
         /// </summary>
         /// <remarks>

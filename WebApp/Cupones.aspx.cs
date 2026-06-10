@@ -148,12 +148,6 @@ namespace WebApp
             return tipo == TipoDescuento.Porcentaje ? "%" : "$";
         }
 
-        protected string GetBadgeClass(object tipoDescuentoObj)
-        {
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            return tipo == TipoDescuento.MontoFijo ? "monto-fijo" : "";
-        }
-
         protected string GetTipoNombre(object tipoDescuentoObj)
         {
             TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
@@ -175,12 +169,11 @@ namespace WebApp
 
         protected string FormatearValor(object tipoDescuentoObj, object valorObj)
         {
+            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
+            if (tipo == TipoDescuento.ReservaGratis) return "GRATIS";
             if (valorObj == null || valorObj == DBNull.Value) return "-";
             decimal valor = Convert.ToDecimal(valorObj);
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            if (tipo == TipoDescuento.Porcentaje)
-                return valor == 100 ? "100% OFF" : $"{valor:0}% OFF";
-            return $"${valor:0} OFF";
+            return valor == 100 ? "100% OFF" : $"{valor:0}% OFF";
         }
 
         protected string FormatearMeta(string tipo, object val1, object val2 = null)

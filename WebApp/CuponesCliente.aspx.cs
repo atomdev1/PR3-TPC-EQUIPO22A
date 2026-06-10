@@ -25,9 +25,15 @@ namespace WebApp
                 CargarCupones();
         }
 
+        // Reservas acumuladas del cliente logueado. La usan los helpers de progreso
+        // del Repeater de objetivos para preguntarle a cada beneficio "¿cuánto falta?".
+        protected int reservasCliente;
+
         private void CargarCupones()
         {
             Usuario usuario = (Usuario)Session["usuario"];
+            reservasCliente = usuario.CantidadAsistencias;
+
             List<Cupon> cupones = new NegocioCupones().ObtenerPorUsuario(usuario.IdUsuario);
 
             // Usables ahora vs historial (canjeados / vencidos / agotados)
@@ -39,14 +45,45 @@ namespace WebApp
             rptHistorial.DataSource = historial;
             rptHistorial.DataBind();
 
-            pnlVacio.Visible = cupones.Count == 0;
+            // Objetivos "en camino": beneficios del catálogo que el cliente todavía no alcanzó.
+            // El cupón real recién existe cuando el trigger lo materialice al llegar al umbral.
+            List<BeneficioFidelidad> objetivos = new NegocioBeneficios()
+                .ObtenerActivos()
+                .Where(b => !b.YaAlcanzado(reservasCliente))
+                .ToList();
+
+            rptObjetivos.DataSource = objetivos;
+            rptObjetivos.DataBind();
+
+            pnlVacio.Visible = cupones.Count == 0 && objetivos.Count == 0;
             pnlDisponibles.Visible = cupones.Count > 0;
             pnlSinDisponibles.Visible = cupones.Count > 0 && disponibles.Count == 0;
             pnlHistorial.Visible = historial.Count > 0;
+            pnlObjetivos.Visible = objetivos.Count > 0;
 
             lblTotal.Text = disponibles.Count == 1
                 ? "1 cupón disponible"
                 : disponibles.Count + " cupones disponibles";
+        }
+
+        // ── Helpers del Repeater de objetivos: delegan en el comportamiento del dominio ──
+
+        protected string TextoFaltantes(object beneficioObj)
+        {
+            int faltan = ((BeneficioFidelidad)beneficioObj).ReservasFaltantes(reservasCliente);
+            return faltan == 1
+                ? "Te falta 1 reserva"
+                : "Te faltan " + faltan + " reservas";
+        }
+
+        protected int ProgresoPorcentaje(object beneficioObj)
+        {
+            return ((BeneficioFidelidad)beneficioObj).PorcentajeProgreso(reservasCliente);
+        }
+
+        protected string ProgresoFraccion(object beneficioObj)
+        {
+            return reservasCliente + " / " + ((BeneficioFidelidad)beneficioObj).ReservasRequeridas;
         }
 
         // ── Helpers de presentación (reutilizados de Cupones.aspx.cs) ──────────
@@ -55,12 +92,6 @@ namespace WebApp
         {
             TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
             return tipo == TipoDescuento.Porcentaje ? "%" : "$";
-        }
-
-        protected string GetBadgeClass(object tipoDescuentoObj)
-        {
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            return tipo == TipoDescuento.MontoFijo ? "monto-fijo" : "";
         }
 
         protected string GetTipoNombre(object tipoDescuentoObj)
@@ -84,18 +115,19 @@ namespace WebApp
 
         protected string FormatearValor(object tipoDescuentoObj, object valorObj)
         {
+            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
+            if (tipo == TipoDescuento.ReservaGratis) return "GRATIS";
             if (valorObj == null || valorObj == DBNull.Value) return "-";
             decimal valor = Convert.ToDecimal(valorObj);
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            if (tipo == TipoDescuento.Porcentaje)
-                return valor == 100 ? "100% OFF" : $"{valor:0}% OFF";
-            return $"${valor:0} OFF";
+            return valor == 100 ? "100% OFF" : $"{valor:0}% OFF";
         }
 
         protected string FormatearMeta(string tipo, object val1, object val2 = null)
         {
             switch (tipo)
             {
+                case "reservas":
+                    return "🎯 Obtenido con " + val1 + " reservas";
                 case "fecha":
                     if (val1 == null || val1 == DBNull.Value) return "Sin vencimiento";
                     return "Válido hasta: " + Convert.ToDateTime(val1).ToString("yyyy-MM-dd");
