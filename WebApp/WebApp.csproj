@@ -86,6 +86,9 @@
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -94,33 +97,57 @@
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Site.Master.designer.cs">
+      <DependentUpon>Site.Master</DependentUpon>
+    </Compile>
     <Compile Include="Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
     <Compile Include="Canchas.aspx.cs">
       <DependentUpon>Canchas.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Canchas.aspx.designer.cs">
+      <DependentUpon>Canchas.aspx</DependentUpon>
+    </Compile>
     <Compile Include="CanchasCliente.aspx.cs">
       <DependentUpon>CanchasCliente.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CanchasCliente.aspx.designer.cs">
+      <DependentUpon>CanchasCliente.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reservas.aspx.cs">
       <DependentUpon>Reservas.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Reservas.aspx.designer.cs">
+      <DependentUpon>Reservas.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Cupones.aspx.cs">
       <DependentUpon>Cupones.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cupones.aspx.designer.cs">
+      <DependentUpon>Cupones.aspx</DependentUpon>
     </Compile>
     <Compile Include="CuponesCliente.aspx.cs">
       <DependentUpon>CuponesCliente.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="CuponesCliente.aspx.designer.cs">
+      <DependentUpon>CuponesCliente.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Calendario.aspx.cs">
       <DependentUpon>Calendario.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Calendario.aspx.designer.cs">
+      <DependentUpon>Calendario.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

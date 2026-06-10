@@ -7,13 +7,6 @@ namespace WebApp
 {
     public partial class Dashboard : System.Web.UI.Page
     {
-        protected Label lblFecha;
-        protected Label lblTurnosHoy;
-        protected Label lblCanchasActivas;
-        protected Label lblCuponesVigentes;
-        protected Label lblIngresosHoy;
-        protected Repeater rptReservas;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)

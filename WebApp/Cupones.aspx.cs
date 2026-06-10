@@ -10,20 +10,6 @@ namespace WebApp
 {
     public partial class Cupones : System.Web.UI.Page
     {
-        protected Repeater rptCupones;
-        protected TextBox txtCodigo;
-        protected DropDownList ddlTipoDescuento;
-        protected TextBox txtValorDescuento;
-        protected TextBox txtReservasRequeridas;
-        protected TextBox txtValidoHasta;
-        protected TextBox txtLimiteUsos;
-        protected TextBox txtDescripcion;
-        protected DropDownList ddlUsuario;
-        protected HiddenField hfIdCupon;
-        protected Label lblError;
-        protected Button btnGuardarCupon;
-
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)

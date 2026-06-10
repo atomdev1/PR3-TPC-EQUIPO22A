@@ -7,10 +7,6 @@ namespace WebApp
 {
     public partial class Login : System.Web.UI.Page
     {
-        protected System.Web.UI.WebControls.Label lblError;
-        protected System.Web.UI.WebControls.TextBox txtEmail;
-        protected System.Web.UI.WebControls.TextBox txtPassword;
-        protected System.Web.UI.WebControls.Button btnLogin;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["usuario"] != null)

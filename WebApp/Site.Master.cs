@@ -9,15 +9,6 @@ namespace WebApp
 {
     public partial class Site : System.Web.UI.MasterPage
     {
-        protected HyperLink lnkPanel;
-        protected HyperLink lnkCanchas;
-        protected HyperLink lnkReservar;
-        protected HyperLink lnkReservas;
-        protected HyperLink lnkCupones;
-        protected HyperLink lnkCalendario;
-        protected System.Web.UI.WebControls.Label lblUsuario; 
-        protected System.Web.UI.WebControls.LinkButton btnCerrarSesion;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["usuario"] == null)

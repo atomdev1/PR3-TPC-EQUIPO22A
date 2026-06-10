@@ -8,20 +8,6 @@ namespace WebApp
 {
     public partial class Canchas : System.Web.UI.Page
     {
-        protected Repeater rptCanchas;
-        protected Label lblTotal;
-        protected HiddenField hfIdCancha;
-        protected Label lblErrorCancha;
-        protected Label lblTituloModalCancha;
-        protected TextBox txtNombre;
-        protected TextBox txtNumero;
-        protected DropDownList ddlDeporte;
-        protected TextBox txtCapacidad;
-        protected TextBox txtPrecio;
-        protected TextBox txtSena;
-        protected TextBox txtDescripcion;
-        protected Button btnGuardarCancha;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)

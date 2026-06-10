@@ -9,10 +9,6 @@ namespace WebApp
 {
     public partial class CanchasCliente : System.Web.UI.Page
     {
-        protected Repeater rptCanchas;
-        protected Label lblTotal;
-        protected System.Web.UI.WebControls.Panel pnlVacio;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             // HACER: control de acceso por rol — pendiente cambio de roles (guard centralizado futuro)

@@ -10,14 +10,6 @@ namespace WebApp
 {
     public partial class CuponesCliente : System.Web.UI.Page
     {
-        protected Repeater rptDisponibles;
-        protected Repeater rptHistorial;
-        protected Label lblTotal;
-        protected System.Web.UI.WebControls.Panel pnlVacio;
-        protected System.Web.UI.WebControls.Panel pnlDisponibles;
-        protected System.Web.UI.WebControls.Panel pnlSinDisponibles;
-        protected System.Web.UI.WebControls.Panel pnlHistorial;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             // El Page_Load de la página corre ANTES que el del Site.Master, así que
