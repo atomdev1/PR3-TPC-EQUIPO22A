@@ -62,6 +62,61 @@ namespace Negocio
             }
         }
 
+        // Cupones de un cliente puntual: todos menos los anulados (estado 5).
+        // La vista cliente separa Activos (usables) del resto (historial) en memoria.
+        public List<Cupon> ObtenerPorUsuario(int idUsuario)
+        {
+            List<Cupon> lista = new List<Cupon>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT c.IDCupon, c.Codigo, c.Descripcion, c.IDEstadoCupon,
+                           c.IDTipoDescuento, c.ValorDescuento, c.ReservasRequeridas,
+                           c.ValidoDesde, c.ValidoHasta, c.LimiteUsos, c.UsosActuales,
+                           c.IDUsuario, u.Nombre, u.Apellido
+                    FROM Cupones c
+                    INNER JOIN Usuarios u ON u.IDUsuario = c.IDUsuario
+                    WHERE c.IDUsuario = @id AND c.IDEstadoCupon <> 5
+                    ORDER BY c.IDEstadoCupon, c.ValidoHasta");
+                datos.AgregarParametro("@id", idUsuario);
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Cupon c = new Cupon();
+                    c.IdCupon = (int)datos.Lector["IDCupon"];
+                    c.Codigo = (string)datos.Lector["Codigo"];
+                    c.Descripcion = (string)datos.Lector["Descripcion"];
+                    c.Estado = (EstadoCupon)(int)datos.Lector["IDEstadoCupon"];
+                    c.TipoDescuento = (TipoDescuento)(int)datos.Lector["IDTipoDescuento"];
+                    c.ValorDescuento = datos.Lector["ValorDescuento"] is DBNull ? (decimal?)null : (decimal)datos.Lector["ValorDescuento"];
+                    c.ReservasRequeridas = (int)datos.Lector["ReservasRequeridas"];
+                    c.ValidoDesde = datos.Lector["ValidoDesde"] is DBNull ? (DateTime?)null : (DateTime)datos.Lector["ValidoDesde"];
+                    c.ValidoHasta = datos.Lector["ValidoHasta"] is DBNull ? (DateTime?)null : (DateTime)datos.Lector["ValidoHasta"];
+                    c.LimiteUsos = datos.Lector["LimiteUsos"] is DBNull ? (int?)null : (int)datos.Lector["LimiteUsos"];
+                    c.UsosActuales = (int)datos.Lector["UsosActuales"];
+                    c.Usuario = new Usuario
+                    {
+                        IdUsuario = (int)datos.Lector["IDUsuario"],
+                        Nombre = (string)datos.Lector["Nombre"],
+                        Apellido = (string)datos.Lector["Apellido"]
+                    };
+                    lista.Add(c);
+                }
+                return lista;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
         public List<Usuario> ObtenerUsuarios()
         {
             List<Usuario> lista = new List<Usuario>();

@@ -139,6 +139,12 @@
     color: #495057;
 }
 
+/* Tarjetas de cupones ya no usables (historial del cliente) */
+.cupon-card-inactivo {
+    opacity: 0.65;
+    background: var(--surface-hover);
+}
+
 .fidelidad-banner {
     background: #f8fffe;
     border: 1px solid var(--brand-success-subtle);

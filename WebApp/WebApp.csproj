@@ -76,6 +76,7 @@
     <Content Include="CanchasCliente.aspx" />
     <Content Include="Reservas.aspx" />
     <Content Include="Cupones.aspx" />
+    <Content Include="CuponesCliente.aspx" />
     <Content Include="Calendario.aspx" />
     <Content Include="Site.css" />
     <Content Include="Web.config" />
@@ -111,6 +112,10 @@
     </Compile>
     <Compile Include="Cupones.aspx.cs">
       <DependentUpon>Cupones.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CuponesCliente.aspx.cs">
+      <DependentUpon>CuponesCliente.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Calendario.aspx.cs">
