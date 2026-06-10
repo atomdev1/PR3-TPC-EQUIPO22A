@@ -8,7 +8,7 @@ using Negocio;
 
 namespace WebApp
 {
-    public partial class Cupones : System.Web.UI.Page
+    public partial class Cupones : CuponPageBase
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -140,57 +140,5 @@ namespace WebApp
             ClientScript.RegisterStartupScript(GetType(), "reabrirModalCupon", script, true);
         }
 
-        // ---- Helpers de presentación (cards del Repeater) ----
-
-        protected string GetBadgeSymbol(object tipoDescuentoObj)
-        {
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            return tipo == TipoDescuento.Porcentaje ? "%" : "$";
-        }
-
-        protected string GetTipoNombre(object tipoDescuentoObj)
-        {
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            return tipo == TipoDescuento.ReservaGratis ? "Reserva gratis" : "Descuento en reserva";
-        }
-
-        protected string GetEstadoBadgeClass(object estadoObj)
-        {
-            EstadoCupon estado = (EstadoCupon)estadoObj;
-            switch (estado)
-            {
-                case EstadoCupon.Activo: return "text-success bg-success-subtle";
-                case EstadoCupon.Canjeado: return "text-secondary bg-secondary-subtle";
-                case EstadoCupon.Vencido: return "text-warning bg-warning-subtle";
-                case EstadoCupon.Agotado: return "text-danger bg-danger-subtle";
-                default: return "text-secondary bg-secondary-subtle";
-            }
-        }
-
-        protected string FormatearValor(object tipoDescuentoObj, object valorObj)
-        {
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            if (tipo == TipoDescuento.ReservaGratis) return "GRATIS";
-            if (valorObj == null || valorObj == DBNull.Value) return "-";
-            decimal valor = Convert.ToDecimal(valorObj);
-            return valor == 100 ? "100% OFF" : $"{valor:0}% OFF";
-        }
-
-        protected string FormatearMeta(string tipo, object val1, object val2 = null)
-        {
-            switch (tipo)
-            {
-                case "reservas":
-                    return "Requiere " + val1 + " reservas";
-                case "fecha":
-                    if (val1 == null || val1 == DBNull.Value) return "Sin vencimiento";
-                    return "Válido hasta: " + Convert.ToDateTime(val1).ToString("yyyy-MM-dd");
-                case "usos":
-                    string limite = (val2 == null || val2 == DBNull.Value) ? "∞" : val2.ToString();
-                    return "Usado: " + val1 + "/" + limite + " veces";
-                default:
-                    return "";
-            }
-        }
     }
 }

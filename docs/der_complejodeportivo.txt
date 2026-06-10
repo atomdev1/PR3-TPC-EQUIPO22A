@@ -1,68 +1,131 @@
 erDiagram
-    ROLES {
+    %% Relaciones
+    Roles ||--o{ Usuarios : "asigna"
+    Deportes ||--o{ Canchas : "categoriza"
+    Canchas ||--o{ DisponibilidadCanchas : "posee"
+    
+    Usuarios ||--o{ Cupones : "dueño de"
+    EstadoCupon ||--o{ Cupones : "define estado"
+    TipoDescuento ||--o{ Cupones : "define tipo"
+    
+    TipoDescuento ||--o{ BeneficiosFidelidad : "define tipo"
+    
+    Usuarios ||--o{ Reservas : "realiza (Cliente)"
+    Usuarios |o--o{ Reservas : "gestiona (Staff)"
+    Canchas ||--o{ Reservas : "reservada en"
+    EstadoReserva ||--o{ Reservas : "estado de"
+    EstadoPago ||--o{ Reservas : "estado pago"
+    Cupones |o--o{ Reservas : "aplica en"
+    
+    Reservas ||--o{ Pagos : "recibe"
+    FormasPago ||--o{ Pagos : "abonado mediante"
+
+    %% Entidades y Atributos
+    Roles {
         int IDRol PK
-        varchar NombreRol
+        string NombreRol
+    }
+    
+    Deportes {
+        int IDDeporte PK
+        string Nombre
+        int DuracionMinutos
+    }
+    
+    EstadoReserva {
+        int IDEstado PK
+        string NombreEstado
+    }
+    
+    EstadoPago {
+        int IDEstadoPago PK
+        string NombreEstadoPago
+    }
+    
+    FormasPago {
+        int IDFormaPago PK
+        string NombreFormaPago
+    }
+    
+    EstadoCupon {
+        int IDEstadoCupon PK
+        string NombreEstado
+    }
+    
+    TipoDescuento {
+        int IDTipoDescuento PK
+        string Nombre
     }
 
-    USUARIOS {
+    Usuarios {
         int IDUsuario PK
-        varchar DNI
-        varchar Nombre
-        varchar Apellido
-        varchar Telefono
-        varchar Email
-        varchar Password
+        string DNI
+        string Nombre
+        string Apellido
+        string Telefono
+        string Email
+        string Password
         datetime FechaNacimiento
         datetime FechaRegistro
-        bool Activo
+        boolean Activo
         int CantidadAsistencias
         int IDRol FK
     }
 
-    DEPORTES {
-        int IDDeporte PK
-        varchar Nombre
-        int DuracionMinutos
-    }
-
-    CANCHAS {
+    Canchas {
         int IDCancha PK
         int Numero
-        varchar NombreFantasia
-        varchar Descripcion
+        string NombreFantasia
+        string Descripcion
         int CapacidadJugadores
         decimal Precio
         decimal MontoSena
-        bool Activa
+        boolean Activa
         int IDDeporte FK
     }
 
-    DISPONIBILIDAD_CANCHAS {
+    DisponibilidadCanchas {
         int IDDisponibilidad PK
         int IDCancha FK
         tinyint DiaSemana
         time HoraApertura
         time HoraCierre
-        bool Activa
+        boolean Activa
     }
 
-    ESTADO_RESERVA {
-        int IDEstado PK
-        varchar NombreEstado
+    Cupones {
+        int IDCupon PK
+        string Codigo
+        string Descripcion
+        int IDEstadoCupon FK
+        int IDTipoDescuento FK
+        decimal ValorDescuento
+        int ReservasRequeridas
+        date ValidoDesde
+        date ValidoHasta
+        int LimiteUsos
+        int UsosActuales
+        int IDUsuario FK
     }
 
-    ESTADO_PAGO {
-        int IDEstadoPago PK
-        varchar NombreEstadoPago
+    BeneficiosFidelidad {
+        int IDBeneficio PK
+        string Nombre
+        string Descripcion
+        int ReservasRequeridas
+        int IDTipoDescuento FK
+        decimal ValorDescuento
+        int DiasValidez
+        boolean Activo
     }
 
-    RESERVAS {
+    Reservas {
         int IDReserva PK
         date Fecha
         time HoraInicio
         time HoraFin
         decimal PrecioTotal
-        varchar Observaciones
+        string Observaciones
         int IDUsuario_Cliente FK
         int IDUsuario_Staff FK
         int IDCancha FK
@@ -71,55 +134,10 @@ erDiagram
         int IDCupon FK
     }
 
-    FORMAS_PAGO {
-        int IDFormaPago PK
-        varchar NombreFormaPago
-    }
-
-    PAGOS {
+    Pagos {
         int IDPago PK
         decimal Monto
         datetime FechaHora
         int IDReserva FK
         int IDFormaPago FK
     }
-
-    ESTADO_CUPON {
-        int IDEstadoCupon PK
-        varchar NombreEstado
-    }
-
-    TIPO_DESCUENTO {
-        int IDTipoDescuento PK
-        varchar Nombre
-    }
-
-    CUPONES {
-        int IDCupon PK
-        varchar Codigo
-        varchar Descripcion
-        decimal ValorDescuento
-        int ReservasRequeridas
-        date ValidoDesde
-        date ValidoHasta
-        int LimiteUsos
-        int UsosActuales
-        int IDUsuario FK
-        int IDEstadoCupon FK
-        int IDTipoDescuento FK
-    }
-
-    ROLES ||--o{ USUARIOS : "agrupa"
-    USUARIOS ||--o{ RESERVAS : "solicita (cliente)"
-    USUARIOS ||--o{ RESERVAS : "gestiona (staff)"
-    USUARIOS ||--o{ CUPONES : "posee"
-    DEPORTES ||--o{ CANCHAS : "clasifica"
-    CANCHAS ||--o{ DISPONIBILIDAD_CANCHAS : "tiene"
-    CANCHAS ||--o{ RESERVAS : "tiene"
-    ESTADO_RESERVA ||--o{ RESERVAS : "define"
-    ESTADO_PAGO ||--o{ RESERVAS : "clasifica"
-    CUPONES ||--o{ RESERVAS : "aplica en"
-    ESTADO_CUPON ||--o{ CUPONES : "define estado"
-    TIPO_DESCUENTO ||--o{ CUPONES : "tipifica"
-    RESERVAS ||--o{ PAGOS : "recibe"
-    FORMAS_PAGO ||--o{ PAGOS : "utiliza"

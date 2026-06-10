@@ -46,7 +46,7 @@ VALUES
     ('20444444', 'Roberto',   'Silva',     '1155554444', 'rsilva@complejo.com',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '1985-11-25', '2024-01-01', 1, 0,  3),
     -- Clientes
     -- CantidadAsistencias alineada a los umbrales de fidelidad (5/10/15/25)
-    -- para que los cupones que tiene cada uno cuenten una historia coherente.
+    -- para que los cupones que tiene cada uno reflejen el concepto.
     ('27555555', 'Lucas',     'Martínez',  '1166661111', 'lmartinez@gmail.com',  'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '1995-02-14', '2024-03-10', 1, 27, 4),  -- 5  Leyenda (pasó los 4)
     ('27666666', 'Sofía',     'Rodríguez', '1166662222', 'srodriguez@gmail.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '1998-07-30', '2024-03-15', 1, 12, 4),  -- 6  tiene 10% y 25%
     ('27777777', 'Matías',    'Fernández', '1166663333', 'mfernandez@gmail.com', 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f', '1993-12-05', '2024-04-01', 1, 16, 4),  -- 7  tiene 10/25/50
