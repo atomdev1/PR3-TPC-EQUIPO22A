@@ -1,6 +1,10 @@
+using Dominio;
+using Dominio.Enums;
+using Negocio;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Web.UI.WebControls;
 
 namespace WebApp
@@ -20,14 +24,20 @@ namespace WebApp
         private void CargarResumen()
         {
             CultureInfo ar = new CultureInfo("es-AR");
-
             lblFecha.Text = DateTime.Today.ToString("dddd d 'de' MMMM 'de' yyyy", ar);
+            
+            lblCanchasActivas.Text = new NegocioCanchas().ObtenerTodas().Count(c => c.Activa).ToString();
+            lblCuponesVigentes.Text = new NegocioCupones().ObtenerTodas().Count(c => c.Estado == EstadoCupon.Activo).ToString();
+
+
+            // PENDIENTE HASTA IMPLEMENTAR NegocioReservas.cs
             lblTurnosHoy.Text = "12";
-            lblCanchasActivas.Text = "8";
-            lblCuponesVigentes.Text = "5";
             lblIngresosHoy.Text = (48500m).ToString("C0", ar);
         }
 
+        
+        
+        
         // NOTA: datos de demostración hardcodeados. Todavía no hay conexión a la BBDD.
         private void CargarUltimasReservas()
         {
