@@ -82,7 +82,7 @@
 
                                 <%-- Metadatos --%>
                                 <div class="d-flex flex-column gap-1 mt-auto cupon-divider pt-3 cupon-meta">
-                                    <asp:Label runat="server" Text='<%# FormatearMeta("reservas", Eval("ReservasRequeridas")) %>' />
+                                    <asp:Label runat="server" Text='<%# FormatearMeta("reservas-obtenidas", Eval("ReservasRequeridas")) %>' />
                                     <asp:Label runat="server" Text='<%# FormatearMeta("fecha", Eval("ValidoHasta")) %>' />
                                     <asp:Label runat="server" Text='<%# FormatearMeta("usos", Eval("UsosActuales"), Eval("LimiteUsos")) %>' />
                                 </div>
@@ -184,7 +184,7 @@
                                     Text='<%# Eval("Descripcion") %>' />
 
                                 <div class="d-flex flex-column gap-1 mt-auto cupon-divider pt-3 cupon-meta">
-                                    <asp:Label runat="server" Text='<%# FormatearMeta("reservas", Eval("ReservasRequeridas")) %>' />
+                                    <asp:Label runat="server" Text='<%# FormatearMeta("reservas-obtenidas", Eval("ReservasRequeridas")) %>' />
                                     <asp:Label runat="server" Text='<%# FormatearMeta("fecha", Eval("ValidoHasta")) %>' />
                                     <asp:Label runat="server" Text='<%# FormatearMeta("usos", Eval("UsosActuales"), Eval("LimiteUsos")) %>' />
                                 </div>

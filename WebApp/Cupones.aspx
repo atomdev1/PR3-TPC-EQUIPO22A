@@ -73,7 +73,7 @@
                             <div class="d-flex flex-column gap-1 mb-3 cupon-meta">
                                 <asp:Label runat="server" CssClass="fw-semibold text-dark"
                                     Text='<%# "👤 " + Eval("Usuario.Nombre") + " " + Eval("Usuario.Apellido") %>' />
-                                <asp:Label runat="server" Text='<%# FormatearMeta("reservas", Eval("ReservasRequeridas")) %>' />
+                                <asp:Label runat="server" Text='<%# FormatearMeta("reservas-requeridas", Eval("ReservasRequeridas")) %>' />
                                 <asp:Label runat="server" Text='<%# FormatearMeta("fecha", Eval("ValidoHasta")) %>' />
                                 <asp:Label runat="server" Text='<%# FormatearMeta("usos", Eval("UsosActuales"), Eval("LimiteUsos")) %>' />
                             </div>

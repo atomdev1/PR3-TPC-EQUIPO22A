@@ -8,12 +8,12 @@ using Negocio;
 
 namespace WebApp
 {
-    public partial class CuponesCliente : System.Web.UI.Page
+    public partial class CuponesCliente : CuponPageBase
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // El Page_Load de la página corre ANTES que el del Site.Master, así que
-            // su redirect no nos cubre: el guard de sesión va acá mismo.
+            // El Page_Load de la página se ejecuta ANTES que el del Site.Master, así que
+            // su redirect no nos cubre: el guard de sesión va acá.
             // HACER: control de acceso por rol — pendiente cambio de roles (guard centralizado futuro)
             if (Session["usuario"] == null)
             {
@@ -46,7 +46,7 @@ namespace WebApp
             rptHistorial.DataBind();
 
             // Objetivos "en camino": beneficios del catálogo que el cliente todavía no alcanzó.
-            // El cupón real recién existe cuando el trigger lo materialice al llegar al umbral.
+            // El cupón real recién existe cuando el trigger lo genere al llegar al umbral.
             List<BeneficioFidelidad> objetivos = new NegocioBeneficios()
                 .ObtenerActivos()
                 .Where(b => !b.YaAlcanzado(reservasCliente))
@@ -86,57 +86,7 @@ namespace WebApp
             return reservasCliente + " / " + ((BeneficioFidelidad)beneficioObj).ReservasRequeridas;
         }
 
-        // ── Helpers de presentación (reutilizados de Cupones.aspx.cs) ──────────
-
-        protected string GetBadgeSymbol(object tipoDescuentoObj)
-        {
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            return tipo == TipoDescuento.Porcentaje ? "%" : "$";
-        }
-
-        protected string GetTipoNombre(object tipoDescuentoObj)
-        {
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            return tipo == TipoDescuento.ReservaGratis ? "Reserva gratis" : "Descuento en reserva";
-        }
-
-        protected string GetEstadoBadgeClass(object estadoObj)
-        {
-            EstadoCupon estado = (EstadoCupon)estadoObj;
-            switch (estado)
-            {
-                case EstadoCupon.Activo: return "text-success bg-success-subtle";
-                case EstadoCupon.Canjeado: return "text-secondary bg-secondary-subtle";
-                case EstadoCupon.Vencido: return "text-warning bg-warning-subtle";
-                case EstadoCupon.Agotado: return "text-danger bg-danger-subtle";
-                default: return "text-secondary bg-secondary-subtle";
-            }
-        }
-
-        protected string FormatearValor(object tipoDescuentoObj, object valorObj)
-        {
-            TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;
-            if (tipo == TipoDescuento.ReservaGratis) return "GRATIS";
-            if (valorObj == null || valorObj == DBNull.Value) return "-";
-            decimal valor = Convert.ToDecimal(valorObj);
-            return valor == 100 ? "100% OFF" : $"{valor:0}% OFF";
-        }
-
-        protected string FormatearMeta(string tipo, object val1, object val2 = null)
-        {
-            switch (tipo)
-            {
-                case "reservas":
-                    return "🎯 Obtenido con " + val1 + " reservas";
-                case "fecha":
-                    if (val1 == null || val1 == DBNull.Value) return "Sin vencimiento";
-                    return "Válido hasta: " + Convert.ToDateTime(val1).ToString("yyyy-MM-dd");
-                case "usos":
-                    string limite = (val2 == null || val2 == DBNull.Value) ? "∞" : val2.ToString();
-                    return "Usado: " + val1 + "/" + limite + " veces";
-                default:
-                    return "";
-            }
-        }
+        // Los helpers de presentación de cupones (badge, tipo, estado, valor, meta)
+        // estan en CuponPageBase, compartidos con la pantalla de admin.
     }
 }
