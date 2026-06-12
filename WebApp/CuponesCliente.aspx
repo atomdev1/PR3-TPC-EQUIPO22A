@@ -32,7 +32,7 @@
         Todavía no tenés cupones. Reservá canchas y empezá a sumar para tus recompensas.
     </asp:Panel>
 
-    <%-- ───────── Disponibles ───────── --%>
+    <%-- Disponibles --%>
     <asp:Panel ID="pnlDisponibles" runat="server">
         <h5 class="fw-semibold mb-3">Disponibles para usar</h5>
 
@@ -95,7 +95,7 @@
         </div>
     </asp:Panel>
 
-    <%-- ───────── En camino (objetivos por alcanzar) ───────── --%>
+    <%-- En camino (objetivos por alcanzar) --%>
     <asp:Panel ID="pnlObjetivos" runat="server" Visible="false">
         <h5 class="fw-semibold mb-1">En camino</h5>
         <small class="text-muted d-block mb-3">Sumá reservas y desbloqueá estos beneficios. Se activan solos al alcanzarlos.</small>
@@ -148,7 +148,7 @@
         </div>
     </asp:Panel>
 
-    <%-- ───────── Historial ───────── --%>
+    <%-- Historial --%>
     <asp:Panel ID="pnlHistorial" runat="server" Visible="false">
         <h5 class="fw-semibold mb-1">Historial</h5>
         <small class="text-muted d-block mb-3">Cupones que ya canjeaste, se vencieron o se agotaron.</small>

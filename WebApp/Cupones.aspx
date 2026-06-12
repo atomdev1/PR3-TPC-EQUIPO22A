@@ -10,11 +10,8 @@
             <h2 class="mb-0">Cupones de fidelidad</h2>
             <small class="text-muted">Recompensá a tus clientes frecuentes</small>
         </div>
-        <button type="button" class="btn btn-success ms-auto"
-            data-bs-toggle="modal" data-bs-target="#modalNuevoCupon"
-            onclick="nuevoCupon()">
-            + Nuevo cupón
-        </button>
+        <asp:Button ID="btnNuevoCupon" runat="server" CssClass="btn btn-success ms-auto"
+            Text="+ Nuevo cupón" OnClick="btnNuevoCupon_Click" CausesValidation="false" />
     </div>
 
     <%-- Banner sistema de fidelidad --%>
@@ -28,6 +25,19 @@
             </div>
         </div>
     </div>
+
+    <%-- Confirmación de eliminación --%>
+    <asp:Panel ID="pnlConfirmarBaja" runat="server" Visible="false"
+        CssClass="alert alert-warning d-flex justify-content-between align-items-center mb-4">
+        <asp:Label ID="lblConfirmarBaja" runat="server" CssClass="mb-0" />
+        <div class="d-flex gap-2">
+            <asp:Button ID="btnConfirmarBaja" runat="server" Text="Sí, eliminar"
+                CssClass="btn btn-sm btn-danger" OnClick="btnConfirmarBaja_Click" CausesValidation="false" />
+            <asp:Button ID="btnCancelarBaja" runat="server" Text="Cancelar"
+                CssClass="btn btn-sm btn-outline-secondary" OnClick="btnCancelarBaja_Click" CausesValidation="false" />
+        </div>
+    </asp:Panel>
+    <asp:HiddenField ID="hfBajaId" runat="server" />
 
     <%-- Grid de cupones --%>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -89,8 +99,7 @@
                                 <asp:LinkButton ID="btnEliminar" runat="server"
                                     CommandName="Eliminar"
                                     CommandArgument='<%# Eval("IdCupon") %>'
-                                    CssClass="btn btn-sm btn-outline-danger btn-accion"
-                                    OnClientClick="return confirm('¿Eliminar este cupón?');">
+                                    CssClass="btn btn-sm btn-outline-danger btn-accion">
                                     Eliminar
                                 </asp:LinkButton>
                             </div>
@@ -111,65 +120,69 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <asp:HiddenField ID="hfIdCupon" runat="server" />
-                    <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
-                    <div class="row g-3">
+                    <asp:UpdatePanel ID="upCupon" runat="server">
+                        <ContentTemplate>
+                            <asp:HiddenField ID="hfIdCupon" runat="server" />
+                            <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
+                            <div class="row g-3">
 
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Código</label>
-                            <asp:TextBox ID="txtCodigo" runat="server" CssClass="form-control" placeholder="Ej: TP-PROMO010" MaxLength="50" />
-                            <asp:RequiredFieldValidator ID="rfvCodigo" runat="server"
-                                ControlToValidate="txtCodigo" ValidationGroup="NuevoCupon"
-                                CssClass="text-danger small" ErrorMessage="El código es obligatorio." Display="Dynamic" />
-                        </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Código</label>
+                                    <asp:TextBox ID="txtCodigo" runat="server" CssClass="form-control" placeholder="Ej: TP-PROMO010" MaxLength="50" />
+                                    <asp:RequiredFieldValidator ID="rfvCodigo" runat="server"
+                                        ControlToValidate="txtCodigo" ValidationGroup="NuevoCupon"
+                                        CssClass="text-danger small" ErrorMessage="El código es obligatorio." Display="Dynamic" />
+                                </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Tipo de descuento</label>
-                            <asp:DropDownList ID="ddlTipoDescuento" runat="server" CssClass="form-select">
-                                <asp:ListItem Value="1">Porcentaje (%)</asp:ListItem>
-                                <asp:ListItem Value="2">Reserva gratis</asp:ListItem>
-                            </asp:DropDownList>
-                        </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Tipo de descuento</label>
+                                    <asp:DropDownList ID="ddlTipoDescuento" runat="server" CssClass="form-select"
+                                        AutoPostBack="true" OnSelectedIndexChanged="ddlTipoDescuento_SelectedIndexChanged">
+                                        <asp:ListItem Value="1">Porcentaje (%)</asp:ListItem>
+                                        <asp:ListItem Value="2">Reserva gratis</asp:ListItem>
+                                    </asp:DropDownList>
+                                </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Valor del descuento</label>
-                            <asp:TextBox ID="txtValorDescuento" runat="server" CssClass="form-control" TextMode="Number" placeholder="10" />
-                            <small class="text-muted d-block">Dejalo vacío si el tipo es "Reserva gratis".</small>
-                        </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Valor del descuento</label>
+                                    <asp:TextBox ID="txtValorDescuento" runat="server" CssClass="form-control" TextMode="Number" placeholder="10" />
+                                </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Reservas requeridas</label>
-                            <asp:TextBox ID="txtReservasRequeridas" runat="server" CssClass="form-control" TextMode="Number" placeholder="3" />
-                            <asp:RequiredFieldValidator ID="rfvReservas" runat="server"
-                                ControlToValidate="txtReservasRequeridas" ValidationGroup="NuevoCupon"
-                                CssClass="text-danger small" ErrorMessage="Campo obligatorio." Display="Dynamic" />
-                        </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Reservas requeridas</label>
+                                    <asp:TextBox ID="txtReservasRequeridas" runat="server" CssClass="form-control" TextMode="Number" placeholder="3" />
+                                    <asp:RequiredFieldValidator ID="rfvReservas" runat="server"
+                                        ControlToValidate="txtReservasRequeridas" ValidationGroup="NuevoCupon"
+                                        CssClass="text-danger small" ErrorMessage="Campo obligatorio." Display="Dynamic" />
+                                </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Válido hasta</label>
-                            <asp:TextBox ID="txtValidoHasta" runat="server" CssClass="form-control" TextMode="Date" />
-                        </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Válido hasta</label>
+                                    <asp:TextBox ID="txtValidoHasta" runat="server" CssClass="form-control" TextMode="Date" />
+                                </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Límite de usos</label>
-                            <asp:TextBox ID="txtLimiteUsos" runat="server" CssClass="form-control" TextMode="Number" placeholder="50" />
-                        </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Límite de usos</label>
+                                    <asp:TextBox ID="txtLimiteUsos" runat="server" CssClass="form-control" TextMode="Number" placeholder="50" />
+                                </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Cliente (dueño del cupón)</label>
-                            <asp:DropDownList ID="ddlUsuario" runat="server" CssClass="form-select" />
-                            <asp:RequiredFieldValidator ID="rfvUsuario" runat="server"
-                                ControlToValidate="ddlUsuario" InitialValue="0" ValidationGroup="NuevoCupon"
-                                CssClass="text-danger small" ErrorMessage="Seleccioná un cliente." Display="Dynamic" />
-                        </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Cliente (dueño del cupón)</label>
+                                    <asp:DropDownList ID="ddlUsuario" runat="server" CssClass="form-select" />
+                                    <asp:RequiredFieldValidator ID="rfvUsuario" runat="server"
+                                        ControlToValidate="ddlUsuario" InitialValue="0" ValidationGroup="NuevoCupon"
+                                        CssClass="text-danger small" ErrorMessage="Seleccioná un cliente." Display="Dynamic" />
+                                </div>
 
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Descripción</label>
-                            <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="2"
-                                placeholder="Ej: 10% off para clientes con 3+ reservas" MaxLength="300" />
-                        </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Descripción</label>
+                                    <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="2"
+                                        placeholder="Ej: 10% off para clientes con 3+ reservas" MaxLength="300" />
+                                </div>
 
-                    </div>
+                            </div>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -187,32 +200,6 @@
                 setTimeout(function () { btn.textContent = 'Copiar'; }, 1500);
             });
         }
-
-        function setVal(id, v) {
-            var el = document.getElementById(id);
-            if (el) el.value = v;
-        }
-
-        function ocultarError() {
-            var err = document.getElementById('<%= lblError.ClientID %>');
-            if (err) err.style.display = 'none';
-        }
-
-        // Alta: limpia el formulario y deja el hidden vacío
-        function nuevoCupon() {
-            setVal('<%= hfIdCupon.ClientID %>', '');
-            setVal('<%= txtCodigo.ClientID %>', '');
-            setVal('<%= ddlTipoDescuento.ClientID %>', '1');
-            setVal('<%= txtValorDescuento.ClientID %>', '');
-            setVal('<%= txtReservasRequeridas.ClientID %>', '');
-            setVal('<%= txtValidoHasta.ClientID %>', '');
-            setVal('<%= txtLimiteUsos.ClientID %>', '');
-            setVal('<%= txtDescripcion.ClientID %>', '');
-            setVal('<%= ddlUsuario.ClientID %>', '0');
-            ocultarError();
-            document.getElementById('modalNuevoCuponLabel').textContent = 'Nuevo cupón';
-        }
-
     </script>
 
 </asp:Content>

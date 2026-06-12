@@ -66,7 +66,7 @@ namespace WebApp
                 : disponibles.Count + " cupones disponibles";
         }
 
-        // ── Helpers del Repeater de objetivos: delegan en el comportamiento del dominio ──
+        // Helpers del Repeater de objetivos: delegan en el comportamiento del dominio
 
         protected string TextoFaltantes(object beneficioObj)
         {

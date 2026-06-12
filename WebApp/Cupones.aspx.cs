@@ -39,6 +39,59 @@ namespace WebApp
             ddlUsuario.Items.Insert(0, new ListItem("-- Seleccioná un cliente --", "0"));
         }
 
+        // Alta: limpia el formulario, deja todo en estado inicial y abre el modal.
+        protected void btnNuevoCupon_Click(object sender, EventArgs e)
+        {
+            hfIdCupon.Value            = "";
+            txtCodigo.Text             = "";
+            ddlTipoDescuento.SelectedValue = "1";
+            txtValorDescuento.Text     = "";
+            txtReservasRequeridas.Text = "";
+            txtValidoHasta.Text        = "";
+            txtLimiteUsos.Text         = "";
+            txtDescripcion.Text        = "";
+            ddlUsuario.SelectedValue   = "0";
+            lblError.Visible           = false;
+
+            AplicarEstadoValor();
+            AbrirModal("Nuevo cupón");
+        }
+
+        // Confirma la eliminación: da de baja el id guardado y oculta el panel.
+        protected void btnConfirmarBaja_Click(object sender, EventArgs e)
+        {
+            new NegocioCupones().BajaLogica(int.Parse(hfBajaId.Value));
+            pnlConfirmarBaja.Visible = false;
+            CargarCupones();
+        }
+
+        protected void btnCancelarBaja_Click(object sender, EventArgs e)
+        {
+            pnlConfirmarBaja.Visible = false;
+        }
+
+        // "Reserva gratis" no lleva valor: se deshabilita el campo (el server igual fuerza NULL).
+        // Corre por AutoPostBack dentro del UpdatePanel, así el modal no se cierra.
+        protected void ddlTipoDescuento_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AplicarEstadoValor();
+        }
+
+        private void AplicarEstadoValor()
+        {
+            bool esReservaGratis = ddlTipoDescuento.SelectedValue == "2";
+            txtValorDescuento.Enabled = !esReservaGratis;
+            if (esReservaGratis) txtValorDescuento.Text = "";
+        }
+
+        private void AbrirModal(string titulo)
+        {
+            string script =
+                "var lbl = document.getElementById('modalNuevoCuponLabel'); if (lbl) lbl.textContent = '" + titulo + "';" +
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevoCupon')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModalCupon", script, true);
+        }
+
         protected void rptCupones_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int idCupon = int.Parse(e.CommandArgument.ToString());
@@ -58,15 +111,16 @@ namespace WebApp
                 txtDescripcion.Text                = c.Descripcion;
                 ddlUsuario.SelectedValue           = c.Usuario.IdUsuario.ToString();
 
-                string script =
-                    "document.getElementById('modalNuevoCuponLabel').textContent = 'Editar cupón';" +
-                    "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevoCupon')).show();";
-                ClientScript.RegisterStartupScript(GetType(), "abrirModalCupon", script, true);
+                AplicarEstadoValor();
+                AbrirModal("Editar cupón");
             }
             else if (e.CommandName == "Eliminar")
             {
-                new NegocioCupones().BajaLogica(idCupon);
-                CargarCupones();
+                // No se elimina directo: se pide confirmación con un panel.
+                Cupon c = new NegocioCupones().ObtenerPorId(idCupon);
+                hfBajaId.Value = idCupon.ToString();
+                lblConfirmarBaja.Text = "¿Eliminar el cupón \"" + (c != null ? c.Codigo : "") + "\"?";
+                pnlConfirmarBaja.Visible = true;
             }
         }
 
@@ -132,12 +186,9 @@ namespace WebApp
             lblError.Text = mensaje;
             lblError.Visible = true;
 
-            // el modal se cierra con el postback → hay que reabrirlo para que se vea el error
+            // el modal se cierra con el postback, hay que reabrirlo para que se vea el error
             string titulo = string.IsNullOrEmpty(hfIdCupon.Value) ? "Nuevo cupón" : "Editar cupón";
-            string script =
-                "var lbl = document.getElementById('modalNuevoCuponLabel'); if (lbl) lbl.textContent = '" + titulo + "';" +
-                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevoCupon')).show();";
-            ClientScript.RegisterStartupScript(GetType(), "reabrirModalCupon", script, true);
+            AbrirModal(titulo);
         }
 
     }

@@ -15,6 +15,40 @@ namespace WebApp
     {
 
         /// <summary>
+        /// btnNuevoCupon control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnNuevoCupon;
+
+        /// <summary>
+        /// pnlConfirmarBaja control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel pnlConfirmarBaja;
+
+        /// <summary>
+        /// lblConfirmarBaja control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblConfirmarBaja;
+
+        /// <summary>
+        /// btnConfirmarBaja control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnConfirmarBaja;
+
+        /// <summary>
+        /// btnCancelarBaja control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnCancelarBaja;
+
+        /// <summary>
+        /// hfBajaId control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfBajaId;
+
+        /// <summary>
         /// rptCupones control.
         /// </summary>
         /// <remarks>
@@ -22,6 +56,15 @@ namespace WebApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater rptCupones;
+
+        /// <summary>
+        /// upCupon control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel upCupon;
 
         /// <summary>
         /// hfIdCupon control.

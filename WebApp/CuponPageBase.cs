@@ -43,8 +43,8 @@ namespace WebApp
         }
 
         // El caso de reservas difiere según la pantalla:
-        //   "reservas-requeridas" → admin: la REGLA ("Requiere X reservas")
-        //   "reservas-obtenidas"  → cliente: con qué se GANÓ ("Obtenido con X reservas")
+        //   "reservas-requeridas" -> admin: la REGLA ("Requiere X reservas")
+        //   "reservas-obtenidas"  -> cliente: con qué se GANÓ ("Obtenido con X reservas")
         // Los casos fecha y usos son idénticos para ambas.
         protected string FormatearMeta(string tipo, object val1, object val2 = null)
         {
