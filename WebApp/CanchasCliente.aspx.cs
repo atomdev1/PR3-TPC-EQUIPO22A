@@ -25,7 +25,7 @@ namespace WebApp
             lblTotal.Text = canchas.Count + " canchas disponibles";
         }
 
-        // ── Helpers reutilizados de Canchas.aspx.cs ──────────────────────────
+        // Helpers reutilizados de Canchas.aspx.cs
 
         protected string GetDeporteEmoji(object nombreObj)
         {
@@ -54,7 +54,7 @@ namespace WebApp
             return "$" + precioObj + " /hora";
         }
 
-        // ── Helpers nuevos ────────────────────────────────────────────────────
+        // Helpers nuevos
 
         protected string NombreDia(object diaObj)
         {

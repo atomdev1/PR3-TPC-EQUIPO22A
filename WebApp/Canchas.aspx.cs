@@ -51,9 +51,42 @@ namespace WebApp
             }
             else if (e.CommandName == "Eliminar")
             {
-                new NegocioCanchas().BajaLogica(idCancha);
-                CargarCanchas();
+                // No se elimina directo: se pide confirmación con un panel.
+                Cancha c = new NegocioCanchas().ObtenerPorId(idCancha);
+                hfBajaId.Value = idCancha.ToString();
+                lblConfirmarBaja.Text = "¿Eliminar la cancha \"" + (c != null ? c.NombreFantasia : "") + "\"?";
+                pnlConfirmarBaja.Visible = true;
             }
+        }
+
+        // Alta: limpia el formulario, deja todo en estado inicial y abre el modal.
+        protected void btnNueva_Click(object sender, EventArgs e)
+        {
+            hfIdCancha.Value          = "";
+            txtNombre.Text            = "";
+            txtNumero.Text            = "";
+            ddlDeporte.SelectedValue  = "0";
+            txtCapacidad.Text         = "";
+            txtPrecio.Text            = "";
+            txtSena.Text              = "";
+            txtDescripcion.Text       = "";
+            lblErrorCancha.Visible    = false;
+            lblTituloModalCancha.Text = "Nueva cancha";
+
+            AbrirModal("modalNuevaCancha", "Nueva cancha", "Editar cancha");
+        }
+
+        // Confirma la eliminación: da de baja el id guardado y oculta el panel.
+        protected void btnConfirmarBaja_Click(object sender, EventArgs e)
+        {
+            new NegocioCanchas().BajaLogica(int.Parse(hfBajaId.Value));
+            pnlConfirmarBaja.Visible = false;
+            CargarCanchas();
+        }
+
+        protected void btnCancelarBaja_Click(object sender, EventArgs e)
+        {
+            pnlConfirmarBaja.Visible = false;
         }
 
         private void CargarDeportes()

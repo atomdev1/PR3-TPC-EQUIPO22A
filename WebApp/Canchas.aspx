@@ -12,12 +12,22 @@
                 <asp:Label ID="lblTotal" runat="server" />
             </small>
         </div>
-        <button type="button" class="btn btn-success ms-auto"
-            data-bs-toggle="modal" data-bs-target="#modalNuevaCancha"
-            onclick="nuevaCancha()">
-            + Nueva cancha
-        </button>
+        <asp:Button ID="btnNueva" runat="server" CssClass="btn btn-success ms-auto"
+            Text="+ Nueva cancha" OnClick="btnNueva_Click" CausesValidation="false" />
     </div>
+
+    <%-- Confirmación de eliminación --%>
+    <asp:Panel ID="pnlConfirmarBaja" runat="server" Visible="false"
+        CssClass="alert alert-warning d-flex justify-content-between align-items-center mb-4">
+        <asp:Label ID="lblConfirmarBaja" runat="server" CssClass="mb-0" />
+        <div class="d-flex gap-2">
+            <asp:Button ID="btnConfirmarBaja" runat="server" Text="Sí, eliminar"
+                CssClass="btn btn-sm btn-danger" OnClick="btnConfirmarBaja_Click" CausesValidation="false" />
+            <asp:Button ID="btnCancelarBaja" runat="server" Text="Cancelar"
+                CssClass="btn btn-sm btn-outline-secondary" OnClick="btnCancelarBaja_Click" CausesValidation="false" />
+        </div>
+    </asp:Panel>
+    <asp:HiddenField ID="hfBajaId" runat="server" />
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <asp:Repeater ID="rptCanchas" runat="server" OnItemCommand="rptCanchas_ItemCommand">
@@ -68,8 +78,7 @@
                                 <asp:LinkButton ID="btnEliminar" runat="server"
                                     CommandName="Eliminar"
                                     CommandArgument='<%# Eval("IdCancha") %>'
-                                    CssClass="btn btn-sm btn-outline-danger btn-accion"
-                                    OnClientClick="return confirm('¿Eliminar esta cancha?');">
+                                    CssClass="btn btn-sm btn-outline-danger btn-accion">
                                     Eliminar
                                 </asp:LinkButton>
                             </div>
@@ -80,24 +89,6 @@
             </ItemTemplate>
         </asp:Repeater>
     </div>
-
-    <script>
-        function nuevaCancha() {
-            function setVal(id, v) { var el = document.getElementById(id); if (el) el.value = v; }
-            setVal('<%= hfIdCancha.ClientID %>', '');
-            setVal('<%= txtNombre.ClientID %>', '');
-            setVal('<%= txtNumero.ClientID %>', '');
-            setVal('<%= ddlDeporte.ClientID %>', '0');
-            setVal('<%= txtCapacidad.ClientID %>', '');
-            setVal('<%= txtPrecio.ClientID %>', '');
-            setVal('<%= txtSena.ClientID %>', '');
-            setVal('<%= txtDescripcion.ClientID %>', '');
-            var lbl = document.getElementById('<%= lblTituloModalCancha.ClientID %>');
-            if (lbl) lbl.textContent = 'Nueva cancha';
-            var err = document.getElementById('<%= lblErrorCancha.ClientID %>');
-            if (err) err.style.display = 'none';
-        }
-    </script>
 
     <%-- Modal Nueva Cancha --%>
     <div class="modal fade" id="modalNuevaCancha" tabindex="-1" aria-labelledby="modalNuevaCanchaLabel" aria-hidden="true">
