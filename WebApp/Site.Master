@@ -14,6 +14,8 @@
 <body class="bg-light">
     <form id="form1" runat="server" class="min-vh-100">
 
+        <asp:ScriptManager ID="ScriptManager1" runat="server" />
+
         <%-- Navbar solo visible en mobile --%>
         <nav class="navbar navbar-dark bg-dark d-md-none px-3">
             <a class="navbar-brand fw-semibold" href="Dashboard.aspx">Mi Aplicación</a>
@@ -27,6 +29,7 @@
                     <a class="nav-link text-white" href="CanchasCliente.aspx">Reservar cancha</a>
                     <a class="nav-link text-white" href="Reservas.aspx">Reservas</a>
                     <a class="nav-link text-white" href="Cupones.aspx">Cupones</a>
+                    <a class="nav-link text-white" href="Beneficios.aspx">Beneficios</a>
                     <a class="nav-link text-white" href="CuponesCliente.aspx">Mis cupones</a>
                     <a class="nav-link text-white" href="Calendario.aspx">Calendario</a>
                 </div>
@@ -47,6 +50,7 @@
                         <asp:HyperLink ID="lnkReservar" runat="server" NavigateUrl="~/CanchasCliente.aspx" CssClass="nav-link text-white">Reservar cancha</asp:HyperLink>
                         <asp:HyperLink ID="lnkReservas" runat="server" NavigateUrl="~/Reservas.aspx" CssClass="nav-link text-white">Reservas</asp:HyperLink>
                         <asp:HyperLink ID="lnkCupones" runat="server" NavigateUrl="~/Cupones.aspx" CssClass="nav-link text-white">Cupones</asp:HyperLink>
+                        <asp:HyperLink ID="lnkBeneficios" runat="server" NavigateUrl="~/Beneficios.aspx" CssClass="nav-link text-white">Beneficios</asp:HyperLink>
                         <asp:HyperLink ID="lnkMisCupones" runat="server" NavigateUrl="~/CuponesCliente.aspx" CssClass="nav-link text-white">Mis cupones</asp:HyperLink>
                         <asp:HyperLink ID="lnkCalendario" runat="server" NavigateUrl="~/Calendario.aspx" CssClass="nav-link text-white">Calendario</asp:HyperLink>
                     </nav>

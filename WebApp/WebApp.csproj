@@ -77,6 +77,7 @@
     <Content Include="Reservas.aspx" />
     <Content Include="Cupones.aspx" />
     <Content Include="CuponesCliente.aspx" />
+    <Content Include="Beneficios.aspx" />
     <Content Include="Calendario.aspx" />
     <Content Include="Site.css" />
     <Content Include="Web.config" />
@@ -144,6 +145,13 @@
     </Compile>
     <Compile Include="CuponesCliente.aspx.designer.cs">
       <DependentUpon>CuponesCliente.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Beneficios.aspx.cs">
+      <DependentUpon>Beneficios.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Beneficios.aspx.designer.cs">
+      <DependentUpon>Beneficios.aspx</DependentUpon>
     </Compile>
     <Compile Include="Calendario.aspx.cs">
       <DependentUpon>Calendario.aspx</DependentUpon>

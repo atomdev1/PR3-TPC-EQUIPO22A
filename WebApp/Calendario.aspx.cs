@@ -40,7 +40,7 @@ namespace WebApp
             DateTime primerDia = new DateTime(año, mes, 1);
             int diasEnMes = DateTime.DaysInMonth(año, mes);
 
-            // DayOfWeek: Sunday=0 → col 0 (Dom), Monday=1 → col 1 (Lun), …, Saturday=6 → col 6 (Sáb)
+            // DayOfWeek: Sunday=0 -> col 0 (Dom), Monday=1 -> col 1 (Lun), ..., Saturday=6 -> col 6 (Sáb)
             int inicioCol = (int)primerDia.DayOfWeek;
             int filas = (int)Math.Ceiling((inicioCol + diasEnMes) / 7.0);
             DateTime hoy = DateTime.Today;

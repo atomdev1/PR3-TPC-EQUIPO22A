@@ -17,7 +17,7 @@ namespace Dominio
         public int? DiasValidez { get; set; }
         public bool Activo { get; set; }
 
-        // ── Comportamiento: el objeto sabe responder sobre el progreso del cliente ──
+        // Comportamiento: el objeto sabe responder sobre el progreso del cliente.
         // En vez de que la vista calcule, le preguntamos al beneficio.
 
         public int ReservasFaltantes(int reservasDelCliente)
