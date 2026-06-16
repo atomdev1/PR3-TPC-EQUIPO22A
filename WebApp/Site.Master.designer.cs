@@ -51,15 +51,6 @@ namespace WebApp
         protected global::System.Web.UI.ScriptManager ScriptManager1;
 
         /// <summary>
-        /// lnkHome control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkHome;
-
-        /// <summary>
         /// lnkPanel control.
         /// </summary>
         /// <remarks>
@@ -67,6 +58,24 @@ namespace WebApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkPanel;
+
+        /// <summary>
+        /// lnkReservas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkReservas;
+
+        /// <summary>
+        /// lnkCalendario control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkCalendario;
 
         /// <summary>
         /// lnkCanchas control.
@@ -87,15 +96,6 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.HyperLink lnkReservar;
 
         /// <summary>
-        /// lnkReservas control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkReservas;
-
-        /// <summary>
         /// lnkCupones control.
         /// </summary>
         /// <remarks>
@@ -103,15 +103,6 @@ namespace WebApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkCupones;
-
-        /// <summary>
-        /// lnkBeneficios control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkBeneficios;
 
         /// <summary>
         /// lnkMisCupones control.
@@ -123,13 +114,22 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.HyperLink lnkMisCupones;
 
         /// <summary>
-        /// lnkCalendario control.
+        /// lnkBeneficios control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkCalendario;
+        protected global::System.Web.UI.WebControls.HyperLink lnkBeneficios;
+
+        /// <summary>
+        /// lblInicialUsuario control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblInicialUsuario;
 
         /// <summary>
         /// lblUsuario control.

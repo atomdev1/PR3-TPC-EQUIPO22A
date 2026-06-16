@@ -9,64 +9,82 @@
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="Site.css" rel="stylesheet" />
 </head>
-<body runat="server" id="bodyMain" class="bg-light">
-    <form id="form1" runat="server" class="min-vh-100">
+
+<body runat="server" id="bodyMain">
+    <form id="form1" runat="server">
 
         <asp:ScriptManager ID="ScriptManager1" runat="server" />
 
-        <%-- Navbar solo visible en mobile --%>
-        <nav class="navbar navbar-dark bg-dark d-md-none px-3">
-            <a class="navbar-brand fw-semibold" href="Dashboard.aspx">Mi Aplicación</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-expanded="false">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="mobileNav">
-                <div class="nav flex-column py-2 gap-1">
-                    <a class="nav-link text-white" href="Dashboard.aspx">Panel</a>
-                    <a class="nav-link text-white" href="Canchas.aspx">Canchas</a>
-                    <a class="nav-link text-white" href="CanchasCliente.aspx">Reservar cancha</a>
-                    <a class="nav-link text-white" href="Reservas.aspx">Reservas</a>
-                    <a class="nav-link text-white" href="Cupones.aspx">Cupones</a>
-                    <a class="nav-link text-white" href="Beneficios.aspx">Beneficios</a>
-                    <a class="nav-link text-white" href="CuponesCliente.aspx">Mis cupones</a>
-                    <a class="nav-link text-white" href="Calendario.aspx">Calendario</a>
+        <div class="app-shell">
+
+            <%-- Sidebar --%>
+            <aside class="app-sidebar">
+                <div class="side-brand">
+                    <div class="side-brand-mark">R2</div>
+                    <div>
+                        <div class="side-brand-name">Reserva2</div>
+                        <div class="side-brand-sub">Complejo Deportivo</div>
+                    </div>
+                </div>
+
+                <nav class="side-nav">
+                    <asp:HyperLink ID="lnkPanel"     runat="server" NavigateUrl="~/Dashboard.aspx"      CssClass="side-link">
+                        <span class="side-ico">🏠</span> Panel
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkReservas"  runat="server" NavigateUrl="~/Reservas.aspx"       CssClass="side-link">
+                        <span class="side-ico">📋</span> Reservas
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkCalendario" runat="server" NavigateUrl="~/Calendario.aspx"    CssClass="side-link">
+                        <span class="side-ico">🗓️</span> Calendario
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkCanchas"   runat="server" NavigateUrl="~/Canchas.aspx"        CssClass="side-link">
+                        <span class="side-ico">🏟️</span> Canchas
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkReservar"  runat="server" NavigateUrl="~/CanchasCliente.aspx" CssClass="side-link">
+                        <span class="side-ico">⚽</span> Reservar cancha
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkCupones"   runat="server" NavigateUrl="~/Cupones.aspx"        CssClass="side-link">
+                        <span class="side-ico">🎟️</span> Cupones
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkMisCupones" runat="server" NavigateUrl="~/CuponesCliente.aspx" CssClass="side-link">
+                        <span class="side-ico">🎟️</span> Mis cupones
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkBeneficios" runat="server" NavigateUrl="~/Beneficios.aspx"    CssClass="side-link">
+                        <span class="side-ico">⭐</span> Beneficios
+                    </asp:HyperLink>
+                </nav>
+
+                <div class="side-foot">
+                    <div class="side-user">
+                        <div class="side-avatar">
+                            <asp:Label ID="lblInicialUsuario" runat="server" />
+                        </div>
+                        <div>
+                            <div class="side-user-name">
+                                <asp:Label ID="lblUsuario" runat="server" />
+                            </div>
+                        </div>
+                    </div>
+                    <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="btn-logout"
+                        OnClick="btnCerrarSesion_Click">🚪 Cerrar sesión</asp:LinkButton>
+                </div>
+            </aside>
+
+            <%-- Contenido principal --%>
+            <div class="app-main">
+                <div class="app-content">
+                    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
                 </div>
             </div>
-        </nav>
 
-        <div class="container-fluid min-vh-100">
-            <div class="row min-vh-100">
-
-                <%-- Sidebar solo visible en desktop --%>
-                <aside class="col-md-3 col-lg-2 bg-dark text-white p-0 d-none d-md-flex flex-column" style="min-height: 100vh;">
-                    <div class="p-3 border-bottom border-secondary">
-                        <asp:HyperLink ID="lnkHome" runat="server" NavigateUrl="~/Dashboard.aspx" CssClass="text-white text-decoration-none fw-semibold fs-5">Mi Aplicación</asp:HyperLink>
-                    </div>
-                    <nav class="nav nav-pills flex-column gap-1 p-3 flex-grow-1">
-                        <asp:HyperLink ID="lnkPanel" runat="server" NavigateUrl="~/Dashboard.aspx" CssClass="nav-link text-white">Panel</asp:HyperLink>
-                        <asp:HyperLink ID="lnkCanchas" runat="server" NavigateUrl="~/Canchas.aspx" CssClass="nav-link text-white">Canchas</asp:HyperLink>
-                        <asp:HyperLink ID="lnkReservar" runat="server" NavigateUrl="~/CanchasCliente.aspx" CssClass="nav-link text-white">Reservar cancha</asp:HyperLink>
-                        <asp:HyperLink ID="lnkReservas" runat="server" NavigateUrl="~/Reservas.aspx" CssClass="nav-link text-white">Reservas</asp:HyperLink>
-                        <asp:HyperLink ID="lnkCupones" runat="server" NavigateUrl="~/Cupones.aspx" CssClass="nav-link text-white">Cupones</asp:HyperLink>
-                        <asp:HyperLink ID="lnkBeneficios" runat="server" NavigateUrl="~/Beneficios.aspx" CssClass="nav-link text-white">Beneficios</asp:HyperLink>
-                        <asp:HyperLink ID="lnkMisCupones" runat="server" NavigateUrl="~/CuponesCliente.aspx" CssClass="nav-link text-white">Mis cupones</asp:HyperLink>
-                        <asp:HyperLink ID="lnkCalendario" runat="server" NavigateUrl="~/Calendario.aspx" CssClass="nav-link text-white">Calendario</asp:HyperLink>
-                    </nav>
-                    <div class="p-3 border-top border-secondary">
-                        <asp:Label ID="lblUsuario" runat="server" CssClass="d-block text-white-50 small mb-2" />
-                        <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="btn btn-sm btn-outline-light w-100"
-                        OnClick="btnCerrarSesion_Click">Cerrar sesión</asp:LinkButton>
-                    </div>
-                </aside>
-
-                <main class="col-12 col-md-9 col-lg-10 p-4">
-                    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
-                </main>
-
-            </div>
         </div>
+
     </form>
 </body>
+    
+
 </html>

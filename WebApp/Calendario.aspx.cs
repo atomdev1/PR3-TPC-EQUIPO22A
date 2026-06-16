@@ -43,53 +43,47 @@ namespace WebApp
             StringBuilder sb = new StringBuilder();
             DateTime primerDia = new DateTime(año, mes, 1);
             int diasEnMes = DateTime.DaysInMonth(año, mes);
-
-            // DayOfWeek: Sunday=0 -> col 0 (Dom), Monday=1 -> col 1 (Lun), ..., Saturday=6 -> col 6 (Sáb)
-            int inicioCol = (int)primerDia.DayOfWeek;
-            int filas = (int)Math.Ceiling((inicioCol + diasEnMes) / 7.0);
+            int inicioCol = (int)primerDia.DayOfWeek; // Dom=0 … Sáb=6
             DateTime hoy = DateTime.Today;
 
-            sb.Append("<table class='cal-tabla table table-bordered mb-0'>");
-            sb.Append("<thead class='table-light'><tr>");
+            sb.Append("<div class='mcal-grid'>");
+
             foreach (string d in new[] { "Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" })
-                sb.AppendFormat("<th class='cal-th'>{0}</th>", d);
-            sb.Append("</tr></thead><tbody>");
+                sb.AppendFormat("<div class='mcal-dow'>{0}</div>", d);
 
-            for (int fila = 0; fila < filas; fila++)
+            // Celdas vacías antes del primer día del mes
+            for (int i = 0; i < inicioCol; i++)
+                sb.Append("<div class='mcal-cell mcal-out'></div>");
+
+            // Días del mes
+            for (int dia = 1; dia <= diasEnMes; dia++)
             {
-                sb.Append("<tr>");
-                for (int col = 0; col < 7; col++)
+                DateTime fecha = new DateTime(año, mes, dia);
+                bool esHoy = fecha == hoy;
+
+                sb.AppendFormat("<div class='mcal-cell{0}'>", esHoy ? " mcal-today" : "");
+                sb.AppendFormat("<div class='mcal-num{0}'>{1}</div>",
+                    esHoy ? " is-today" : "", dia);
+
+                foreach (Reserva r in reservas.FindAll(r2 => r2.Fecha.Date == fecha))
                 {
-                    int dia = fila * 7 + col - inicioCol + 1;
-
-                    if (dia < 1 || dia > diasEnMes)
-                    {
-                        sb.Append("<td class='cal-celda cal-fuera-mes'></td>");
-                        continue;
-                    }
-
-                    DateTime fecha = new DateTime(año, mes, dia);
-                    bool esHoy = fecha == hoy;
-
-                    sb.AppendFormat("<td class='cal-celda{0}'>", esHoy ? " cal-dia-hoy" : "");
-                    sb.AppendFormat("<span class='cal-num{0}'>{1}</span>",
-                        esHoy ? " cal-num-hoy" : "", dia);
-
-                    foreach (Reserva r in reservas.FindAll(r2 => r2.Fecha.Date == fecha))
-                    {
-                        string nombre = HttpUtility.HtmlEncode(r.Cliente.Nombre + " " + r.Cliente.Apellido);
-                        sb.AppendFormat("<div class='cal-evento {0}'>{1} {2}</div>",
-                            GetClaseEvento(r.Estado),
-                            r.HoraInicio.ToString(@"H\:mm"),
-                            nombre);
-                    }
-
-                    sb.Append("</td>");
+                    string nombre = HttpUtility.HtmlEncode(r.Cliente.Nombre + " " + r.Cliente.Apellido);
+                    sb.AppendFormat("<div class='mcal-ev {0}'>{1} {2}</div>",
+                        GetClaseEvento(r.Estado),
+                        r.HoraInicio.ToString(@"H\:mm"),
+                        nombre);
                 }
-                sb.Append("</tr>");
+
+                sb.Append("</div>");
             }
 
-            sb.Append("</tbody></table>");
+            // Celdas vacías al final para completar la última fila
+            int total = inicioCol + diasEnMes;
+            int restantes = total % 7 == 0 ? 0 : 7 - (total % 7);
+            for (int i = 0; i < restantes; i++)
+                sb.Append("<div class='mcal-cell mcal-out'></div>");
+
+            sb.Append("</div>");
             return sb.ToString();
         }
 
@@ -97,11 +91,11 @@ namespace WebApp
         {
             switch (estado)
             {
-                case EstadoReserva.Nueva:        return "cal-nueva";
-                case EstadoReserva.Reprogramada: return "cal-reprogramada";
-                case EstadoReserva.Cancelada:    return "cal-cancelada";
-                case EstadoReserva.Finalizada:   return "cal-finalizada";
-                default:                          return "cal-noasistio";
+                case EstadoReserva.Nueva:        return "mcal-nueva";
+                case EstadoReserva.Reprogramada: return "mcal-reprogramada";
+                case EstadoReserva.Cancelada:    return "mcal-cancelada";
+                case EstadoReserva.Finalizada:   return "mcal-finalizada";
+                default:                         return "mcal-noasistio";
             }
         }
 

@@ -218,9 +218,7 @@ namespace WebApp
 
         protected string GetEstadoBadgeClass(object activoObj)
         {
-            return (bool)activoObj
-                ? "text-success bg-success-subtle"
-                : "text-secondary bg-secondary-subtle";
+            return (bool)activoObj ? "tag-ok" : "tag-neutral";
         }
     }
 }

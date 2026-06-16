@@ -24,32 +24,32 @@
         <asp:Repeater ID="rptCanchas" runat="server">
             <ItemTemplate>
                 <div class="col">
-                    <div class="card h-100 app-card app-card-hover">
-                        <div class="card-body d-flex flex-column p-3">
+                    <div class="card-r card-hover h-100">
+                        <div class="card-r-pad d-flex flex-column">
 
                             <%-- Encabezado: ícono + nombre --%>
                             <div class="d-flex align-items-start gap-3 mb-3">
-                                <asp:Panel runat="server" CssClass="cancha-sport-icon"
+                                <asp:Panel runat="server" CssClass="sport-ico"
                                     Style='<%# "border-left: 3px solid " + GetDeporteAccent(Eval("Deporte.Nombre")) %>'>
                                     <asp:Label runat="server" Text='<%# GetDeporteEmoji(Eval("Deporte.Nombre")) %>' />
                                 </asp:Panel>
                                 <div class="flex-grow-1 min-w-0">
                                     <asp:Label runat="server" CssClass="mb-0 fw-semibold text-truncate d-block"
                                         Text='<%# Eval("NombreFantasia") %>' />
-                                    <asp:Label runat="server" CssClass="cancha-meta d-block"
+                                    <asp:Label runat="server" CssClass="text-soft small d-block"
                                         Text='<%# Eval("Deporte.Nombre") %>' />
                                 </div>
                             </div>
 
                             <%-- Descripción --%>
-                            <asp:Label runat="server" CssClass="cancha-meta d-block mb-3"
+                            <asp:Label runat="server" CssClass="text-soft small d-block mb-3"
                                 Style="line-height:1.5" Text='<%# Eval("Descripcion") %>' />
 
                             <%-- Precio + capacidad --%>
-                            <div class="d-flex justify-content-between align-items-center pt-2 cancha-divider mb-3">
-                                <asp:Label runat="server" CssClass="cancha-precio mt-2"
+                            <div class="d-flex justify-content-between align-items-center pt-2 mb-3" style="border-top: 1px solid var(--border-subtle)">
+                                <asp:Label runat="server" CssClass="price-tag mt-2"
                                     Text='<%# FormatearPrecio(Eval("Precio")) %>' />
-                                <asp:Label runat="server" CssClass="cancha-meta mt-2"
+                                <asp:Label runat="server" CssClass="text-soft small mt-2"
                                     Text='<%# Eval("CapacidadJugadores") + " jugadores" %>' />
                             </div>
 

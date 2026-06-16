@@ -25,11 +25,11 @@ namespace WebApp
             EstadoCupon estado = (EstadoCupon)estadoObj;
             switch (estado)
             {
-                case EstadoCupon.Activo: return "text-success bg-success-subtle";
-                case EstadoCupon.Canjeado: return "text-secondary bg-secondary-subtle";
-                case EstadoCupon.Vencido: return "text-warning bg-warning-subtle";
-                case EstadoCupon.Agotado: return "text-danger bg-danger-subtle";
-                default: return "text-secondary bg-secondary-subtle";
+                case EstadoCupon.Activo:   return "tag-ok";
+                case EstadoCupon.Canjeado: return "tag-neutral";
+                case EstadoCupon.Vencido:  return "tag-warn";
+                case EstadoCupon.Agotado:  return "tag-danger";
+                default:                   return "tag-neutral";
             }
         }
 

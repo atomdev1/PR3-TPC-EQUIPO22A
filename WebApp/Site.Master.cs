@@ -23,6 +23,7 @@ namespace WebApp
             if (!IsPostBack)
             {
                 lblUsuario.Text = u.Nombre + " " + u.Apellido;
+                lblInicialUsuario.Text = u.Nombre.Substring(0, 1).ToUpper();
                 FiltrarMenuPorRol(u.Rol);
                 MarcarSeccionActiva();
             }

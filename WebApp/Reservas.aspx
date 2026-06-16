@@ -1,4 +1,5 @@
-﻿<%@ Page Title="Reservas" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="false" %>
+﻿<%@ Page Title="Reservas" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true"
+    CodeBehind="Reservas.aspx.cs" Inherits="WebApp.Reservas" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>
@@ -11,14 +12,14 @@
             <h2 class="mb-0">Reservas</h2>
             <small class="text-muted">8 reservas</small>
         </div>
-        <button type="button" class="btn btn-success ms-auto"
+        <button type="button" class="btn-r btn-primary-r ms-auto"
             data-bs-toggle="modal" data-bs-target="#modalNuevaReserva">
-            + Nueva reserva
+            ➕ Nueva reserva
         </button>
     </div>
 
     <%-- Filtros --%>
-    <div class="card app-card mb-4 p-3">
+    <div class="card-r card-r-pad mb-4">
         <div class="row g-2 align-items-end">
             <div class="col-md-3">
                 <label class="form-label small fw-semibold mb-1">Estado</label>
@@ -44,15 +45,15 @@
                 <input type="date" class="form-control form-control-sm" />
             </div>
             <div class="col-md-3">
-                <button type="button" class="btn btn-sm btn-outline-secondary w-100">Limpiar filtros</button>
+                <button type="button" class="btn-r btn-sm-r btn-ghost-r w-100">Limpiar filtros</button>
             </div>
         </div>
     </div>
 
     <%-- Tabla de reservas --%>
-    <div class="card app-card">
-        <div class="card-header bg-white border-bottom d-flex align-items-center py-3">
-            <asp:Label ID="lblTotal" runat="server" CssClass="fw-semibold mb-0" />
+    <div class="card-r">
+        <div class="card-head">
+            <asp:Label ID="lblTotal" runat="server" CssClass="fw-semibold" />
         </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 align-middle">

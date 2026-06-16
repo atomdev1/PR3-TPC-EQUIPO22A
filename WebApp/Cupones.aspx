@@ -10,13 +10,13 @@
             <h2 class="mb-0">Cupones de fidelidad</h2>
             <small class="text-muted">Recompensá a tus clientes frecuentes</small>
         </div>
-        <asp:Button ID="btnNuevoCupon" runat="server" CssClass="btn btn-success ms-auto"
+        <asp:Button ID="btnNuevoCupon" runat="server" CssClass="btn-r btn-primary-r ms-auto"
             Text="+ Nuevo cupón" OnClick="btnNuevoCupon_Click" CausesValidation="false" />
     </div>
 
     <%-- Banner sistema de fidelidad --%>
-    <div class="fidelidad-banner d-flex align-items-start gap-3 mb-4">
-        <div class="fidelidad-icon">🎫</div>
+    <div class="banner-soft d-flex align-items-start gap-3 mb-4">
+        <div class="kpi-ico flex-shrink-0">🎫</div>
         <div>
             <div class="fw-semibold mb-1">Sistema de fidelidad</div>
             <div class="text-muted" style="font-size:0.875rem">
@@ -34,7 +34,7 @@
             <asp:Button ID="btnConfirmarBaja" runat="server" Text="Sí, eliminar"
                 CssClass="btn btn-sm btn-danger" OnClick="btnConfirmarBaja_Click" CausesValidation="false" />
             <asp:Button ID="btnCancelarBaja" runat="server" Text="Cancelar"
-                CssClass="btn btn-sm btn-outline-secondary" OnClick="btnCancelarBaja_Click" CausesValidation="false" />
+                CssClass="btn-r btn-sm-r btn-ghost-r" OnClick="btnCancelarBaja_Click" CausesValidation="false" />
         </div>
     </asp:Panel>
     <asp:HiddenField ID="hfBajaId" runat="server" />
@@ -44,43 +44,43 @@
         <asp:Repeater ID="rptCupones" runat="server" OnItemCommand="rptCupones_ItemCommand">
             <ItemTemplate>
                 <div class="col">
-                    <div class="card h-100 app-card app-card-hover">
-                        <div class="card-body d-flex flex-column p-3">
+                    <div class="card-r card-hover h-100">
+                        <div class="card-r-pad d-flex flex-column">
 
                             <%-- Header: badge descuento + código + badge estado --%>
                             <div class="d-flex align-items-start gap-3 mb-3">
-                                <asp:Panel runat="server" CssClass="cupon-descuento-badge">
+                                <asp:Panel runat="server" CssClass="kpi-ico flex-shrink-0">
                                     <asp:Label runat="server" Text='<%# GetBadgeSymbol(Eval("TipoDescuento")) %>' />
                                 </asp:Panel>
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div class="d-flex align-items-center gap-2">
                                             <asp:Label runat="server" CssClass="cupon-codigo" Text='<%# Eval("Codigo") %>' />
-                                            <button type="button" class="btn-copy-code"
+                                            <button type="button" class="btn-copy"
                                                 onclick='copiarCodigo(this, "<%# Eval("Codigo") %>")'>
                                                 Copiar
                                             </button>
                                         </div>
                                         <asp:Label runat="server"
-                                            CssClass='<%# "badge fw-normal flex-shrink-0 " + GetEstadoBadgeClass(Eval("Estado")) %>'
+                                            CssClass='<%# "tag flex-shrink-0 " + GetEstadoBadgeClass(Eval("Estado")) %>'
                                             Text='<%# Eval("Estado").ToString() %>' />
                                     </div>
-                                    <asp:Label runat="server" CssClass="cupon-tipo-label d-block mt-1"
+                                    <asp:Label runat="server" CssClass="text-soft small d-block mt-1"
                                         Text='<%# GetTipoNombre(Eval("TipoDescuento")) %>' />
                                 </div>
                             </div>
 
                             <%-- Valor --%>
                             <asp:Label runat="server"
-                                CssClass="cupon-valor d-block mb-1"
+                                CssClass="price-tag d-block mb-1"
                                 Text='<%# FormatearValor(Eval("TipoDescuento"), Eval("ValorDescuento")) %>' />
 
                             <%-- Descripción --%>
-                            <asp:Label runat="server" CssClass="cupon-descripcion d-block mb-3"
+                            <asp:Label runat="server" CssClass="text-soft small d-block mb-3"
                                 Text='<%# Eval("Descripcion") %>' />
 
                             <%-- Metadatos --%>
-                            <div class="d-flex flex-column gap-1 mb-3 cupon-meta">
+                            <div class="d-flex flex-column gap-1 mb-3">
                                 <asp:Label runat="server" CssClass="fw-semibold text-dark"
                                     Text='<%# "👤 " + Eval("Usuario.Nombre") + " " + Eval("Usuario.Apellido") %>' />
                                 <asp:Label runat="server" Text='<%# FormatearMeta("reservas-requeridas", Eval("ReservasRequeridas")) %>' />
@@ -89,17 +89,17 @@
                             </div>
 
                             <%-- Acciones --%>
-                            <div class="d-flex gap-2 mt-auto cupon-divider pt-3">
+                            <div class="d-flex gap-2 mt-auto pt-3" style="border-top: 1px solid var(--border-subtle)">
                                 <asp:LinkButton ID="btnEditar" runat="server"
                                     CommandName="Editar"
                                     CommandArgument='<%# Eval("IdCupon") %>'
-                                    CssClass="btn btn-sm btn-light btn-accion w-100">
+                                    CssClass="btn-r btn-sm-r btn-ghost-r w-100">
                                     Editar
                                 </asp:LinkButton>
                                 <asp:LinkButton ID="btnEliminar" runat="server"
                                     CommandName="Eliminar"
                                     CommandArgument='<%# Eval("IdCupon") %>'
-                                    CssClass="btn btn-sm btn-outline-danger btn-accion">
+                                    CssClass="btn btn-sm btn-outline-danger">
                                     Eliminar
                                 </asp:LinkButton>
                             </div>
@@ -185,9 +185,9 @@
                     </asp:UpdatePanel>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Cancelar</button>
                     <asp:Button ID="btnGuardarCupon" runat="server" Text="Guardar cupón"
-                        CssClass="btn btn-success" OnClick="btnGuardarCupon_Click" ValidationGroup="NuevoCupon" />
+                        CssClass="btn-r btn-primary-r" OnClick="btnGuardarCupon_Click" ValidationGroup="NuevoCupon" />
                 </div>
             </div>
         </div>

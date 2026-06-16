@@ -38,12 +38,12 @@ namespace WebApp
             EstadoReserva estado = (EstadoReserva)estadoObj;
             switch (estado)
             {
-                case EstadoReserva.Nueva: return "badge fw-normal text-primary bg-primary-subtle";
-                case EstadoReserva.Reprogramada: return "badge fw-normal text-warning bg-warning-subtle";
-                case EstadoReserva.Cancelada: return "badge fw-normal text-danger bg-danger-subtle";
-                case EstadoReserva.Finalizada: return "badge fw-normal text-success bg-success-subtle";
-                case EstadoReserva.NoAsistio: return "badge fw-normal text-secondary bg-secondary-subtle";
-                default: return "badge fw-normal text-secondary bg-secondary-subtle";
+                case EstadoReserva.Nueva:        return "tag tag-ok";
+                case EstadoReserva.Reprogramada: return "tag tag-warn";
+                case EstadoReserva.Cancelada:    return "tag tag-danger";
+                case EstadoReserva.Finalizada:   return "tag tag-info";
+                case EstadoReserva.NoAsistio:    return "tag tag-neutral";
+                default:                         return "tag tag-neutral";
             }
         }
 
@@ -52,10 +52,11 @@ namespace WebApp
             EstadoPago pago = (EstadoPago)pagoObj;
             switch (pago)
             {
-                case EstadoPago.Pagado: return "badge fw-normal text-success bg-success-subtle";
-                case EstadoPago.Senado: return "badge fw-normal text-info bg-info-subtle";
-                case EstadoPago.Pendiente: return "badge fw-normal text-warning bg-warning-subtle";
-                default: return "badge fw-normal text-secondary bg-secondary-subtle";
+                case EstadoPago.Pagado:      return "tag tag-ok";
+                case EstadoPago.Senado:      return "tag tag-info";
+                case EstadoPago.Pendiente:   return "tag tag-warn";
+                case EstadoPago.Reembolsado: return "tag tag-neutral";
+                default:                     return "tag tag-neutral";
             }
         }
     }

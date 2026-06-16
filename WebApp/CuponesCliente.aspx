@@ -15,8 +15,8 @@
     </div>
 
     <%-- Cómo se obtienen los cupones: explica la mecánica de fidelidad al cliente --%>
-    <div class="fidelidad-banner d-flex align-items-center gap-3 mb-4">
-        <div class="fidelidad-icon">🎯</div>
+    <div class="banner-soft d-flex align-items-center gap-3 mb-4">
+        <div class="kpi-ico flex-shrink-0">🎯</div>
         <div>
             <div class="fw-semibold mb-1">¿Cómo consigo cupones?</div>
             <div class="text-muted" style="font-size:0.875rem">
@@ -45,43 +45,43 @@
             <asp:Repeater ID="rptDisponibles" runat="server">
                 <ItemTemplate>
                     <div class="col">
-                        <div class="card h-100 app-card app-card-hover">
-                            <div class="card-body d-flex flex-column p-3">
+                        <div class="card-r card-hover h-100">
+                            <div class="card-r-pad d-flex flex-column">
 
                                 <%-- Header: badge descuento + código + estado --%>
                                 <div class="d-flex align-items-start gap-3 mb-3">
-                                    <asp:Panel runat="server" CssClass="cupon-descuento-badge">
+                                    <asp:Panel runat="server" CssClass="kpi-ico flex-shrink-0">
                                         <asp:Label runat="server" Text='<%# GetBadgeSymbol(Eval("TipoDescuento")) %>' />
                                     </asp:Panel>
                                     <div class="flex-grow-1 min-w-0">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div class="d-flex align-items-center gap-2">
                                                 <asp:Label runat="server" CssClass="cupon-codigo" Text='<%# Eval("Codigo") %>' />
-                                                <button type="button" class="btn-copy-code"
+                                                <button type="button" class="btn-copy"
                                                     onclick='copiarCodigo(this, "<%# Eval("Codigo") %>")'>
                                                     Copiar
                                                 </button>
                                             </div>
                                             <asp:Label runat="server"
-                                                CssClass='<%# "badge fw-normal flex-shrink-0 " + GetEstadoBadgeClass(Eval("Estado")) %>'
+                                                CssClass='<%# "tag flex-shrink-0 " + GetEstadoBadgeClass(Eval("Estado")) %>'
                                                 Text='<%# Eval("Estado").ToString() %>' />
                                         </div>
-                                        <asp:Label runat="server" CssClass="cupon-tipo-label d-block mt-1"
+                                        <asp:Label runat="server" CssClass="text-soft small d-block mt-1"
                                             Text='<%# GetTipoNombre(Eval("TipoDescuento")) %>' />
                                     </div>
                                 </div>
 
                                 <%-- Valor --%>
                                 <asp:Label runat="server"
-                                    CssClass="cupon-valor d-block mb-1"
+                                    CssClass="price-tag d-block mb-1"
                                     Text='<%# FormatearValor(Eval("TipoDescuento"), Eval("ValorDescuento")) %>' />
 
                                 <%-- Descripción --%>
-                                <asp:Label runat="server" CssClass="cupon-descripcion d-block mb-3"
+                                <asp:Label runat="server" CssClass="text-soft small d-block mb-3"
                                     Text='<%# Eval("Descripcion") %>' />
 
                                 <%-- Metadatos --%>
-                                <div class="d-flex flex-column gap-1 mt-auto cupon-divider pt-3 cupon-meta">
+                                <div class="d-flex flex-column gap-1 mt-auto pt-3" style="border-top: 1px solid var(--border-subtle)">
                                     <asp:Label runat="server" Text='<%# FormatearMeta("reservas-obtenidas", Eval("ReservasRequeridas")) %>' />
                                     <asp:Label runat="server" Text='<%# FormatearMeta("fecha", Eval("ValidoHasta")) %>' />
                                     <asp:Label runat="server" Text='<%# FormatearMeta("usos", Eval("UsosActuales"), Eval("LimiteUsos")) %>' />
@@ -104,17 +104,17 @@
             <asp:Repeater ID="rptObjetivos" runat="server">
                 <ItemTemplate>
                     <div class="col">
-                        <div class="card h-100 app-card cupon-card-objetivo">
-                            <div class="card-body d-flex flex-column p-3">
+                        <div class="card-r h-100" style="opacity:.75">
+                            <div class="card-r-pad d-flex flex-column">
 
                                 <%-- Header: badge + nombre del beneficio --%>
                                 <div class="d-flex align-items-start gap-3 mb-3">
-                                    <div class="cupon-descuento-badge objetivo-badge">
+                                    <div class="kpi-ico flex-shrink-0" style="opacity:.6">
                                         <asp:Label runat="server" Text='<%# GetBadgeSymbol(Eval("TipoDescuento")) %>' />
                                     </div>
                                     <div class="flex-grow-1 min-w-0">
                                         <asp:Label runat="server" CssClass="fw-semibold d-block" Text='<%# Eval("Nombre") %>' />
-                                        <asp:Label runat="server" CssClass="cupon-tipo-label d-block"
+                                        <asp:Label runat="server" CssClass="text-soft small d-block"
                                             Text='<%# GetTipoNombre(Eval("TipoDescuento")) %>' />
                                     </div>
                                 </div>
@@ -124,19 +124,18 @@
                                     Text='<%# FormatearValor(Eval("TipoDescuento"), Eval("ValorDescuento")) %>' />
 
                                 <%-- Descripción --%>
-                                <asp:Label runat="server" CssClass="cupon-descripcion d-block mb-3"
+                                <asp:Label runat="server" CssClass="text-soft small d-block mb-3"
                                     Text='<%# Eval("Descripcion") %>' />
 
                                 <%-- Progreso: cuánto le falta al cliente --%>
-                                <div class="mt-auto cupon-divider pt-3">
-                                    <div class="d-flex justify-content-between cupon-meta mb-1">
+                                <div class="mt-auto pt-3" style="border-top: 1px solid var(--border-subtle)">
+                                    <div class="d-flex justify-content-between mb-1">
                                         <asp:Label runat="server" CssClass="fw-semibold text-dark"
                                             Text='<%# TextoFaltantes(Container.DataItem) %>' />
                                         <asp:Label runat="server" Text='<%# ProgresoFraccion(Container.DataItem) %>' />
                                     </div>
-                                    <div class="progress objetivo-progress">
-                                        <div class="progress-bar" role="progressbar"
-                                            style='<%# "width:" + ProgresoPorcentaje(Container.DataItem) + "%" %>'></div>
+                                    <div class="progress-r">
+                                        <span style='<%# "width:" + ProgresoPorcentaje(Container.DataItem) + "%" %>'></span>
                                     </div>
                                 </div>
 
@@ -157,33 +156,33 @@
             <asp:Repeater ID="rptHistorial" runat="server">
                 <ItemTemplate>
                     <div class="col">
-                        <div class="card h-100 app-card cupon-card-inactivo">
-                            <div class="card-body d-flex flex-column p-3">
+                        <div class="card-r h-100" style="opacity:.6">
+                            <div class="card-r-pad d-flex flex-column">
 
                                 <div class="d-flex align-items-start gap-3 mb-3">
-                                    <asp:Panel runat="server" CssClass="cupon-descuento-badge">
+                                    <asp:Panel runat="server" CssClass="kpi-ico flex-shrink-0">
                                         <asp:Label runat="server" Text='<%# GetBadgeSymbol(Eval("TipoDescuento")) %>' />
                                     </asp:Panel>
                                     <div class="flex-grow-1 min-w-0">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <asp:Label runat="server" CssClass="cupon-codigo" Text='<%# Eval("Codigo") %>' />
                                             <asp:Label runat="server"
-                                                CssClass='<%# "badge fw-normal flex-shrink-0 " + GetEstadoBadgeClass(Eval("Estado")) %>'
+                                                CssClass='<%# "tag flex-shrink-0 " + GetEstadoBadgeClass(Eval("Estado")) %>'
                                                 Text='<%# Eval("Estado").ToString() %>' />
                                         </div>
-                                        <asp:Label runat="server" CssClass="cupon-tipo-label d-block mt-1"
+                                        <asp:Label runat="server" CssClass="text-soft small d-block mt-1"
                                             Text='<%# GetTipoNombre(Eval("TipoDescuento")) %>' />
                                     </div>
                                 </div>
 
                                 <asp:Label runat="server"
-                                    CssClass="cupon-valor d-block mb-1"
+                                    CssClass="price-tag d-block mb-1"
                                     Text='<%# FormatearValor(Eval("TipoDescuento"), Eval("ValorDescuento")) %>' />
 
-                                <asp:Label runat="server" CssClass="cupon-descripcion d-block mb-3"
+                                <asp:Label runat="server" CssClass="text-soft small d-block mb-3"
                                     Text='<%# Eval("Descripcion") %>' />
 
-                                <div class="d-flex flex-column gap-1 mt-auto cupon-divider pt-3 cupon-meta">
+                                <div class="d-flex flex-column gap-1 mt-auto pt-3" style="border-top: 1px solid var(--border-subtle)">
                                     <asp:Label runat="server" Text='<%# FormatearMeta("reservas-obtenidas", Eval("ReservasRequeridas")) %>' />
                                     <asp:Label runat="server" Text='<%# FormatearMeta("fecha", Eval("ValidoHasta")) %>' />
                                     <asp:Label runat="server" Text='<%# FormatearMeta("usos", Eval("UsosActuales"), Eval("LimiteUsos")) %>' />

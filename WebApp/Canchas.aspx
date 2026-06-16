@@ -12,7 +12,7 @@
                 <asp:Label ID="lblTotal" runat="server" />
             </small>
         </div>
-        <asp:Button ID="btnNueva" runat="server" CssClass="btn btn-success ms-auto"
+        <asp:Button ID="btnNueva" runat="server" CssClass="btn-r btn-primary-r ms-auto"
             Text="+ Nueva cancha" OnClick="btnNueva_Click" CausesValidation="false" />
     </div>
 
@@ -24,7 +24,7 @@
             <asp:Button ID="btnConfirmarBaja" runat="server" Text="Sí, eliminar"
                 CssClass="btn btn-sm btn-danger" OnClick="btnConfirmarBaja_Click" CausesValidation="false" />
             <asp:Button ID="btnCancelarBaja" runat="server" Text="Cancelar"
-                CssClass="btn btn-sm btn-outline-secondary" OnClick="btnCancelarBaja_Click" CausesValidation="false" />
+                CssClass="btn-r btn-sm-r btn-ghost-r" OnClick="btnCancelarBaja_Click" CausesValidation="false" />
         </div>
     </asp:Panel>
     <asp:HiddenField ID="hfBajaId" runat="server" />
@@ -33,12 +33,12 @@
         <asp:Repeater ID="rptCanchas" runat="server" OnItemCommand="rptCanchas_ItemCommand">
             <ItemTemplate>
                 <div class="col">
-                    <div class="card h-100 app-card app-card-hover">
-                        <div class="card-body d-flex flex-column p-3">
+                    <div class="card-r card-hover h-100">
+                        <div class="card-r-pad d-flex flex-column">
 
                             <%-- Encabezado: ícono + nombre + badge --%>
                             <div class="d-flex align-items-start gap-3 mb-3">
-                                <asp:Panel runat="server" CssClass="cancha-sport-icon"
+                                <asp:Panel runat="server" CssClass="sport-ico"
                                     Style='<%# "border-left: 3px solid " + GetDeporteAccent(Eval("Deporte.Nombre")) %>'>
                                     <asp:Label runat="server" Text='<%# GetDeporteEmoji(Eval("Deporte.Nombre")) %>' />
                                 </asp:Panel>
@@ -47,23 +47,23 @@
                                         <asp:Label runat="server" CssClass="mb-0 fw-semibold text-truncate me-2"
                                             Text='<%# Eval("NombreFantasia") %>' />
                                         <asp:Label runat="server"
-                                            CssClass='<%# "badge fw-normal flex-shrink-0 " + ((bool)Eval("Activa") ? "text-success bg-success-subtle" : "text-warning bg-warning-subtle") %>'
+                                            CssClass='<%# "tag flex-shrink-0 " + ((bool)Eval("Activa") ? "tag-ok" : "tag-warn") %>'
                                             Text='<%# (bool)Eval("Activa") ? "Disponible" : "Mantenimiento" %>' />
                                     </div>
-                                    <asp:Label runat="server" CssClass="cancha-meta d-block"
+                                    <asp:Label runat="server" CssClass="text-soft small d-block"
                                         Text='<%# Eval("Deporte.Nombre") %>' />
                                 </div>
                             </div>
 
                             <%-- Descripción --%>
-                            <asp:Label runat="server" CssClass="cancha-meta d-block mb-3"
+                            <asp:Label runat="server" CssClass="text-soft small d-block mb-3"
                                 Style="line-height:1.5" Text='<%# Eval("Descripcion") %>' />
 
                             <%-- Precio + capacidad --%>
-                            <div class="d-flex justify-content-between align-items-center pt-2 cancha-divider mt-auto mb-3">
-                                <asp:Label runat="server" CssClass="cancha-precio mt-2"
+                            <div class="d-flex justify-content-between align-items-center pt-2 mt-auto mb-3" style="border-top: 1px solid var(--border-subtle)">
+                                <asp:Label runat="server" CssClass="price-tag mt-2"
                                     Text='<%# FormatearPrecio(Eval("Precio")) %>' />
-                                <asp:Label runat="server" CssClass="cancha-meta mt-2"
+                                <asp:Label runat="server" CssClass="text-soft small mt-2"
                                     Text='<%# Eval("CapacidadJugadores") + " jugadores" %>' />
                             </div>
 
@@ -72,13 +72,13 @@
                                 <asp:LinkButton ID="btnEditar" runat="server"
                                     CommandName="Editar"
                                     CommandArgument='<%# Eval("IdCancha") %>'
-                                    CssClass="btn btn-sm btn-light btn-accion w-100">
+                                    CssClass="btn-r btn-sm-r btn-ghost-r w-100">
                                     Editar
                                 </asp:LinkButton>
                                 <asp:LinkButton ID="btnEliminar" runat="server"
                                     CommandName="Eliminar"
                                     CommandArgument='<%# Eval("IdCancha") %>'
-                                    CssClass="btn btn-sm btn-outline-danger btn-accion">
+                                    CssClass="btn btn-sm btn-outline-danger">
                                     Eliminar
                                 </asp:LinkButton>
                             </div>
@@ -160,9 +160,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Cancelar</button>
                     <asp:Button ID="btnGuardarCancha" runat="server" Text="Guardar cancha"
-                        CssClass="btn btn-success" OnClick="btnGuardarCancha_Click" ValidationGroup="NuevaCancha" />
+                        CssClass="btn-r btn-primary-r" OnClick="btnGuardarCancha_Click" ValidationGroup="NuevaCancha" />
                 </div>
             </div>
         </div>
