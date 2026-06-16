@@ -13,6 +13,10 @@ namespace WebApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+            if (u.Rol == RolUsuario.Cliente) { Response.Redirect("~/Dashboard.aspx"); return; }
+
             if (!IsPostBack)
             {
                 ViewState["año"] = DateTime.Today.Year;

@@ -12,6 +12,14 @@ namespace WebApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+            if (u.Rol != RolUsuario.Administrador && u.Rol != RolUsuario.Recepcionista)
+            {
+                Response.Redirect("~/Dashboard.aspx");
+                return;
+            }
+
             if (!IsPostBack)
             {
                 CargarCupones();

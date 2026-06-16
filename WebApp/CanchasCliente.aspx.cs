@@ -11,7 +11,10 @@ namespace WebApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // HACER: control de acceso por rol — pendiente cambio de roles (guard centralizado futuro)
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+            if (u.Rol != RolUsuario.Cliente) { Response.Redirect("~/Dashboard.aspx"); return; }
+
             if (!IsPostBack)
                 CargarCanchas();
         }

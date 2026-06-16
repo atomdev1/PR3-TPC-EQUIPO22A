@@ -12,17 +12,13 @@ namespace WebApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // El Page_Load de la página se ejecuta ANTES que el del Site.Master, así que
-            // su redirect no nos cubre: el guard de sesión va acá.
-            // HACER: control de acceso por rol — pendiente cambio de roles (guard centralizado futuro)
-            if (Session["usuario"] == null)
-            {
-                Response.Redirect("~/Login.aspx");
-                return;
-            }
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+            if (u.Rol != RolUsuario.Cliente) { Response.Redirect("~/Dashboard.aspx"); return; }
 
-            if (!IsPostBack)
+            if (!IsPostBack){
                 CargarCupones();
+            }
         }
 
         // Reservas acumuladas del cliente logueado. La usan los helpers de progreso

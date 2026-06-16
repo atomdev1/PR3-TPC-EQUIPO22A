@@ -17,12 +17,46 @@ namespace WebApp
                 return;
             }
 
+            Usuario u = (Usuario)Session["usuario"];
+            bodyMain.Attributes["data-role"] = RolCss(u.Rol);
+
             if (!IsPostBack)
             {
-                Usuario u = (Usuario)Session["usuario"];
                 lblUsuario.Text = u.Nombre + " " + u.Apellido;
+                FiltrarMenuPorRol(u.Rol);
                 MarcarSeccionActiva();
             }
+        }
+
+        private string RolCss(RolUsuario rol)
+        {
+            switch (rol)
+            {
+                case RolUsuario.Administrador: return "admin";
+                case RolUsuario.Recepcionista: return "recepcionista";
+                case RolUsuario.EncargadoCancha: return "encargado";
+                default: return "cliente";
+            }
+        }
+
+        private void FiltrarMenuPorRol(RolUsuario rol)
+        {
+            bool esAdmin = rol == RolUsuario.Administrador;
+            bool esRecep = rol == RolUsuario.Recepcionista;
+            bool esCliente = rol == RolUsuario.Cliente;
+
+            lnkPanel.Visible = true;
+            lnkReservas.Visible = true;
+
+            lnkCalendario.Visible = !esCliente;
+
+            lnkCanchas.Visible = !esCliente;
+            lnkReservar.Visible = esCliente;
+
+            lnkCupones.Visible = esAdmin || esRecep;
+            lnkMisCupones.Visible = esCliente;
+
+            lnkBeneficios.Visible = esAdmin || esCliente;
         }
 
         protected void btnCerrarSesion_Click(object sender, EventArgs e)
@@ -43,6 +77,8 @@ namespace WebApp
                 { "CanchasCliente.aspx", lnkReservar },
                 { "Reservas.aspx", lnkReservas },
                 { "Cupones.aspx", lnkCupones },
+                { "CuponesCliente.aspx", lnkMisCupones },
+                { "Beneficios.aspx",     lnkBeneficios },
                 { "Calendario.aspx", lnkCalendario },
             };
 

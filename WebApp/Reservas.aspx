@@ -51,6 +51,9 @@
 
     <%-- Tabla de reservas --%>
     <div class="card app-card">
+        <div class="card-header bg-white border-bottom d-flex align-items-center py-3">
+            <asp:Label ID="lblTotal" runat="server" CssClass="fw-semibold mb-0" />
+        </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 align-middle">
                 <thead class="table-light">
@@ -63,116 +66,40 @@
                         <th>Estado</th>
                         <th>Pago</th>
                         <th class="text-end pe-3">Precio</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <%-- Fila 1 --%>
-                    <tr>
-                        <td class="ps-3 text-muted small">1</td>
-                        <td><span class="fw-semibold">Martín Gómez</span></td>
-                        <td>
-                            <span>La Bombonera</span><br />
-                            <span class="cancha-meta">⚽ Fútbol</span>
-                        </td>
-                        <td class="small">10/06/2025</td>
-                        <td class="small">09:00 – 10:00</td>
-                        <td><span class="badge fw-normal text-primary bg-primary-subtle">Nueva</span></td>
-                        <td><span class="badge fw-normal text-warning bg-warning-subtle">Pendiente</span></td>
-                        <td class="text-end pe-3 fw-semibold small">$6.000</td>
-                        <td class="pe-3">
-                            <div class="d-flex gap-1 justify-content-end">
-                                <button type="button" class="btn btn-sm btn-light btn-accion"
-                                    data-bs-toggle="modal" data-bs-target="#modalDetalleReserva">Ver</button>
-                                <button type="button" class="btn btn-sm btn-outline-danger btn-accion"
-                                    onclick="return confirm('¿Cancelar esta reserva?')">Cancelar</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <%-- Fila 2 --%>
-                    <tr>
-                        <td class="ps-3 text-muted small">2</td>
-                        <td><span class="fw-semibold">Laura Fernández</span></td>
-                        <td>
-                            <span>El Monumental</span><br />
-                            <span class="cancha-meta">⚽ Fútbol</span>
-                        </td>
-                        <td class="small">11/06/2025</td>
-                        <td class="small">14:00 – 15:00</td>
-                        <td><span class="badge fw-normal text-info bg-info-subtle">Reprogramada</span></td>
-                        <td><span class="badge fw-normal text-info bg-info-subtle">Señado</span></td>
-                        <td class="text-end pe-3 fw-semibold small">$4.500</td>
-                        <td class="pe-3">
-                            <div class="d-flex gap-1 justify-content-end">
-                                <button type="button" class="btn btn-sm btn-light btn-accion"
-                                    data-bs-toggle="modal" data-bs-target="#modalDetalleReserva">Ver</button>
-                                <button type="button" class="btn btn-sm btn-outline-danger btn-accion"
-                                    onclick="return confirm('¿Cancelar esta reserva?')">Cancelar</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <%-- Fila 3 --%>
-                    <tr>
-                        <td class="ps-3 text-muted small">3</td>
-                        <td><span class="fw-semibold">Carlos Rodríguez</span></td>
-                        <td>
-                            <span>Cancha Azul</span><br />
-                            <span class="cancha-meta">🏀 Básquet</span>
-                        </td>
-                        <td class="small">12/06/2025</td>
-                        <td class="small">18:00 – 19:00</td>
-                        <td><span class="badge fw-normal text-danger bg-danger-subtle">Cancelada</span></td>
-                        <td><span class="badge fw-normal text-secondary bg-secondary-subtle">Reembolsado</span></td>
-                        <td class="text-end pe-3 fw-semibold small">$5.000</td>
-                        <td class="pe-3">
-                            <div class="d-flex gap-1 justify-content-end">
-                                <button type="button" class="btn btn-sm btn-light btn-accion"
-                                    data-bs-toggle="modal" data-bs-target="#modalDetalleReserva">Ver</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <%-- Fila 4 --%>
-                    <tr>
-                        <td class="ps-3 text-muted small">4</td>
-                        <td><span class="fw-semibold">Ana Pérez</span></td>
-                        <td>
-                            <span>La Bombonera</span><br />
-                            <span class="cancha-meta">⚽ Fútbol</span>
-                        </td>
-                        <td class="small">13/06/2025</td>
-                        <td class="small">20:00 – 21:00</td>
-                        <td><span class="badge fw-normal text-success bg-success-subtle">Finalizada</span></td>
-                        <td><span class="badge fw-normal text-success bg-success-subtle">Pagado</span></td>
-                        <td class="text-end pe-3 fw-semibold small">$6.000</td>
-                        <td class="pe-3">
-                            <div class="d-flex gap-1 justify-content-end">
-                                <button type="button" class="btn btn-sm btn-light btn-accion"
-                                    data-bs-toggle="modal" data-bs-target="#modalDetalleReserva">Ver</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <%-- Fila 5 --%>
-                    <tr>
-                        <td class="ps-3 text-muted small">5</td>
-                        <td><span class="fw-semibold">Diego Torres</span></td>
-                        <td>
-                            <span>El Monumental</span><br />
-                            <span class="cancha-meta">🏓 Pádel</span>
-                        </td>
-                        <td class="small">14/06/2025</td>
-                        <td class="small">11:00 – 12:00</td>
-                        <td><span class="badge fw-normal text-primary bg-primary-subtle">Nueva</span></td>
-                        <td><span class="badge fw-normal text-success bg-success-subtle">Pagado</span></td>
-                        <td class="text-end pe-3 fw-semibold small">$3.800</td>
-                        <td class="pe-3">
-                            <div class="d-flex gap-1 justify-content-end">
-                                <button type="button" class="btn btn-sm btn-light btn-accion"
-                                    data-bs-toggle="modal" data-bs-target="#modalDetalleReserva">Ver</button>
-                                <button type="button" class="btn btn-sm btn-outline-danger btn-accion"
-                                    onclick="return confirm('¿Cancelar esta reserva?')">Cancelar</button>
-                            </div>
-                        </td>
-                    </tr>
+                    <asp:Repeater ID="rptReservas" runat="server">
+                        <ItemTemplate>
+                            <tr>
+                                <td class="ps-3 text-muted small"><%# Eval("IdReserva") %></td>
+                                <td><span class="fw-semibold"><%# Eval("Cliente.Nombre") %> <%# Eval("Cliente.Apellido") %></span></td>
+                                <td>
+                                    <span><%# Eval("Cancha.NombreFantasia") %></span><br />
+                                    <span class="text-muted small"><%# Eval("Cancha.Deporte.Nombre") %></span>
+                                </td>
+                                <td class="small"><%# ((DateTime)Eval("Fecha")).ToString("dd/MM/yyyy") %></td>
+                                <td class="small">
+                                    <%# ((TimeSpan)Eval("HoraInicio")).ToString(@"hh\:mm") %>
+                                    –
+                                    <%# ((TimeSpan)Eval("HoraFin")).ToString(@"hh\:mm") %>
+                                </td>
+                                <td>
+                                    <span class='<%# GetBadgeEstado(Eval("Estado")) %>'>
+                                        <%# Eval("Estado") %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class='<%# GetBadgePago(Eval("EstadoPago")) %>'>
+                                        <%# Eval("EstadoPago") %>
+                                    </span>
+                                </td>
+                                <td class="text-end pe-3 fw-semibold small">
+                                    <%# string.Format("{0:C0}", Eval("PrecioTotal")) %>
+                                </td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </tbody>
             </table>
         </div>

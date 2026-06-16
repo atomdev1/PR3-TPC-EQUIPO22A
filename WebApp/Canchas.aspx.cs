@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using Dominio;
+using Dominio.Enums;
 using Negocio;
 
 namespace WebApp
@@ -10,6 +11,10 @@ namespace WebApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+            if (u.Rol == RolUsuario.Cliente) { Response.Redirect("~/Dashboard.aspx"); return; }
+
             if (!IsPostBack)
             {
                 CargarCanchas();

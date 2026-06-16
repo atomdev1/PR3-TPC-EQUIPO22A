@@ -13,12 +13,37 @@ namespace WebApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
             if (!IsPostBack)
+            {
+                MostrarSegunRol(u.Rol);
+            }
+        }
+
+        private void MostrarSegunRol(RolUsuario rol)
+        {
+            bool esCliente = rol == RolUsuario.Cliente;
+
+            pnlStaff.Visible = !esCliente;
+            pnlCliente.Visible = esCliente;
+
+            if (esCliente)
+                CargarInicioCliente();
+            else
             {
                 CargarResumen();
                 CargarUltimasReservas();
             }
         }
+
+        private void CargarInicioCliente()
+        {
+            Usuario u = (Usuario)Session["usuario"];
+            lblBienvenida.Text = "¡Hola, " + u.Nombre + "! ¿Listo para jugar?";
+        }
+
 
         // NOTA: datos de demostración hardcodeados. Todavía no hay conexión a la BBDD.
         private void CargarResumen()
