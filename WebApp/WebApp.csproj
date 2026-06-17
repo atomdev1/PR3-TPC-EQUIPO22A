@@ -79,6 +79,8 @@
     <Content Include="CuponesCliente.aspx" />
     <Content Include="Beneficios.aspx" />
     <Content Include="Calendario.aspx" />
+    <Content Include="Error.aspx" />
+    <Content Include="NotFound.aspx" />
     <Content Include="Site.css" />
     <Content Include="Web.config" />
   </ItemGroup>
