@@ -26,12 +26,12 @@
         </div>
     </div>
 
-    <%-- Confirmación de eliminación --%>
+    <%-- Confirmación de baja --%>
     <asp:Panel ID="pnlConfirmarBaja" runat="server" Visible="false"
         CssClass="alert alert-warning d-flex justify-content-between align-items-center mb-4">
         <asp:Label ID="lblConfirmarBaja" runat="server" CssClass="mb-0" />
         <div class="d-flex gap-2">
-            <asp:Button ID="btnConfirmarBaja" runat="server" Text="Sí, eliminar"
+            <asp:Button ID="btnConfirmarBaja" runat="server" Text="Sí, dar de baja"
                 CssClass="btn btn-sm btn-danger" OnClick="btnConfirmarBaja_Click" CausesValidation="false" />
             <asp:Button ID="btnCancelarBaja" runat="server" Text="Cancelar"
                 CssClass="btn-r btn-sm-r btn-ghost-r" OnClick="btnCancelarBaja_Click" CausesValidation="false" />
@@ -44,7 +44,7 @@
         <asp:Repeater ID="rptCupones" runat="server" OnItemCommand="rptCupones_ItemCommand">
             <ItemTemplate>
                 <div class="col">
-                    <div class="card-r card-hover h-100">
+                    <div class='<%# GetCardClass(Eval("Estado")) %>'>
                         <div class="card-r-pad d-flex flex-column">
 
                             <%-- Header: badge descuento + código + badge estado --%>
@@ -96,11 +96,19 @@
                                     CssClass="btn-r btn-sm-r btn-ghost-r w-100">
                                     Editar
                                 </asp:LinkButton>
-                                <asp:LinkButton ID="btnEliminar" runat="server"
-                                    CommandName="Eliminar"
+                                <asp:LinkButton ID="btnBaja" runat="server"
+                                    CommandName="Baja"
                                     CommandArgument='<%# Eval("IdCupon") %>'
-                                    CssClass="btn btn-sm btn-outline-danger">
-                                    Eliminar
+                                    CssClass="btn btn-sm btn-outline-danger"
+                                    Visible='<%# PuedeDarDeBaja(Eval("Estado")) %>'>
+                                    Dar de baja
+                                </asp:LinkButton>
+                                <asp:LinkButton ID="btnReactivar" runat="server"
+                                    CommandName="Reactivar"
+                                    CommandArgument='<%# Eval("IdCupon") %>'
+                                    CssClass="btn btn-sm btn-outline-success"
+                                    Visible='<%# PuedeReactivar(Eval("Estado")) %>'>
+                                    Reactivar
                                 </asp:LinkButton>
                             </div>
 

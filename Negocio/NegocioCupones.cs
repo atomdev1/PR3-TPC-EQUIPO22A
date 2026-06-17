@@ -24,8 +24,7 @@ namespace Negocio
                            c.ValidoDesde, c.ValidoHasta, c.LimiteUsos, c.UsosActuales,
                            c.IDUsuario, u.Nombre, u.Apellido
                     FROM Cupones c
-                    INNER JOIN Usuarios u ON u.IDUsuario = c.IDUsuario
-                    WHERE c.IDEstadoCupon <> 5");
+                    INNER JOIN Usuarios u ON u.IDUsuario = c.IDUsuario");
                 datos.EjecutarLectura();
 
                 while (datos.Lector.Read())
@@ -234,6 +233,15 @@ namespace Negocio
             AccesoDatos datos = new AccesoDatos();
 
             datos.SetearConsulta("UPDATE Cupones SET IDEstadoCupon = 5 WHERE IDCupon = @id");
+            datos.AgregarParametro("@id", idCupon);
+            datos.EjecutarAccion();
+        }
+
+        public void Reactivar(int idCupon)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            datos.SetearConsulta("UPDATE Cupones SET IDEstadoCupon = 1 WHERE IDCupon = @id");
             datos.AgregarParametro("@id", idCupon);
             datos.EjecutarAccion();
         }

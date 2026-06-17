@@ -33,6 +33,24 @@ namespace WebApp
             }
         }
 
+        // Solo Activo se da de baja; solo Anulado se reactiva.
+        protected bool PuedeDarDeBaja(object estadoObj)
+        {
+            return (EstadoCupon)estadoObj == EstadoCupon.Activo;
+        }
+
+        protected bool PuedeReactivar(object estadoObj)
+        {
+            return (EstadoCupon)estadoObj == EstadoCupon.Anulado;
+        }
+
+        // Atenúa la tarjeta salvo que el cupón esté Activo.
+        protected string GetCardClass(object estadoObj)
+        {
+            string baseClass = "card-r card-hover h-100";
+            return (EstadoCupon)estadoObj == EstadoCupon.Activo ? baseClass : baseClass + " is-inactive";
+        }
+
         protected string FormatearValor(object tipoDescuentoObj, object valorObj)
         {
             TipoDescuento tipo = (TipoDescuento)tipoDescuentoObj;

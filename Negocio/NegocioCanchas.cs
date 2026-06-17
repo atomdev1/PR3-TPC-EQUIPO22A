@@ -261,6 +261,16 @@ namespace Negocio
             datos.AgregarParametro("@id", idCancha);
             datos.EjecutarAccion();
         }
+
+        public void Reactivar(int idCancha)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            datos.SetearConsulta(
+                "UPDATE Canchas SET Activa = 1 WHERE IDCancha = @id");
+            datos.AgregarParametro("@id", idCancha);
+            datos.EjecutarAccion();
+        }
     }
 }
 

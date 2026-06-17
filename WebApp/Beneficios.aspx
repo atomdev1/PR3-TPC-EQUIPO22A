@@ -44,7 +44,7 @@
         <asp:Repeater ID="rptBeneficios" runat="server" OnItemCommand="rptBeneficios_ItemCommand">
             <ItemTemplate>
                 <div class="col">
-                    <div class="card-r card-hover h-100">
+                    <div class='<%# "card-r card-hover h-100" + ((bool)Eval("Activo") ? "" : " is-inactive") %>'>
                         <div class="card-r-pad d-flex flex-column">
 
                             <%-- Header: badge descuento + nombre + badge estado --%>

@@ -65,7 +65,7 @@ namespace WebApp
             AbrirModal("Nuevo cupón");
         }
 
-        // Confirma la eliminación: da de baja el id guardado y oculta el panel.
+        // Confirma la baja: anula el cupón del id guardado y oculta el panel.
         protected void btnConfirmarBaja_Click(object sender, EventArgs e)
         {
             new NegocioCupones().BajaLogica(int.Parse(hfBajaId.Value));
@@ -122,13 +122,18 @@ namespace WebApp
                 AplicarEstadoValor();
                 AbrirModal("Editar cupón");
             }
-            else if (e.CommandName == "Eliminar")
+            else if (e.CommandName == "Baja")
             {
-                // No se elimina directo: se pide confirmación con un panel.
+                // No se da de baja directo: se pide confirmación con un panel.
                 Cupon c = new NegocioCupones().ObtenerPorId(idCupon);
                 hfBajaId.Value = idCupon.ToString();
-                lblConfirmarBaja.Text = "¿Eliminar el cupón \"" + (c != null ? c.Codigo : "") + "\"?";
+                lblConfirmarBaja.Text = "¿Dar de baja el cupón \"" + (c != null ? c.Codigo : "") + "\"?";
                 pnlConfirmarBaja.Visible = true;
+            }
+            else if (e.CommandName == "Reactivar")
+            {
+                new NegocioCupones().Reactivar(idCupon);
+                CargarCupones();
             }
         }
 

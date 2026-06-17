@@ -497,13 +497,26 @@ h1, h2, h3, h4, h5, h6, .font-display {
 }
 
 .card-hover {
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, opacity .18s ease;
 }
 
     .card-hover:hover {
         transform: translateY(-3px);
         box-shadow: var(--shadow);
         border-color: var(--border-hover);
+    }
+
+/* Ítem inactivo / dado de baja: la tarjeta se atenúa para distinguirla a simple vista.
+   Al pasar el mouse vuelve a plena opacidad para leerla más facilmente.
+   Tiene una cinta lateral roja que permite visibilizar el estado aunque la tarjeta este "apagada". */
+.card-r.is-inactive {
+    opacity: .58;
+    background: var(--surface-2);
+    border-left: 3px solid var(--danger);
+}
+
+    .card-r.is-inactive:hover {
+        opacity: 1;
     }
 
 .card-head {
@@ -685,6 +698,13 @@ h1, h2, h3, h4, h5, h6, .font-display {
     font-size: .8rem;
     padding: 6px 11px;
     border-radius: 8px;
+}
+
+/* Botones de baja/reactivar dentro de las tarjetas. */
+.card-r .btn-outline-danger,
+.card-r .btn-outline-success {
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* ============================================================

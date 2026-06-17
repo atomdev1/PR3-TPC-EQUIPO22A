@@ -54,13 +54,18 @@ namespace WebApp
                 lblTituloModalCancha.Text = "Editar cancha";
                 AbrirModal("modalNuevaCancha", "Nueva cancha", "Editar cancha");
             }
-            else if (e.CommandName == "Eliminar")
+            else if (e.CommandName == "Baja")
             {
-                // No se elimina directo: se pide confirmación con un panel.
+                // No se da de baja directo: se pide confirmación con un panel.
                 Cancha c = new NegocioCanchas().ObtenerPorId(idCancha);
                 hfBajaId.Value = idCancha.ToString();
-                lblConfirmarBaja.Text = "¿Eliminar la cancha \"" + (c != null ? c.NombreFantasia : "") + "\"?";
+                lblConfirmarBaja.Text = "¿Dar de baja la cancha \"" + (c != null ? c.NombreFantasia : "") + "\"?";
                 pnlConfirmarBaja.Visible = true;
+            }
+            else if (e.CommandName == "Reactivar")
+            {
+                new NegocioCanchas().Reactivar(idCancha);
+                CargarCanchas();
             }
         }
 
@@ -81,7 +86,7 @@ namespace WebApp
             AbrirModal("modalNuevaCancha", "Nueva cancha", "Editar cancha");
         }
 
-        // Confirma la eliminación: da de baja el id guardado y oculta el panel.
+        // Confirma la baja: da de baja lógica del id guardado y oculta el panel.
         protected void btnConfirmarBaja_Click(object sender, EventArgs e)
         {
             new NegocioCanchas().BajaLogica(int.Parse(hfBajaId.Value));
