@@ -105,5 +105,36 @@ namespace Negocio
             }
             finally { datos.CerrarConexion(); }
         }
+
+        // Alimenta el mapa de calor del Panel. Lee la vista vw_OcupacionPorTurno,
+        // que ya devuelve el dato agregado por dia de semana y turno.
+        public List<OcupacionTurno> ObtenerOcupacionPorTurno()
+        {
+            List<OcupacionTurno> lista = new List<OcupacionTurno>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT DiaNum, Dia, TurnoOrden, Turno, CantidadReservas, PorcentajeOcupacion
+                    FROM   vw_OcupacionPorTurno
+                    ORDER BY DiaNum, TurnoOrden");
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    OcupacionTurno o = new OcupacionTurno();
+                    o.DiaNum = (int)datos.Lector["DiaNum"];
+                    o.Dia = (string)datos.Lector["Dia"];
+                    o.TurnoOrden = (int)datos.Lector["TurnoOrden"];
+                    o.Turno = (string)datos.Lector["Turno"];
+                    o.CantidadReservas = (int)datos.Lector["CantidadReservas"];
+                    o.PorcentajeOcupacion = datos.Lector["PorcentajeOcupacion"] is DBNull
+                                            ? 0m : (decimal)datos.Lector["PorcentajeOcupacion"];
+                    lista.Add(o);
+                }
+                return lista;
+            }
+            finally { datos.CerrarConexion(); }
+        }
     }
 }

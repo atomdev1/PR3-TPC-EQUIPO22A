@@ -54,7 +54,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row g-3">
 
         <%-- Últimas reservas --%>
@@ -129,6 +129,29 @@
        
        
         
+    <%-- Mapa de calor: ocupación por día y turno --%>
+    <div class="card-r mt-4">
+        <div class="card-head">
+            <h6>Ocupación por día y turno</h6>
+            <small class="text-faint ms-auto">Reservas efectivas ya ocurridas</small>
+        </div>
+        <div class="card-r-pad">
+            <p class="text-soft mb-3" style="font-size:.85rem;">
+                <strong>Cantidad de reservas efectivas</strong> por día y turno (cuanto más oscuro, más concurrido). Debajo, el <strong>porcentaje de ocupación</strong> del turno.
+            </p>
+            <asp:Literal ID="litHeatmap" runat="server" />
+            <div class="heat-legend">
+                <span class="text-faint">Menos gente</span>
+                <span class="heat-swatch heat-1"></span>
+                <span class="heat-swatch heat-2"></span>
+                <span class="heat-swatch heat-3"></span>
+                <span class="heat-swatch heat-4"></span>
+                <span class="heat-swatch heat-5"></span>
+                <span class="text-faint">Más gente</span>
+            </div>
+        </div>
+    </div>
+
     </asp:Panel>
 
     <asp:Panel ID="pnlCliente" runat="server" Visible="false">

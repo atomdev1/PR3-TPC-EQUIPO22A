@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Web;
 using System.Web.UI.WebControls;
 
 namespace WebApp
@@ -35,6 +37,7 @@ namespace WebApp
             {
                 CargarResumen();
                 CargarUltimasReservas();
+                CargarOcupacion();
             }
         }
 
@@ -77,6 +80,72 @@ namespace WebApp
 
             rptReservas.DataSource = reservas;
             rptReservas.DataBind();
+        }
+
+        // Mapa de calor de ocupación: 3 turnos (filas) x 7 días (columnas).
+        private void CargarOcupacion()
+        {
+            List<OcupacionTurno> datos;
+            try { datos = new NegocioReservas().ObtenerOcupacionPorTurno(); }
+            catch { datos = new List<OcupacionTurno>(); }   // si la vista aún no se creó, la grilla se muestra en cero
+            litHeatmap.Text = GenerarHeatmap(datos);
+        }
+
+        private string GenerarHeatmap(List<OcupacionTurno> datos)
+        {
+            string[] diasCorto = { "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" };
+            string[] diasLargo = { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+            string[] turnos    = { "Mañana", "Tarde", "Noche" };
+            CultureInfo inv = CultureInfo.InvariantCulture;
+
+            // El color va por volumen relativo a la celda más concurrida.
+            int maxCant = datos.Count == 0 ? 0 : datos.Max(o => o.CantidadReservas);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<div class='heat-grid'>");
+
+            // Encabezado: esquina vacía + nombres de los días
+            sb.Append("<div class='heat-corner'></div>");
+            for (int d = 0; d < 7; d++)
+                sb.AppendFormat("<div class='heat-dow'>{0}</div>", diasCorto[d]);
+
+            // Una fila por turno (1=Mañana 2=Tarde 3=Noche)
+            for (int t = 1; t <= 3; t++)
+            {
+                sb.AppendFormat("<div class='heat-turno'>{0}</div>", turnos[t - 1]);
+                for (int d = 0; d < 7; d++)
+                {
+                    OcupacionTurno celda = datos.Find(o => o.DiaNum == d && o.TurnoOrden == t);
+                    int cant = celda == null ? 0 : celda.CantidadReservas;
+                    decimal pct = celda == null ? 0m : celda.PorcentajeOcupacion;
+
+                    sb.AppendFormat(
+                        "<div class='heat-cell {0}' title='{1} · {2}: {3} reservas ({4}% ocupación)'>" +
+                            "<span class='heat-cant'>{3}</span>" +
+                            "<span class='heat-pct'>{4}%</span>" +
+                        "</div>",
+                        GetHeatClase(cant, maxCant),
+                        HttpUtility.HtmlEncode(diasLargo[d]),
+                        HttpUtility.HtmlEncode(turnos[t - 1]),
+                        cant,
+                        pct.ToString("0.#", inv));
+                }
+            }
+
+            sb.Append("</div>");
+            return sb.ToString();
+        }
+
+        // Tramo de color por volumen. Sin reservas queda neutro.
+        private string GetHeatClase(int cant, int maxCant)
+        {
+            if (cant == 0 || maxCant == 0) return "heat-0";
+            double r = (double)cant / maxCant;
+            if (r <= 0.20) return "heat-1";
+            if (r <= 0.40) return "heat-2";
+            if (r <= 0.60) return "heat-3";
+            if (r <= 0.80) return "heat-4";
+            return "heat-5";
         }
 
         protected string GetDeporteEmoji(object nombreObj)
