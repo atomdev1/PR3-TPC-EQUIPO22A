@@ -14,7 +14,8 @@ namespace WebApp
         {
             Usuario u = Session["usuario"] as Usuario;
             if (u == null) { Response.Redirect("~/Login.aspx"); return; }
-            if (u.Rol == RolUsuario.Recepcionista || u.Rol == RolUsuario.EncargadoCancha)
+            // Solo Administrador: configura los umbrales que reparten cupones.
+            if (u.Rol != RolUsuario.Administrador)
             {
                 Response.Redirect("~/Dashboard.aspx");
                 return;

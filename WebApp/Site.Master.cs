@@ -57,7 +57,7 @@ namespace WebApp
             lnkCupones.Visible = esAdmin || esRecep;
             lnkMisCupones.Visible = esCliente;
 
-            lnkBeneficios.Visible = esAdmin || esCliente;
+            lnkBeneficios.Visible = esAdmin;
         }
 
         protected void btnCerrarSesion_Click(object sender, EventArgs e)
