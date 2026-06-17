@@ -70,7 +70,7 @@ namespace WebApp
                     string nombre = HttpUtility.HtmlEncode(r.Cliente.Nombre + " " + r.Cliente.Apellido);
                     sb.AppendFormat("<div class='mcal-ev {0}'>{1} {2}</div>",
                         GetClaseEvento(r.Estado),
-                        r.HoraInicio.ToString(@"H\:mm"),
+                        r.HoraInicio.ToString(@"hh\:mm"),
                         nombre);
                 }
 
