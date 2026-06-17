@@ -23,8 +23,8 @@ INSERT INTO EstadoCupon (NombreEstado) VALUES
 INSERT INTO TipoDescuento (Nombre) VALUES
     ('Porcentaje'), ('Reserva gratis');
 
-INSERT INTO Deportes (Nombre, DuracionMinutos) VALUES
-    ('Fútbol', 60), ('Tenis', 60), ('Pádel', 60), ('Básquet', 60), ('Vóley', 60);
+INSERT INTO Deportes (Nombre, DuracionMinutos, Activa) VALUES
+    ('Fútbol', 60, 1), ('Tenis', 60, 1), ('Pádel', 60, 1), ('Básquet', 60, 1), ('Vóley', 60, 1);
 GO
 
 

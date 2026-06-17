@@ -18,7 +18,8 @@ CREATE TABLE Roles (
 CREATE TABLE Deportes (
     IDDeporte        INT         IDENTITY(1,1) PRIMARY KEY,
     Nombre           VARCHAR(50) NOT NULL,
-    DuracionMinutos  INT         NOT NULL
+    DuracionMinutos  INT         NOT NULL,
+    Activa           BIT         NOT NULL DEFAULT 1
 );
 
 CREATE TABLE EstadoReserva (

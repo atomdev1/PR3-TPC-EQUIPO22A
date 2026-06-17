@@ -52,6 +52,7 @@ namespace WebApp
             lnkCalendario.Visible = !esCliente;
 
             lnkCanchas.Visible = !esCliente;
+            lnkDeportes.Visible = !esCliente;
             lnkReservar.Visible = esCliente;
 
             lnkCupones.Visible = esAdmin || esRecep;
@@ -75,6 +76,7 @@ namespace WebApp
             {
                 { "Dashboard.aspx", lnkPanel },
                 { "Canchas.aspx", lnkCanchas },
+                { "Deportes.aspx", lnkDeportes },
                 { "CanchasCliente.aspx", lnkReservar },
                 { "Reservas.aspx", lnkReservas },
                 { "Cupones.aspx", lnkCupones },

@@ -30,6 +30,7 @@ erDiagram
         int IDDeporte PK
         string Nombre
         int DuracionMinutos
+        boolean Activa
     }
     
     EstadoReserva {

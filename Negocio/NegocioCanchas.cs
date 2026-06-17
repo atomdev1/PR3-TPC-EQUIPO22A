@@ -160,6 +160,17 @@ namespace Negocio
             }
         }
 
+        // Cuántas canchas activas usan este deporte. Sirve para avisar antes de dar de baja un deporte.
+        public int ContarCanchasActivasPorDeporte(int idDeporte)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            datos.SetearConsulta(
+                "SELECT COUNT(*) FROM Canchas WHERE IDDeporte = @dep AND Activa = 1");
+            datos.AgregarParametro("@dep", idDeporte);
+            return datos.EjecutarAccionScalar();
+        }
+
         public void Agregar(Cancha c)
         {
             AccesoDatos datos = new AccesoDatos();

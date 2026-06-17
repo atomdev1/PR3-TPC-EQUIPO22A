@@ -11,5 +11,6 @@ namespace Dominio
         public int IdDeporte { get; set; }
         public string Nombre { get; set; }
         public int DuracionMinutos { get; set; }
+        public bool Activa { get; set; }
     }
 }
