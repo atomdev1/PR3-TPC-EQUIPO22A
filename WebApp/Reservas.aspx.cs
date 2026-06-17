@@ -9,10 +9,14 @@ namespace WebApp
 {
     public partial class Reservas : System.Web.UI.Page
     {
+        protected bool EsCliente { get; private set; }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             Usuario u = Session["usuario"] as Usuario;
             if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
+            EsCliente = u.Rol == RolUsuario.Cliente;
 
             if (!IsPostBack)
                 CargarReservas(u);

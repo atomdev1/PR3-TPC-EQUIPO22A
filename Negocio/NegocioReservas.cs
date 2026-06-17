@@ -21,7 +21,7 @@ namespace Negocio
                            u.Apellido AS ClienteApellido,
                            c.NombreFantasia AS CanchaNombre
                     FROM Reservas r
-                    INNER JOIN Usuarios u ON u.IDUsuario = r.IDUsuarioCliente
+                    INNER JOIN Usuarios u ON u.IDUsuario = r.IDUsuario_Cliente
                     INNER JOIN Canchas  c ON c.IDCancha  = r.IDCancha
                     WHERE YEAR(r.Fecha) = @año AND MONTH(r.Fecha) = @mes
                     ORDER BY r.Fecha, r.HoraInicio");
@@ -70,7 +70,7 @@ namespace Negocio
                    c.NombreFantasia AS CanchaNombre,
                    d.Nombre     AS DeporteNombre
             FROM   Reservas r
-            INNER JOIN Usuarios u ON u.IDUsuario = r.IDUsuarioCliente
+            INNER JOIN Usuarios u ON u.IDUsuario = r.IDUsuario_Cliente
             INNER JOIN Canchas  c ON c.IDCancha  = r.IDCancha
             INNER JOIN Deportes d ON d.IDDeporte = c.IDDeporte
             ORDER BY r.Fecha DESC, r.HoraInicio DESC");

@@ -12,10 +12,12 @@
             <h2 class="mb-0">Reservas</h2>
             <small class="text-muted">8 reservas</small>
         </div>
+        <% if (!EsCliente) { %>
         <button type="button" class="btn-r btn-primary-r ms-auto"
             data-bs-toggle="modal" data-bs-target="#modalNuevaReserva">
             ➕ Nueva reserva
         </button>
+        <% } %>
     </div>
 
     <%-- Filtros --%>
@@ -67,6 +69,9 @@
                         <th>Estado</th>
                         <th>Pago</th>
                         <th class="text-end pe-3">Precio</th>
+                        <% if (!EsCliente) { %>
+                        <th class="text-end pe-3">Acciones</th>
+                        <% } %>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,6 +103,14 @@
                                 <td class="text-end pe-3 fw-semibold small">
                                     <%# string.Format("{0:C0}", Eval("PrecioTotal")) %>
                                 </td>
+                                <% if (!EsCliente) { %>
+                                <td class="text-end pe-3">
+                                    <button type="button" class="btn-r btn-sm-r btn-ghost-r"
+                                        data-bs-toggle="modal" data-bs-target="#modalDetalleReserva">
+                                        Ver
+                                    </button>
+                                </td>
+                                <% } %>
                             </tr>
                         </ItemTemplate>
                     </asp:Repeater>
