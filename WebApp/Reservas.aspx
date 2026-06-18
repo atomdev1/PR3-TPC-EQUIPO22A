@@ -75,7 +75,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <asp:Repeater ID="rptReservas" runat="server">
+                    <asp:Repeater ID="rptReservas" runat="server" OnItemCommand="rptReservas_ItemCommand">
                         <ItemTemplate>
                             <tr>
                                 <td class="ps-3 text-muted small"><%# Eval("IdReserva") %></td>
@@ -97,7 +97,7 @@
                                 </td>
                                 <td>
                                     <span class='<%# GetBadgePago(Eval("EstadoPago")) %>'>
-                                        <%# Eval("EstadoPago") %>
+                                        <%# GetTextoPago(Eval("EstadoPago")) %>
                                     </span>
                                 </td>
                                 <td class="text-end pe-3 fw-semibold small">
@@ -105,10 +105,18 @@
                                 </td>
                                 <% if (!EsCliente) { %>
                                 <td class="text-end pe-3">
-                                    <button type="button" class="btn-r btn-sm-r btn-ghost-r"
-                                        data-bs-toggle="modal" data-bs-target="#modalDetalleReserva">
-                                        Ver
-                                    </button>
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <button type="button" class="btn-r btn-sm-r btn-ghost-r"
+                                            data-bs-toggle="modal" data-bs-target="#modalDetalleReserva">
+                                            Ver
+                                        </button>
+                                        <asp:LinkButton runat="server"
+                                            CommandName="RegistrarPago"
+                                            CommandArgument='<%# Eval("IdReserva") %>'
+                                            CssClass="btn btn-sm btn-outline-success">
+                                            Registrar pago
+                                        </asp:LinkButton>
+                                    </div>
                                 </td>
                                 <% } %>
                             </tr>
@@ -181,6 +189,55 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button type="button" class="btn btn-success">Guardar cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- MODAL REGISTRAR PAGO --%>
+    <%-- El INSERT en Pagos dispara TR_SincronizarEstadoPago, que recalcula el
+         estado de pago de la reserva (Señado / Pagado) de forma automática. --%>
+    <div class="modal fade" id="modalRegistrarPago" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Registrar pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <asp:HiddenField ID="hfIdReservaPago" runat="server" />
+                    <asp:Label ID="lblErrorPago" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
+
+                    <div class="mb-3">
+                        <asp:Label ID="lblPagoReserva" runat="server" CssClass="fw-semibold d-block" />
+                        <div class="d-flex justify-content-between small text-muted mt-1">
+                            <span>Precio total: <asp:Label ID="lblPagoPrecio" runat="server" /></span>
+                            <span>Pagado: <asp:Label ID="lblPagoPagado" runat="server" /></span>
+                            <span>Saldo: <asp:Label ID="lblPagoSaldo" runat="server" CssClass="fw-semibold" /></span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Monto ($)</label>
+                            <asp:TextBox ID="txtMontoPago" runat="server" CssClass="form-control" TextMode="Number" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Forma de pago</label>
+                            <asp:DropDownList ID="ddlFormaPago" runat="server" CssClass="form-select">
+                                <asp:ListItem Value="1">Efectivo</asp:ListItem>
+                                <asp:ListItem Value="2">Transferencia</asp:ListItem>
+                                <asp:ListItem Value="3">Tarjeta de débito</asp:ListItem>
+                                <asp:ListItem Value="4">Tarjeta de crédito</asp:ListItem>
+                                <asp:ListItem Value="5">Mercado Pago</asp:ListItem>
+                            </asp:DropDownList>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Cancelar</button>
+                    <asp:Button ID="btnConfirmarPago" runat="server" Text="Registrar pago"
+                        CssClass="btn-r btn-primary-r" OnClick="btnConfirmarPago_Click" CausesValidation="false" />
                 </div>
             </div>
         </div>
