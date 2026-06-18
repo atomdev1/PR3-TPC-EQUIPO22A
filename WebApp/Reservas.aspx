@@ -10,7 +10,7 @@
     <div class="d-flex align-items-center mb-4">
         <div>
             <h2 class="mb-0">Reservas</h2>
-            <small class="text-muted">8 reservas</small>
+            <small class="text-muted">Gestión de reservas del complejo</small>
         </div>
         <% if (!EsCliente) { %>
         <button type="button" class="btn-r btn-primary-r ms-auto"
@@ -20,34 +20,33 @@
         <% } %>
     </div>
 
-    <%-- Filtros --%>
+    <%-- Filtros (controles de servidor) --%>
     <div class="card-r card-r-pad mb-4">
         <div class="row g-2 align-items-end">
             <div class="col-md-3">
                 <label class="form-label small fw-semibold mb-1">Estado</label>
-                <select class="form-select form-select-sm">
-                    <option value="0">Todos los estados</option>
-                    <option value="1">Nueva</option>
-                    <option value="2">Reprogramada</option>
-                    <option value="3">Cancelada</option>
-                    <option value="4">No Asistió</option>
-                    <option value="5">Finalizada</option>
-                </select>
+                <asp:DropDownList ID="ddlFiltroEstado" runat="server" CssClass="form-select form-select-sm">
+                    <asp:ListItem Value="0">Todos los estados</asp:ListItem>
+                    <asp:ListItem Value="1">Nueva</asp:ListItem>
+                    <asp:ListItem Value="2">Reprogramada</asp:ListItem>
+                    <asp:ListItem Value="3">Cancelada</asp:ListItem>
+                    <asp:ListItem Value="4">No Asistió</asp:ListItem>
+                    <asp:ListItem Value="5">Finalizada</asp:ListItem>
+                </asp:DropDownList>
             </div>
             <div class="col-md-3">
                 <label class="form-label small fw-semibold mb-1">Cancha</label>
-                <select class="form-select form-select-sm">
-                    <option value="0">Todas las canchas</option>
-                    <option value="1">La Bombonera</option>
-                    <option value="2">El Monumental</option>
-                </select>
+                <asp:DropDownList ID="ddlFiltroCancha" runat="server" CssClass="form-select form-select-sm" />
             </div>
             <div class="col-md-3">
                 <label class="form-label small fw-semibold mb-1">Fecha</label>
-                <input type="date" class="form-control form-control-sm" />
+                <asp:TextBox ID="txtFiltroFecha" runat="server" CssClass="form-control form-control-sm" TextMode="Date" />
             </div>
-            <div class="col-md-3">
-                <button type="button" class="btn-r btn-sm-r btn-ghost-r w-100">Limpiar filtros</button>
+            <div class="col-md-3 d-flex gap-2">
+                <asp:Button ID="btnFiltrar" runat="server" Text="Filtrar" CssClass="btn-r btn-sm-r btn-primary-r w-100"
+                    OnClick="btnFiltrar_Click" CausesValidation="false" />
+                <asp:Button ID="btnLimpiar" runat="server" Text="Limpiar" CssClass="btn-r btn-sm-r btn-ghost-r w-100"
+                    OnClick="btnLimpiar_Click" CausesValidation="false" />
             </div>
         </div>
     </div>
@@ -106,10 +105,12 @@
                                 <% if (!EsCliente) { %>
                                 <td class="text-end pe-3">
                                     <div class="d-flex gap-2 justify-content-end">
-                                        <button type="button" class="btn-r btn-sm-r btn-ghost-r"
-                                            data-bs-toggle="modal" data-bs-target="#modalDetalleReserva">
+                                        <asp:LinkButton runat="server"
+                                            CommandName="Ver"
+                                            CommandArgument='<%# Eval("IdReserva") %>'
+                                            CssClass="btn-r btn-sm-r btn-ghost-r">
                                             Ver
-                                        </button>
+                                        </asp:LinkButton>
                                         <asp:LinkButton runat="server"
                                             CommandName="RegistrarPago"
                                             CommandArgument='<%# Eval("IdReserva") %>'
@@ -139,56 +140,40 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Cliente</label>
-                            <p class="form-control-plaintext">Martín Gómez</p>
+                            <p class="form-control-plaintext"><asp:Label ID="lblDetCliente" runat="server" /></p>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Cancha</label>
-                            <p class="form-control-plaintext">La Bombonera · Fútbol</p>
+                            <p class="form-control-plaintext"><asp:Label ID="lblDetCancha" runat="server" /></p>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Fecha</label>
-                            <p class="form-control-plaintext">10/06/2025</p>
+                            <p class="form-control-plaintext"><asp:Label ID="lblDetFecha" runat="server" /></p>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Horario</label>
-                            <p class="form-control-plaintext">09:00 – 10:00</p>
+                            <p class="form-control-plaintext"><asp:Label ID="lblDetHorario" runat="server" /></p>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Precio total</label>
-                            <p class="form-control-plaintext fw-semibold">$6.000</p>
+                            <p class="form-control-plaintext fw-semibold"><asp:Label ID="lblDetPrecio" runat="server" /></p>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Estado reserva</label>
-                            <select class="form-select form-select-sm">
-                                <option value="1" selected>Nueva</option>
-                                <option value="2">Reprogramada</option>
-                                <option value="3">Cancelada</option>
-                                <option value="4">No Asistió</option>
-                                <option value="5">Finalizada</option>
-                            </select>
+                            <p class="form-control-plaintext"><asp:Label ID="lblDetEstado" runat="server" /></p>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Estado pago</label>
-                            <select class="form-select form-select-sm">
-                                <option value="1" selected>Pendiente</option>
-                                <option value="2">Señado</option>
-                                <option value="3">Pagado</option>
-                                <option value="4">Reembolsado</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-semibold">Cupón aplicado</label>
-                            <p class="form-control-plaintext">—</p>
+                            <p class="form-control-plaintext"><asp:Label ID="lblDetPago" runat="server" /></p>
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Observaciones</label>
-                            <textarea class="form-control form-control-sm" rows="2" placeholder="Sin observaciones"></textarea>
+                            <p class="form-control-plaintext"><asp:Label ID="lblDetObs" runat="server" /></p>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-success">Guardar cambios</button>
                 </div>
             </div>
         </div>

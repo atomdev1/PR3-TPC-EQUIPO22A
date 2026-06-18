@@ -3,7 +3,7 @@
 //     Este código fue generado por una herramienta.
 //
 //     Los cambios en este archivo podrían causar un comportamiento incorrecto y se perderán si
-//     se vuelve a generar el código.
+//     se vuelve a generar el código. 
 // </generado automáticamente>
 //------------------------------------------------------------------------------
 
@@ -15,11 +15,56 @@ namespace WebApp
     {
 
         /// <summary>
+        /// Control ddlFiltroEstado.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlFiltroEstado;
+
+        /// <summary>
+        /// Control ddlFiltroCancha.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlFiltroCancha;
+
+        /// <summary>
+        /// Control txtFiltroFecha.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtFiltroFecha;
+
+        /// <summary>
+        /// Control btnFiltrar.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnFiltrar;
+
+        /// <summary>
+        /// Control btnLimpiar.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnLimpiar;
+
+        /// <summary>
         /// Control lblTotal.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTotal;
 
@@ -28,16 +73,88 @@ namespace WebApp
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater rptReservas;
+
+        /// <summary>
+        /// Control lblDetCliente.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetCliente;
+
+        /// <summary>
+        /// Control lblDetCancha.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetCancha;
+
+        /// <summary>
+        /// Control lblDetFecha.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetFecha;
+
+        /// <summary>
+        /// Control lblDetHorario.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetHorario;
+
+        /// <summary>
+        /// Control lblDetPrecio.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetPrecio;
+
+        /// <summary>
+        /// Control lblDetEstado.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetEstado;
+
+        /// <summary>
+        /// Control lblDetPago.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetPago;
+
+        /// <summary>
+        /// Control lblDetObs.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetObs;
 
         /// <summary>
         /// Control hfIdReservaPago.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hfIdReservaPago;
 
@@ -46,7 +163,7 @@ namespace WebApp
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblErrorPago;
 
@@ -55,7 +172,7 @@ namespace WebApp
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPagoReserva;
 
@@ -64,7 +181,7 @@ namespace WebApp
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPagoPrecio;
 
@@ -73,7 +190,7 @@ namespace WebApp
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPagoPagado;
 
@@ -82,7 +199,7 @@ namespace WebApp
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblPagoSaldo;
 
@@ -91,7 +208,7 @@ namespace WebApp
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtMontoPago;
 
@@ -100,7 +217,7 @@ namespace WebApp
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlFormaPago;
 
@@ -109,7 +226,7 @@ namespace WebApp
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo de diseño al archivo de código subyacente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnConfirmarPago;
     }
