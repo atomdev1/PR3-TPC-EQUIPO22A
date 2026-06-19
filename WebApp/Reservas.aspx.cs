@@ -132,6 +132,55 @@ namespace WebApp
 
                 AbrirModalPago();
             }
+            else if (e.CommandName == "Canjear")
+            {
+                int idReserva = int.Parse(e.CommandArgument.ToString());
+
+                Reserva reserva = new NegocioReservas().Listar()
+                    .FirstOrDefault(r => r.IdReserva == idReserva);
+                if (reserva == null) return;
+
+                hfIdReservaCanje.Value = idReserva.ToString();
+                lblCanjeReserva.Text   = "Reserva #" + idReserva;
+                lblCanjePrecio.Text    = string.Format("{0:C0}", reserva.PrecioTotal);
+                txtCodigoCupon.Text    = "";
+                lblErrorCanje.Visible  = false;
+
+                AbrirModalCanje();
+            }
+        }
+
+        // Confirma el canje. Si el SP rechaza por una regla, hace THROW: el
+        // mensaje llega como excepción y lo mostramos en el modal.
+        protected void btnConfirmarCanje_Click(object sender, EventArgs e)
+        {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
+            string codigo = txtCodigoCupon.Text.Trim();
+            if (string.IsNullOrEmpty(codigo))
+            {
+                lblErrorCanje.Text = "Ingresá el código del cupón.";
+                lblErrorCanje.Visible = true;
+                AbrirModalCanje();
+                return;
+            }
+
+            try
+            {
+                new NegocioCupones().Canjear(int.Parse(hfIdReservaCanje.Value), codigo);
+            }
+            catch (Exception ex)
+            {
+                // ex.Message trae el mensaje del THROW del SP.
+                lblErrorCanje.Text = ex.Message;
+                lblErrorCanje.Visible = true;
+                AbrirModalCanje();
+                return;
+            }
+
+            // Canje OK: recargo la grilla, el precio ya viene recalculado.
+            CargarReservas(u);
         }
 
         // Confirma el pago: inserta en Pagos y el trigger recalcula el estado.
@@ -173,6 +222,13 @@ namespace WebApp
             string script =
                 "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDetalleReserva')).show();";
             ClientScript.RegisterStartupScript(GetType(), "abrirModalDetalle", script, true);
+        }
+
+        private void AbrirModalCanje()
+        {
+            string script =
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCanjearCupon')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModalCanje", script, true);
         }
 
         protected string GetBadgeEstado(object estadoObj)

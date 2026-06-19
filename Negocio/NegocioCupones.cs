@@ -246,6 +246,25 @@ namespace Negocio
             datos.EjecutarAccion();
         }
 
+        // El canje lo resuelve el SP sp_CanjearCupon (valida y aplica todo en
+        // una transacción). Si algo no cumple hace THROW, y el SqlException
+        // sube hasta acá con el mensaje para mostrar.
+        public void Canjear(int idReserva, string codigoCupon)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearProcedimiento("sp_CanjearCupon");
+                datos.AgregarParametro("@IDReserva", idReserva);
+                datos.AgregarParametro("@CodigoCupon", codigoCupon);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
         // parametros compartidos por Agregar y Modificar (los nullables van como DBNull)
         private void CargarParametros(AccesoDatos datos, Cupon c)
         {

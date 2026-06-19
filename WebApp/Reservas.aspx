@@ -68,9 +68,7 @@
                         <th>Estado</th>
                         <th>Pago</th>
                         <th class="text-end pe-3">Precio</th>
-                        <% if (!EsCliente) { %>
                         <th class="text-end pe-3">Acciones</th>
-                        <% } %>
                     </tr>
                 </thead>
                 <tbody>
@@ -102,9 +100,11 @@
                                 <td class="text-end pe-3 fw-semibold small">
                                     <%# string.Format("{0:C0}", Eval("PrecioTotal")) %>
                                 </td>
-                                <% if (!EsCliente) { %>
                                 <td class="text-end pe-3">
                                     <div class="d-flex gap-2 justify-content-end">
+                                        <%-- Ver y Registrar pago son solo para staff. Canjear cupón lo
+                                             ve también el cliente, sobre sus propias reservas. --%>
+                                        <% if (!EsCliente) { %>
                                         <asp:LinkButton runat="server"
                                             CommandName="Ver"
                                             CommandArgument='<%# Eval("IdReserva") %>'
@@ -117,9 +117,15 @@
                                             CssClass="btn btn-sm btn-outline-success">
                                             Registrar pago
                                         </asp:LinkButton>
+                                        <% } %>
+                                        <asp:LinkButton runat="server"
+                                            CommandName="Canjear"
+                                            CommandArgument='<%# Eval("IdReserva") %>'
+                                            CssClass="btn btn-sm btn-outline-primary">
+                                            Canjear cupón
+                                        </asp:LinkButton>
                                     </div>
                                 </td>
-                                <% } %>
                             </tr>
                         </ItemTemplate>
                     </asp:Repeater>
@@ -223,6 +229,42 @@
                     <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Cancelar</button>
                     <asp:Button ID="btnConfirmarPago" runat="server" Text="Registrar pago"
                         CssClass="btn-r btn-primary-r" OnClick="btnConfirmarPago_Click" CausesValidation="false" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- MODAL CANJEAR CUPÓN --%>
+    <%-- El canje lo hace el SP sp_CanjearCupon. Si una regla falla, el mensaje
+         del THROW se muestra acá mismo. --%>
+    <div class="modal fade" id="modalCanjearCupon" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Canjear cupón</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <asp:HiddenField ID="hfIdReservaCanje" runat="server" />
+                    <asp:Label ID="lblErrorCanje" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
+
+                    <div class="mb-3">
+                        <asp:Label ID="lblCanjeReserva" runat="server" CssClass="fw-semibold d-block" />
+                        <div class="small text-muted mt-1">
+                            <span>Precio actual: <asp:Label ID="lblCanjePrecio" runat="server" /></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-1">
+                        <label class="form-label fw-semibold">Código del cupón</label>
+                        <asp:TextBox ID="txtCodigoCupon" runat="server" CssClass="form-control"
+                            placeholder="Ej: FID-LUC-15" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Cancelar</button>
+                    <asp:Button ID="btnConfirmarCanje" runat="server" Text="Canjear cupón"
+                        CssClass="btn-r btn-primary-r" OnClick="btnConfirmarCanje_Click" CausesValidation="false" />
                 </div>
             </div>
         </div>
