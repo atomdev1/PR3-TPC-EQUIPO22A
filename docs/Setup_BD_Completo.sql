@@ -1,3 +1,195 @@
+-- =========================================================================
+-- Setup_BD_Completo.sql
+-- Setup completo de la base: creación, datos, vista, SP y trigger, todo junto.
+-- Orden: creación de tablas -> datos iniciales -> vista -> SP -> trigger.
+--
+-- El reset (00_Reset_BD.sql) va aparte: este script CREA la base, así que si
+-- ya existe hay que dropearla primero con el reset.
+--
+-- =========================================================================
+
+-- Creación de la Base de Datos
+CREATE DATABASE BBDD2_TPI_GRUPO45;
+GO
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+
+-- =========================================
+-- TABLAS MAESTRAS
+-- =========================================
+
+CREATE TABLE Roles (
+    IDRol       INT          IDENTITY(1,1) PRIMARY KEY,
+    NombreRol   VARCHAR(50)  NOT NULL
+);
+
+CREATE TABLE Deportes (
+    IDDeporte        INT         IDENTITY(1,1) PRIMARY KEY,
+    Nombre           VARCHAR(50) NOT NULL,
+    DuracionMinutos  INT         NOT NULL,
+    Activa           BIT         NOT NULL DEFAULT 1
+);
+
+CREATE TABLE EstadoReserva (
+    IDEstado       INT         IDENTITY(1,1) PRIMARY KEY,
+    NombreEstado   VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE EstadoPago (
+    IDEstadoPago       INT         IDENTITY(1,1) PRIMARY KEY,
+    NombreEstadoPago   VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE FormasPago (
+    IDFormaPago       INT         IDENTITY(1,1) PRIMARY KEY,
+    NombreFormaPago   VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE EstadoCupon (
+    IDEstadoCupon   INT          IDENTITY(1,1) PRIMARY KEY,
+    NombreEstado    VARCHAR(50)  NOT NULL
+);
+
+CREATE TABLE TipoDescuento (
+    IDTipoDescuento   INT          IDENTITY(1,1) PRIMARY KEY,
+    Nombre            VARCHAR(50)  NOT NULL
+);
+
+-- =========================================
+-- USUARIOS (clientes + staff unificados)
+-- =========================================
+
+CREATE TABLE Usuarios (
+    IDUsuario            INT           IDENTITY(1,1) PRIMARY KEY,
+    DNI                  VARCHAR(20)   UNIQUE NOT NULL,
+    Nombre               VARCHAR(100)  NOT NULL,
+    Apellido             VARCHAR(100)  NOT NULL,
+    Telefono             VARCHAR(20)   NULL,
+    Email                VARCHAR(100)  UNIQUE NOT NULL,
+    Password             VARCHAR(255)  NOT NULL,  -- SHA256
+    FechaNacimiento      DATETIME      NULL,
+    FechaRegistro        DATETIME      NOT NULL DEFAULT GETDATE(),
+    Activo               BIT           NOT NULL DEFAULT 1,
+    CantidadAsistencias  INT           NOT NULL DEFAULT 0,
+    IDRol                INT           NOT NULL,
+    CONSTRAINT FK_Usuarios_Roles FOREIGN KEY (IDRol) REFERENCES Roles(IDRol)
+);
+
+-- =========================================
+-- CANCHAS
+-- =========================================
+
+CREATE TABLE Canchas (
+    IDCancha            INT            IDENTITY(1,1) PRIMARY KEY,
+    Numero              INT            NOT NULL,
+    NombreFantasia      VARCHAR(100)   NULL,
+    Descripcion         VARCHAR(255)   NULL,
+    CapacidadJugadores  INT            NULL,
+    Precio              DECIMAL(10,2)  NOT NULL,
+    MontoSena           DECIMAL(10,2)  NULL,
+    Activa              BIT            NOT NULL DEFAULT 1,
+    IDDeporte           INT            NOT NULL,
+    CONSTRAINT FK_Canchas_Deportes FOREIGN KEY (IDDeporte) REFERENCES Deportes(IDDeporte)
+);
+
+CREATE TABLE DisponibilidadCanchas (
+    IDDisponibilidad   INT   IDENTITY(1,1) PRIMARY KEY,
+    IDCancha           INT   NOT NULL,
+    DiaSemana          TINYINT NOT NULL,  -- 0=Lunes, 6=Domingo
+    HoraApertura       TIME  NOT NULL,
+    HoraCierre         TIME  NOT NULL,
+    Activa             BIT   NOT NULL DEFAULT 1,
+    CONSTRAINT FK_Disponibilidad_Canchas FOREIGN KEY (IDCancha) REFERENCES Canchas(IDCancha),
+    CONSTRAINT CK_DiaSemana CHECK (DiaSemana BETWEEN 0 AND 6)
+);
+
+-- =========================================
+-- CUPONES
+-- =========================================
+
+CREATE TABLE Cupones (
+    IDCupon             INT            IDENTITY(1,1) PRIMARY KEY,
+    Codigo              VARCHAR(50)    UNIQUE NOT NULL,
+    Descripcion         VARCHAR(255)   NOT NULL,
+    IDEstadoCupon       INT            NOT NULL DEFAULT 1,   -- 1=Activo (ver tabla EstadoCupon)
+    IDTipoDescuento     INT            NOT NULL,             -- Porcentaje | ReservaGratis
+    ValorDescuento      DECIMAL(10,2)  NULL,                 -- NULL cuando IDTipoDescuento = ReservaGratis
+    ReservasRequeridas  INT            NOT NULL DEFAULT 10,
+    ValidoDesde         DATE           NULL,
+    ValidoHasta         DATE           NULL,
+    LimiteUsos          INT            NULL,                 -- NULL = sin límite
+    UsosActuales        INT            NOT NULL DEFAULT 0,
+    IDUsuario           INT            NOT NULL,             -- dueño del cupón (cupón personal)
+    CONSTRAINT FK_Cupones_Usuarios       FOREIGN KEY (IDUsuario)       REFERENCES Usuarios(IDUsuario),
+    CONSTRAINT FK_Cupones_EstadoCupon    FOREIGN KEY (IDEstadoCupon)   REFERENCES EstadoCupon(IDEstadoCupon),
+    CONSTRAINT FK_Cupones_TipoDescuento  FOREIGN KEY (IDTipoDescuento) REFERENCES TipoDescuento(IDTipoDescuento)
+);
+
+-- =========================================
+-- BENEFICIOS DE FIDELIDAD
+-- Catálogo fijo del complejo: la REGLA "a las X reservas, tal beneficio".
+-- No es el cupón emitido — el trigger genera el cupón al alcanzar el umbral.
+-- =========================================
+
+CREATE TABLE BeneficiosFidelidad (
+    IDBeneficio         INT            IDENTITY(1,1) PRIMARY KEY,
+    Nombre              VARCHAR(100)   NOT NULL,
+    Descripcion         VARCHAR(255)   NOT NULL,
+    ReservasRequeridas  INT            NOT NULL,             -- el umbral a alcanzar
+    IDTipoDescuento     INT            NOT NULL,             -- Porcentaje | ReservaGratis
+    ValorDescuento      DECIMAL(10,2)  NULL,                 -- NULL cuando es Reserva gratis
+    DiasValidez         INT            NULL,                 -- vigencia del cupón generado (NULL = sin vencimiento)
+    Activo              BIT            NOT NULL DEFAULT 1,
+    CONSTRAINT FK_Beneficios_TipoDescuento FOREIGN KEY (IDTipoDescuento) REFERENCES TipoDescuento(IDTipoDescuento),
+    CONSTRAINT UQ_Beneficios_Umbral        UNIQUE (ReservasRequeridas)   -- un beneficio por umbral
+);
+
+-- =========================================
+-- RESERVAS
+-- =========================================
+
+CREATE TABLE Reservas (
+    IDReserva          INT            IDENTITY(1,1) PRIMARY KEY,
+    Fecha              DATE           NOT NULL,
+    HoraInicio         TIME           NOT NULL,
+    HoraFin            TIME           NOT NULL,
+    PrecioTotal        DECIMAL(10,2)  NOT NULL,
+    Observaciones      VARCHAR(255)   NULL,
+    IDUsuario_Cliente  INT            NOT NULL,
+    IDUsuario_Staff    INT            NULL,        -- NULL si fue autogestión web
+    IDCancha           INT            NOT NULL,
+    IDEstado           INT            NOT NULL,
+    IDEstadoPago       INT            NOT NULL,
+    IDCupon            INT            NULL,        -- NULL si no se aplicó cupón
+    CONSTRAINT FK_Reservas_Cliente    FOREIGN KEY (IDUsuario_Cliente) REFERENCES Usuarios(IDUsuario),
+    CONSTRAINT FK_Reservas_Staff      FOREIGN KEY (IDUsuario_Staff)   REFERENCES Usuarios(IDUsuario),
+    CONSTRAINT FK_Reservas_Canchas    FOREIGN KEY (IDCancha)          REFERENCES Canchas(IDCancha),
+    CONSTRAINT FK_Reservas_Estado     FOREIGN KEY (IDEstado)          REFERENCES EstadoReserva(IDEstado),
+    CONSTRAINT FK_Reservas_EstadoPago FOREIGN KEY (IDEstadoPago)      REFERENCES EstadoPago(IDEstadoPago),
+    CONSTRAINT FK_Reservas_Cupon      FOREIGN KEY (IDCupon)           REFERENCES Cupones(IDCupon)
+);
+
+-- =========================================
+-- PAGOS
+-- =========================================
+
+CREATE TABLE Pagos (
+    IDPago        INT            IDENTITY(1,1) PRIMARY KEY,
+    Monto         DECIMAL(10,2)  NOT NULL,
+    FechaHora     DATETIME       NOT NULL DEFAULT GETDATE(),
+    IDReserva     INT            NOT NULL,
+    IDFormaPago   INT            NOT NULL,
+    CONSTRAINT FK_Pagos_Reservas   FOREIGN KEY (IDReserva)   REFERENCES Reservas(IDReserva),
+    CONSTRAINT FK_Pagos_FormasPago FOREIGN KEY (IDFormaPago) REFERENCES FormasPago(IDFormaPago)
+);
+
+GO
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+
 USE BBDD2_TPI_GRUPO45;
 GO
 
@@ -694,3 +886,254 @@ INSERT INTO Pagos (Monto, FechaHora, IDReserva, IDFormaPago)
 SELECT PrecioTotal, CAST(Fecha AS DATETIME), IDReserva, 1
 FROM Reservas WHERE Observaciones = 'Carga de ocupación';
 GO
+
+GO
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+
+-- =========================================
+-- VISTA: vw_OcupacionPorTurno
+-- Ocupación del complejo por día de la semana y turno (Mañana/Tarde/Noche).
+-- Autor: Tomás Oliveres — Base de Datos 2 (TPI Complejo Deportivo)
+--
+-- Por cada celda día x turno informa:
+--   - CantidadReservas    : volumen de reservas efectivas (cuánta demanda hubo).
+--   - PorcentajeOcupacion : cupos usados sobre cupos ofrecidos.
+--
+-- Regla de negocio: cada reserva ocupa un cupo de 1 hora, así que el uso y la
+-- capacidad se miden en la misma unidad. La capacidad se asume FIJA: todas las
+-- canchas activas operan el turno completo todos los días.
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+-- Fija el inicio de semana en Lunes para que DATEPART(WEEKDAY) dé el mismo
+-- resultado en cualquier servidor (1=Lunes ... 7=Domingo).
+SET DATEFIRST 1;
+GO
+
+CREATE OR ALTER VIEW vw_OcupacionPorTurno AS
+
+-- Paso 1: etiqueta cada reserva efectiva con su día de la semana y su turno.
+WITH ReservasClasificadas AS (
+    SELECT
+        r.Fecha,
+        (DATEPART(WEEKDAY, r.Fecha) - 1) AS DiaNum,   -- 0=Lunes ... 6=Domingo
+        CASE
+            WHEN r.HoraInicio >= '08:00' AND r.HoraInicio < '12:00' THEN 1
+            WHEN r.HoraInicio >= '12:00' AND r.HoraInicio < '18:00' THEN 2
+            WHEN r.HoraInicio >= '18:00' AND r.HoraInicio < '22:00' THEN 3
+        END AS TurnoOrden                             -- 1=Mañana 2=Tarde 3=Noche
+    FROM Reservas r
+    WHERE r.IDEstado NOT IN (3, 4)            -- excluye Cancelada y No Asistió: no hubo uso real
+      AND r.Fecha < CAST(GETDATE() AS DATE)   -- solo ocupación ya ocurrida (no cuenta reservas futuras)
+)
+
+-- Paso 2: agrupa por día y turno, cuenta el volumen y calcula el % de ocupación.
+SELECT
+    DiaNum,
+    CASE DiaNum
+        WHEN 0 THEN 'Lunes'   WHEN 1 THEN 'Martes'  WHEN 2 THEN 'Miércoles'
+        WHEN 3 THEN 'Jueves'  WHEN 4 THEN 'Viernes' WHEN 5 THEN 'Sábado'
+        WHEN 6 THEN 'Domingo'
+    END AS Dia,
+    TurnoOrden,
+    CASE TurnoOrden WHEN 1 THEN 'Mañana' WHEN 2 THEN 'Tarde' WHEN 3 THEN 'Noche' END AS Turno,
+
+    COUNT(*) AS CantidadReservas,    -- cada reserva es un cupo de 1 hora
+
+    -- % = cupos usados / cupos ofrecidos.
+    -- Cupos ofrecidos = cupos del turno (Mañana 4, Tarde 6, Noche 4)
+    --                 x canchas activas
+    --                 x cantidad de fechas: numerador y denominador deben cubrir
+    --                   la misma cantidad de días, así el % nunca pasa de 100.
+    CAST(
+        COUNT(*) * 100.0
+        / NULLIF(
+              (CASE TurnoOrden WHEN 1 THEN 4 WHEN 2 THEN 6 WHEN 3 THEN 4 END)
+              * (SELECT COUNT(*) FROM Canchas WHERE Activa = 1)
+              * COUNT(DISTINCT Fecha)
+          , 0)                       -- NULLIF evita la división por cero
+        AS DECIMAL(5,2)
+    ) AS PorcentajeOcupacion
+
+FROM ReservasClasificadas
+GROUP BY DiaNum, TurnoOrden;
+GO
+
+-- El orden se aplica al consultar.
+-- DiaNum y TurnoOrden se muestran para ordenar Lun->Dom y Mañana->Noche.
+SELECT Dia, Turno, CantidadReservas, PorcentajeOcupacion
+FROM vw_OcupacionPorTurno
+ORDER BY DiaNum, TurnoOrden;
+
+GO
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+
+-- =========================================
+-- SP: sp_CanjearCupon
+-- Autor: Tomas Oliveres
+-- Aplica un cupón de fidelidad a una reserva validando todas las
+-- reglas de negocio (estado, titularidad, vigencia y límite de usos)
+-- dentro de una transacción: pasa todo o no se aplica nada.
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+CREATE OR ALTER PROCEDURE sp_CanjearCupon
+    @IDReserva    INT,
+    @CodigoCupon  VARCHAR(50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Variables de la reserva.
+        DECLARE @IDClienteReserva INT,
+            @PrecioActual DECIMAL(10,2),
+            @IDCuponEnReserva INT;
+
+        -- Variables del cupón.
+        DECLARE @IDCupon INT,
+            @IDUsuarioCupon INT,
+            @IDEstadoCupon INT,
+            @IDTipoDescuento INT,
+            @ValorDescuento DECIMAL(10,2),
+            @ValidoDesde DATE,
+            @ValidoHasta DATE,
+            @LimiteUsos INT,
+            @UsosActuales INT;
+
+        DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);
+
+        -- 1) Traer la reserva.
+        SELECT @IDClienteReserva = IDUsuario_Cliente,
+            @PrecioActual = PrecioTotal,
+            @IDCuponEnReserva = IDCupon
+        FROM Reservas
+        WHERE IDReserva = @IDReserva;
+
+        IF @IDClienteReserva IS NULL
+            THROW 50001, 'La reserva no existe.', 1;
+
+        IF @IDCuponEnReserva IS NOT NULL
+            THROW 50002, 'La reserva ya tiene un cupón aplicado.', 1;
+
+        -- 2) Traer el cupón por su código.
+        SELECT @IDCupon = IDCupon,
+            @IDUsuarioCupon = IDUsuario,
+            @IDEstadoCupon = IDEstadoCupon,
+            @IDTipoDescuento = IDTipoDescuento,
+            @ValorDescuento = ValorDescuento,
+            @ValidoDesde = ValidoDesde,
+            @ValidoHasta = ValidoHasta,
+            @LimiteUsos = LimiteUsos,
+            @UsosActuales = UsosActuales
+        FROM Cupones
+        WHERE Codigo = @CodigoCupon;
+
+        -- 3) Validaciones de negocio.
+        IF @IDCupon IS NULL
+            THROW 50003, 'El cupón no existe.', 1;
+
+        IF @IDEstadoCupon <> 1   -- 1 = Activo
+            THROW 50004, 'El cupón no está activo (puede estar canjeado, vencido, agotado o anulado).', 1;
+
+        IF @IDUsuarioCupon <> @IDClienteReserva
+            THROW 50005, 'El cupón no pertenece al cliente de la reserva.', 1;
+
+        IF (@ValidoDesde IS NOT NULL AND @Hoy < @ValidoDesde)
+           OR (@ValidoHasta IS NOT NULL AND @Hoy > @ValidoHasta)
+            THROW 50006, 'El cupón está fuera de su período de validez.', 1;
+
+        IF (@LimiteUsos IS NOT NULL AND @UsosActuales >= @LimiteUsos)
+            THROW 50007, 'El cupón ya alcanzó su límite de usos.', 1;
+
+        -- 4) Calcular el nuevo precio según el tipo de descuento.
+        DECLARE @NuevoPrecio DECIMAL(10,2);
+
+        IF @IDTipoDescuento = 2                 -- Reserva gratis
+            SET @NuevoPrecio = 0;
+        ELSE IF @IDTipoDescuento = 1            -- Porcentaje
+            SET @NuevoPrecio = @PrecioActual - (@PrecioActual * @ValorDescuento / 100.0);
+        ELSE
+            SET @NuevoPrecio = @PrecioActual;
+
+        IF @NuevoPrecio < 0
+            SET @NuevoPrecio = 0;
+
+        -- 5) Aplicar el cupón a la reserva.
+        UPDATE Reservas
+        SET PrecioTotal = @NuevoPrecio,
+            IDCupon = @IDCupon
+        WHERE IDReserva = @IDReserva;
+
+        -- 6) Registrar el uso y cerrar el cupón si llegó al límite
+        --    (Canjeado si era de un solo uso, Agotado si era multiuso).
+        UPDATE Cupones
+        SET UsosActuales = UsosActuales + 1,
+            IDEstadoCupon = CASE
+                WHEN @LimiteUsos IS NOT NULL AND (@UsosActuales + 1) >= @LimiteUsos
+                    THEN CASE WHEN @LimiteUsos = 1 THEN 2 ELSE 4 END
+                ELSE IDEstadoCupon
+            END
+        WHERE IDCupon = @IDCupon;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;   -- propaga el error original al que llamó al SP
+    END CATCH
+END;
+GO
+
+-- Prueba manual
+-- EXEC sp_CanjearCupon @IDReserva = 21, @CodigoCupon = 'FID-LUC-15';
+
+GO
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+
+-- =========================================
+-- TRIGGER: Sincronizar estado de pago
+-- Autor: Tomas Oliveres
+-- Recalcula el estado de pago de la reserva al registrarse un pago.
+-- Escrito en modo CONJUNTO ('inserted' puede traer varias filas).
+-- No toca reservas Canceladas (evita el problema del reembolso).
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+CREATE OR ALTER TRIGGER TR_SincronizarEstadoPago
+ON Pagos
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE r
+    SET r.IDEstadoPago = CASE
+            WHEN (SELECT SUM(p.Monto) FROM Pagos p WHERE p.IDReserva = r.IDReserva) >= r.PrecioTotal
+                THEN 3   -- Pagado
+            WHEN (SELECT SUM(p.Monto) FROM Pagos p WHERE p.IDReserva = r.IDReserva) > 0
+                THEN 2   -- Señado
+            ELSE r.IDEstadoPago
+        END
+    FROM Reservas r
+    INNER JOIN inserted i ON i.IDReserva = r.IDReserva
+    WHERE r.IDEstado <> 3;   -- no tocar Canceladas
+END;
+GO
+
+-- Uso:  INSERT INTO Pagos (Monto, IDReserva, IDFormaPago) VALUES (2000, 25, 1);

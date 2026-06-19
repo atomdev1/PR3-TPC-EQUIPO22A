@@ -1,7 +1,6 @@
 -- =========================================
 -- RESET de la base de datos
--- Borra la BD si existe. Después correr en orden:
---   01_Creacion_BD.sql  ->  02_Datos_Iniciales.sql
+-- Borra la BD si existe. Después correr Setup_BD_Completo.sql para recrearla.
 -- =========================================
 
 USE master;
