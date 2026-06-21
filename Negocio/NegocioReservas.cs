@@ -136,5 +136,37 @@ namespace Negocio
             }
             finally { datos.CerrarConexion(); }
         }
+        public List<CanchaMenorUso> ObtenerCanchasMenorUso()
+        {
+            List<CanchaMenorUso> lista = new List<CanchaMenorUso>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+            SELECT NroCancha, NombreFantasia, Deporte, ReservasXMes, Mes, Anio
+            FROM   vw_CanchasMenorUso
+            ORDER BY ReservasXMes ASC, NroCancha ASC");
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    lista.Add(new CanchaMenorUso
+                    {
+                        NroCancha = (int)datos.Lector["NroCancha"],
+                        NombreFantasia = datos.Lector["NombreFantasia"] is DBNull ? "" : (string)datos.Lector["NombreFantasia"],
+                        Deporte = (string)datos.Lector["Deporte"],
+                        ReservasXMes = (int)datos.Lector["ReservasXMes"],
+                        Mes = (int)datos.Lector["Mes"],
+                        Anio = (int)datos.Lector["Anio"]
+                    });
+                }
+                return lista;
+            }
+            catch (Exception)
+            {
+                return new List<CanchaMenorUso>();
+            }
+            finally { datos.CerrarConexion(); }
+        }
     }
 }

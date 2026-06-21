@@ -38,6 +38,7 @@ namespace WebApp
                 CargarResumen();
                 CargarUltimasReservas();
                 CargarOcupacion();
+                CargarCanchasMenorUso();
             }
         }
 
@@ -90,7 +91,15 @@ namespace WebApp
             catch { datos = new List<OcupacionTurno>(); }   // si la vista aún no se creó, la grilla se muestra en cero
             litHeatmap.Text = GenerarHeatmap(datos);
         }
+        private void CargarCanchasMenorUso()
+        {
+            List<CanchaMenorUso> lista = new NegocioReservas().ObtenerCanchasMenorUso();
 
+            rptCanchasMenorUso.DataSource = lista;
+            rptCanchasMenorUso.DataBind();
+
+            pnlSinCanchasMenorUso.Visible = lista.Count == 0;
+        }
         private string GenerarHeatmap(List<OcupacionTurno> datos)
         {
             string[] diasCorto = { "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" };
