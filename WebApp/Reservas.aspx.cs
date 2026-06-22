@@ -148,6 +148,22 @@ namespace WebApp
 
                 AbrirModalCanje();
             }
+            else if (e.CommandName == "Finalizar")
+            {
+                Usuario u = Session["usuario"] as Usuario;
+                if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
+                try
+                {
+                    new NegocioReservas().Finalizar(int.Parse(e.CommandArgument.ToString()));
+                    CargarReservas(u);
+                }
+                catch (Exception ex)
+                {
+                    lblErrorFinalizar.Text = ex.Message;
+                    lblErrorFinalizar.Visible = true;
+                }
+            }
         }
 
         // Confirma el canje. Si el SP rechaza por una regla, hace THROW: el

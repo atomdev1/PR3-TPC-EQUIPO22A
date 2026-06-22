@@ -55,12 +55,14 @@
     <div class="card-r">
         <div class="card-head">
             <asp:Label ID="lblTotal" runat="server" CssClass="fw-semibold" />
+            <asp:Label ID="lblErrorFinalizar" runat="server"
+    CssClass="alert alert-danger d-block mt-3" Visible="false" />
         </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th class="ps-3">#</th>
+                        <th class="ps-3" style="width:50px">#</th>
                         <th>Cliente</th>
                         <th>Cancha</th>
                         <th>Fecha</th>
@@ -97,10 +99,10 @@
                                         <%# GetTextoPago(Eval("EstadoPago")) %>
                                     </span>
                                 </td>
-                                <td class="text-end pe-3 fw-semibold small">
+                                <td class="text-end pe-3 fw-semibold small" style="white-space:nowrap">
                                     <%# string.Format("{0:C0}", Eval("PrecioTotal")) %>
                                 </td>
-                                <td class="text-end pe-3">
+                                <td class="text-end pe-3" style="white-space:nowrap">
                                     <div class="d-flex gap-2 justify-content-end">
                                         <%-- Ver y Registrar pago son solo para staff. Canjear cupón lo
                                              ve también el cliente, sobre sus propias reservas. --%>
@@ -108,7 +110,7 @@
                                         <asp:LinkButton runat="server"
                                             CommandName="Ver"
                                             CommandArgument='<%# Eval("IdReserva") %>'
-                                            CssClass="btn-r btn-sm-r btn-ghost-r">
+                                            CssClass="btn btn-sm btn-outline-secondary">
                                             Ver
                                         </asp:LinkButton>
                                         <asp:LinkButton runat="server"
@@ -116,6 +118,13 @@
                                             CommandArgument='<%# Eval("IdReserva") %>'
                                             CssClass="btn btn-sm btn-outline-success">
                                             Registrar pago
+                                        </asp:LinkButton>
+                                        <asp:LinkButton runat="server"
+                                            CommandName="Finalizar"
+                                            CommandArgument='<%# Eval("IdReserva") %>'
+                                            CssClass="btn btn-sm btn-outline-danger"
+                                            Visible='<%# (int)Eval("Estado") == 1 || (int)Eval("Estado") == 2 %>'>
+                                            Finalizar
                                         </asp:LinkButton>
                                         <% } %>
                                         <asp:LinkButton runat="server"

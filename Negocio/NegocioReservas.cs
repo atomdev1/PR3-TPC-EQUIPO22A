@@ -168,5 +168,16 @@ namespace Negocio
             }
             finally { datos.CerrarConexion(); }
         }
+        public void Finalizar(int idReserva)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta("EXEC SP_FinalizarReserva @IDReserva = @id");
+                datos.AgregarParametro("@id", idReserva);
+                datos.EjecutarAccion();
+            }
+            finally { datos.CerrarConexion(); }
+        }
     }
 }
