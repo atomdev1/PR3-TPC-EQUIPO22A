@@ -1108,8 +1108,12 @@ GO
 -- TRIGGER: Sincronizar estado de pago
 -- Autor: Tomas Oliveres
 -- Recalcula el estado de pago de la reserva al registrarse un pago.
--- Escrito en modo CONJUNTO ('inserted' puede traer varias filas).
--- No toca reservas Canceladas (evita el problema del reembolso).
+-- Escrito pensando en que inserted puede traer varias filas.
+-- No toca reservas Canceladas.
+-- "Señado" exige alcanzar la MontoSena de la cancha: un pago menor a la seña
+-- deja la reserva en Pendiente, NO en Señado. Si la cancha no define seña
+-- (MontoSena NULL), no hay umbral que alcanzar: la reserva queda Pendiente
+-- hasta cubrir el total (pasa directo a Pagado).
 -- =========================================
 
 USE BBDD2_TPI_GRUPO45;
@@ -1123,11 +1127,13 @@ BEGIN
     SET NOCOUNT ON;
 
     UPDATE r
-    SET r.IDEstadoPago = CASE
-            WHEN (SELECT SUM(p.Monto) FROM Pagos p WHERE p.IDReserva = r.IDReserva) >= r.PrecioTotal
-                THEN 3   -- Pagado
-            WHEN (SELECT SUM(p.Monto) FROM Pagos p WHERE p.IDReserva = r.IDReserva) > 0
-                THEN 2   -- Señado
+    SET r.IDEstadoPago = CASE  -- La subconsulta suma TODOS los pagos de cada reserva y decide el estado
+            WHEN ISNULL(pg.Pagado, 0) >= r.PrecioTotal
+                THEN 3   -- Pagado: cubrió el total
+            WHEN c.MontoSena IS NOT NULL AND pg.Pagado >= c.MontoSena
+                THEN 2   -- Señado: solo si hay seña definida y el pago la alcanzó
+            WHEN ISNULL(pg.Pagado, 0) > 0
+                THEN 1   -- pagó algo pero no llega a la seña (o no hay seña): sigue Pendiente
             ELSE r.IDEstadoPago
         END
     FROM Reservas r
