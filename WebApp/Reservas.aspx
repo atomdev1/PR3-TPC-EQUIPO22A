@@ -102,45 +102,70 @@
                                 <td class="text-end pe-3 fw-semibold small" style="white-space:nowrap">
                                     <%# string.Format("{0:C0}", Eval("PrecioTotal")) %>
                                 </td>
-                                <td class="text-end pe-3" style="white-space:nowrap">
-                                    <div class="d-flex gap-2 justify-content-end">
-                                        <%-- Ver y Registrar pago son solo para staff. Canjear cupón lo
-                                             ve también el cliente, sobre sus propias reservas. --%>
-                                        <% if (!EsCliente) { %>
-                                        <asp:LinkButton runat="server"
-                                            CommandName="Ver"
-                                            CommandArgument='<%# Eval("IdReserva") %>'
-                                            CssClass="btn btn-sm btn-outline-secondary">
-                                            Ver
-                                        </asp:LinkButton>
-                                        <asp:LinkButton runat="server"
-                                            CommandName="RegistrarPago"
-                                            CommandArgument='<%# Eval("IdReserva") %>'
-                                            CssClass="btn btn-sm btn-outline-success">
-                                            Registrar pago
-                                        </asp:LinkButton>
-                                         <asp:LinkButton runat="server"
-                                            CommandName="Cancelar"
-                                            CommandArgument='<%# Eval("IdReserva") %>'
-                                            CssClass="btn btn-sm btn-outline-danger">
-                                            Cancelar
-                                        </asp:LinkButton>
-                                        <asp:LinkButton runat="server"
-                                            CommandName="Finalizar"
-                                            CommandArgument='<%# Eval("IdReserva") %>'
-                                            CssClass="btn btn-sm btn-outline-danger"
-                                            Visible='<%# (int)Eval("Estado") == 1 || (int)Eval("Estado") == 2 %>'>
-                                            Finalizar
-                                        </asp:LinkButton>
-                                        <% } %>
-
-                                        <asp:LinkButton runat="server"
-                                            CommandName="Canjear"
-                                            CommandArgument='<%# Eval("IdReserva") %>'
-                                            CssClass="btn btn-sm btn-outline-primary">
-                                            Canjear cupón
-                                        </asp:LinkButton>
+                                
+                                <td class="text-end pe-3">
+                                    <% if (!EsCliente) { %>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <%--Acciones--%>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <asp:LinkButton runat="server"
+                                                    CommandName="Ver"
+                                                    CommandArgument='<%# Eval("IdReserva") %>'
+                                                    CssClass="dropdown-item">
+                                                    Ver detalle
+                                                </asp:LinkButton>
+                                            </li>
+                                            <li>
+                                                <asp:LinkButton runat="server"
+                                                    CommandName="RegistrarPago"
+                                                    CommandArgument='<%# Eval("IdReserva") %>'
+                                                    CssClass="dropdown-item">
+                                                    Registrar pago
+                                                </asp:LinkButton>
+                                            </li>
+                                            <li>
+                                                <asp:LinkButton runat="server"
+                                                    CommandName="Canjear"
+                                                    CommandArgument='<%# Eval("IdReserva") %>'
+                                                    CssClass="dropdown-item"
+                                                    Visible='<%# (int)Eval("EstadoPago") != 3 %>'>
+                                                    Canjear cupón
+                                                </asp:LinkButton>
+                                            </li>
+                                            <li><hr class="dropdown-divider" /></li>
+                                            <li>
+                                                <asp:LinkButton runat="server"
+                                                    CommandName="Finalizar"
+                                                    CommandArgument='<%# Eval("IdReserva") %>'
+                                                    CssClass="dropdown-item"
+                                                    Visible='<%# (int)Eval("Estado") == 1 || (int)Eval("Estado") == 2 %>'>
+                                                    Finalizar
+                                                </asp:LinkButton>
+                                            </li>
+                                            <li>
+                                                <asp:LinkButton runat="server"
+                                                    CommandName="Cancelar"
+                                                    CommandArgument='<%# Eval("IdReserva") %>'
+                                                    CssClass="dropdown-item text-danger"
+                                                    Visible='<%# (int)Eval("Estado") != 3 && (int)Eval("Estado") != 5 %>'>
+                                                    Cancelar reserva
+                                                </asp:LinkButton>
+                                            </li>
+                                        </ul>
                                     </div>
+                                    <% } else { %>
+                                    <asp:LinkButton runat="server"
+                                        CommandName="Canjear"
+                                        CommandArgument='<%# Eval("IdReserva") %>'
+                                        CssClass="btn btn-sm btn-outline-primary"
+                                        Visible='<%# (int)Eval("EstadoPago") != 3 %>'>
+                                        Canjear cupón
+                                    </asp:LinkButton>
+                                    <% } %>
                                 </td>
                             </tr>
                         </ItemTemplate>
