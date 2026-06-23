@@ -148,6 +148,24 @@ namespace WebApp
 
                 AbrirModalCanje();
             }
+            else if (e.CommandName == "Cancelar")
+            {
+                int idReserva = int.Parse(e.CommandArgument.ToString());
+                Reserva reserva = new NegocioReservas().Listar()
+                    .FirstOrDefault(r => r.IdReserva == idReserva);
+                if (reserva == null) return;
+
+                hfIdReservaCancelacion.Value = idReserva.ToString();
+                lblCancelacionReserva.Text = "Reserva #" + idReserva;
+                lblCancelacionCliente.Text = reserva.Cliente.Nombre + " " + reserva.Cliente.Apellido;
+                lblCancelacionFecha.Text = reserva.Fecha.ToString("dd/MM/yyyy") + " " +
+                                                   reserva.HoraInicio.ToString(@"hh\:mm") + " – " +
+                                                   reserva.HoraFin.ToString(@"hh\:mm");
+                lblCancelacionPrecio.Text = string.Format("{0:C0}", reserva.PrecioTotal);
+                lblErrorCancelacion.Visible = false;
+
+                AbrirModalCancelacion();
+            }
         }
 
         // Confirma el canje. Si el SP rechaza por una regla, hace THROW: el
@@ -229,6 +247,33 @@ namespace WebApp
             string script =
                 "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCanjearCupon')).show();";
             ClientScript.RegisterStartupScript(GetType(), "abrirModalCanje", script, true);
+        }
+
+        protected void btnConfirmarCancelacion_Click(object sender, EventArgs e)
+        {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
+            try
+            {
+                new NegocioReservas().CancelarReserva(int.Parse(hfIdReservaCancelacion.Value));
+            }
+            catch (Exception ex)
+            {
+                lblErrorCancelacion.Text = ex.Message;
+                lblErrorCancelacion.Visible = true;
+                AbrirModalCancelacion();
+                return;
+            }
+
+            CargarReservas(u);
+        }
+
+        private void AbrirModalCancelacion()
+        {
+            string script =
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelarReserva')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModalCancelacion", script, true);
         }
 
         protected string GetBadgeEstado(object estadoObj)

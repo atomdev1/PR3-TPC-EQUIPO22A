@@ -117,7 +117,14 @@
                                             CssClass="btn btn-sm btn-outline-success">
                                             Registrar pago
                                         </asp:LinkButton>
+                                        <asp:LinkButton runat="server"
+                                            CommandName="Cancelar"
+                                            CommandArgument='<%# Eval("IdReserva") %>'
+                                            CssClass="btn btn-sm btn-outline-danger">
+                                            Cancelar
+                                        </asp:LinkButton>
                                         <% } %>
+
                                         <asp:LinkButton runat="server"
                                             CommandName="Canjear"
                                             CommandArgument='<%# Eval("IdReserva") %>'
@@ -265,6 +272,37 @@
                     <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Cancelar</button>
                     <asp:Button ID="btnConfirmarCanje" runat="server" Text="Canjear cupón"
                         CssClass="btn-r btn-primary-r" OnClick="btnConfirmarCanje_Click" CausesValidation="false" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- MODAL CANCELAR RESERVA --%>
+    <div class="modal fade" id="modalCancelarReserva" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cancelar reserva</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <asp:HiddenField ID="hfIdReservaCancelacion" runat="server" />
+                    <asp:Label ID="lblErrorCancelacion" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
+
+                    <p>¿Estás seguro que querés cancelar esta reserva?</p>
+                    <div class="mb-2">
+                        <asp:Label ID="lblCancelacionReserva" runat="server" CssClass="fw-semibold d-block" />
+                        <div class="small text-muted mt-1">
+                            <span>Cliente: <asp:Label ID="lblCancelacionCliente" runat="server" /></span><br />
+                            <span>Fecha: <asp:Label ID="lblCancelacionFecha" runat="server" /></span><br />
+                            <span>Precio: <asp:Label ID="lblCancelacionPrecio" runat="server" /></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Volver</button>
+                    <asp:Button ID="btnConfirmarCancelacion" runat="server" Text="Sí, cancelar reserva"
+                        CssClass="btn-r btn-danger-r" OnClick="btnConfirmarCancelacion_Click" CausesValidation="false" />
                 </div>
             </div>
         </div>

@@ -69,15 +69,6 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.Label lblIngresosHoy;
 
         /// <summary>
-        /// litHeatmap control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litHeatmap;
-
-        /// <summary>
         /// rptReservas control.
         /// </summary>
         /// <remarks>
@@ -85,6 +76,24 @@ namespace WebApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater rptReservas;
+
+        /// <summary>
+        /// rptDeudores control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptDeudores;
+
+        /// <summary>
+        /// litHeatmap control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litHeatmap;
 
         /// <summary>
         /// pnlCliente control.

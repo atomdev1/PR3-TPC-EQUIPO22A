@@ -136,5 +136,44 @@ namespace Negocio
             }
             finally { datos.CerrarConexion(); }
         }
+
+        public void CancelarReserva(int idReserva)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearProcedimiento("sp_CancelarReserva");
+                datos.AgregarParametro("@IDReserva", idReserva);
+                datos.EjecutarAccion();
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
+        public List<ClienteDeudor> ObtenerClientesDeudores()
+        {
+            List<ClienteDeudor> lista = new List<ClienteDeudor>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta("SELECT IDUsuario, DNI, Nombre, Apellido, Email, Telefono, ReservasConDeuda, MontoDeudaTotal FROM vw_ClientesDeudores ORDER BY MontoDeudaTotal DESC");
+                datos.EjecutarLectura();
+                while (datos.Lector.Read())
+                {
+                    ClienteDeudor c = new ClienteDeudor();
+                    c.IdUsuario = (int)datos.Lector["IDUsuario"];
+                    c.DNI = (string)datos.Lector["DNI"];
+                    c.Nombre = (string)datos.Lector["Nombre"];
+                    c.Apellido = (string)datos.Lector["Apellido"];
+                    c.Email = (string)datos.Lector["Email"];
+                    c.Telefono = datos.Lector["Telefono"] is DBNull ? "" : (string)datos.Lector["Telefono"];
+                    c.ReservasConDeuda = (int)datos.Lector["ReservasConDeuda"];
+                    c.MontoDeudaTotal = (decimal)datos.Lector["MontoDeudaTotal"];
+                    lista.Add(c);
+                }
+                return lista;
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
     }
 }

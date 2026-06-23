@@ -126,6 +126,44 @@
     
     </div>
     
+    <%-- Clientes con deuda --%>
+    <div class="card-r mt-4">
+        <div class="card-head">
+            <h6>Clientes con deuda pendiente</h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Cliente</th>
+                        <th>DNI</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th class="text-center">Reservas con deuda</th>
+                        <th class="text-end pe-3">Deuda total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <asp:Repeater ID="rptDeudores" runat="server">
+                        <ItemTemplate>
+                            <tr>
+                                <td class="ps-3 fw-semibold"><%# Eval("Nombre") %> <%# Eval("Apellido") %></td>
+                                <td class="text-muted small"><%# Eval("DNI") %></td>
+                                <td class="small"><%# Eval("Email") %></td>
+                                <td class="small"><%# Eval("Telefono") %></td>
+                                <td class="text-center">
+                                    <span class="tag tag-warn"><%# Eval("ReservasConDeuda") %></span>
+                                </td>
+                                <td class="text-end pe-3 fw-semibold text-danger">
+                                    <%# string.Format("{0:C0}", Eval("MontoDeudaTotal")) %>
+                                </td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </tbody>
+            </table>
+        </div>
+    </div>
        
        
         
@@ -151,6 +189,8 @@
             </div>
         </div>
     </div>
+
+    
 
     </asp:Panel>
 

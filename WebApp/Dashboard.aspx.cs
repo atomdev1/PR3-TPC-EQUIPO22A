@@ -38,6 +38,7 @@ namespace WebApp
                 CargarResumen();
                 CargarUltimasReservas();
                 CargarOcupacion();
+                CargarClientesDeudores();
             }
         }
 
@@ -89,6 +90,19 @@ namespace WebApp
             try { datos = new NegocioReservas().ObtenerOcupacionPorTurno(); }
             catch { datos = new List<OcupacionTurno>(); }   // si la vista aún no se creó, la grilla se muestra en cero
             litHeatmap.Text = GenerarHeatmap(datos);
+        }
+
+        private void CargarClientesDeudores()
+        {
+            try
+            {
+                rptDeudores.DataSource = new NegocioReservas().ObtenerClientesDeudores();
+                rptDeudores.DataBind();
+            }
+            catch
+            {
+                // Si la vista aún no existe, la tabla se muestra vacía
+            }
         }
 
         private string GenerarHeatmap(List<OcupacionTurno> datos)
