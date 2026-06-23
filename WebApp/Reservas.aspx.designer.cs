@@ -150,6 +150,24 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.Label lblDetPago;
 
         /// <summary>
+        /// lblDetPagado control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetPagado;
+
+        /// <summary>
+        /// lblDetSaldo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDetSaldo;
+
+        /// <summary>
         /// lblDetObs control.
         /// </summary>
         /// <remarks>
@@ -157,6 +175,36 @@ namespace WebApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblDetObs;
+
+        /// <summary>
+        /// lblPagosReserva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblPagosReserva;
+
+        /// <summary>
+        /// lblPagosPrecio control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblPagosPrecio;
+
+        /// <summary>
+        /// lblPagosPagado control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblPagosPagado;
+
+        /// <summary>
+        /// lblPagosSaldo control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblPagosSaldo;
+
+        /// <summary>
+        /// rptPagos control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Repeater rptPagos;
+
+        /// <summary>
+        /// lblPagosVacio control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblPagosVacio;
 
         /// <summary>
         /// hfIdReservaPago control.

@@ -103,6 +103,8 @@ namespace WebApp
                 lblDetPrecio.Text  = string.Format("{0:C0}", r.PrecioTotal);
                 lblDetEstado.Text  = r.Estado.ToString();
                 lblDetPago.Text    = GetTextoPago(r.EstadoPago);
+                lblDetPagado.Text  = string.Format("{0:C0}", r.TotalPagado);
+                lblDetSaldo.Text   = string.Format("{0:C0}", r.SaldoPendiente);
                 lblDetObs.Text     = string.IsNullOrEmpty(r.Observaciones) ? "Sin observaciones" : r.Observaciones;
 
                 AbrirModalDetalle();
@@ -111,26 +113,44 @@ namespace WebApp
             {
                 int idReserva = int.Parse(e.CommandArgument.ToString());
 
-                // Busco precio total y lo ya pagado para mostrar el saldo y
-                // proponer ese monto por defecto.
+                // Precio total y lo ya pagado ya vienen en la reserva (Listar los
+                // trae en una sola query), así que el saldo sale sin viajar de nuevo.
                 Reserva reserva = new NegocioReservas().Listar()
                     .FirstOrDefault(r => r.IdReserva == idReserva);
                 if (reserva == null) return;
 
-                decimal pagado = new NegocioPagos().ObtenerTotalPagado(idReserva);
-                decimal saldo = reserva.PrecioTotal - pagado;
-                if (saldo < 0) saldo = 0;
+                decimal saldo = reserva.SaldoPendiente;
 
                 hfIdReservaPago.Value = idReserva.ToString();
                 lblPagoReserva.Text   = "Reserva #" + idReserva;
                 lblPagoPrecio.Text    = string.Format("{0:C0}", reserva.PrecioTotal);
-                lblPagoPagado.Text    = string.Format("{0:C0}", pagado);
+                lblPagoPagado.Text    = string.Format("{0:C0}", reserva.TotalPagado);
                 lblPagoSaldo.Text     = string.Format("{0:C0}", saldo);
                 txtMontoPago.Text     = saldo.ToString("0.##");
                 ddlFormaPago.SelectedValue = "1";
                 lblErrorPago.Visible  = false;
 
                 AbrirModalPago();
+            }
+            else if (e.CommandName == "VerPagos")
+            {
+                int idReserva = int.Parse(e.CommandArgument.ToString());
+                Reserva reserva = new NegocioReservas().Listar()
+                    .FirstOrDefault(r => r.IdReserva == idReserva);
+                if (reserva == null) return;
+
+                List<Pago> pagos = new NegocioPagos().ObtenerPagosPorReserva(idReserva);
+
+                lblPagosReserva.Text = "Reserva #" + idReserva;
+                lblPagosPrecio.Text  = string.Format("{0:C0}", reserva.PrecioTotal);
+                lblPagosPagado.Text  = string.Format("{0:C0}", reserva.TotalPagado);
+                lblPagosSaldo.Text   = string.Format("{0:C0}", reserva.SaldoPendiente);
+
+                rptPagos.DataSource = pagos;
+                rptPagos.DataBind();
+                lblPagosVacio.Visible = pagos.Count == 0;
+
+                AbrirModalDetallePago();
             }
             else if (e.CommandName == "Canjear")
             {
@@ -256,6 +276,26 @@ namespace WebApp
             string script =
                 "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDetalleReserva')).show();";
             ClientScript.RegisterStartupScript(GetType(), "abrirModalDetalle", script, true);
+        }
+
+        private void AbrirModalDetallePago()
+        {
+            string script =
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDetallePago')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModalDetallePago", script, true);
+        }
+
+        // Nombre legible de la forma de pago (los del enum no llevan acentos ni espacios).
+        protected string GetTextoFormaPago(object formaObj)
+        {
+            FormaPago forma = (FormaPago)formaObj;
+            switch (forma)
+            {
+                case FormaPago.TarjetaDebito:  return "Tarjeta de débito";
+                case FormaPago.TarjetaCredito: return "Tarjeta de crédito";
+                case FormaPago.MercadoPago:    return "Mercado Pago";
+                default:                       return forma.ToString();
+            }
         }
 
         private void AbrirModalCanje()

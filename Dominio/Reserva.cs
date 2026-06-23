@@ -11,7 +11,18 @@ namespace Dominio
         public TimeSpan HoraInicio { get; set; }
         public TimeSpan HoraFin { get; set; }
         public decimal PrecioTotal { get; set; }
+        public decimal TotalPagado { get; set; }   // suma de los pagos de la reserva (lo trae Listar en una sola query)
         public string Observaciones { get; set; }
+
+        // Lo que falta cobrar. Si por algún ajuste se pagó de más, no devuelvo negativo.
+        public decimal SaldoPendiente
+        {
+            get
+            {
+                decimal saldo = PrecioTotal - TotalPagado;
+                return saldo < 0 ? 0 : saldo;
+            }
+        }
         public Usuario Cliente { get; set; }    // el que reserva la cancha
         public Usuario Staff { get; set; }      // el del mostrador que la carga
         public Cancha Cancha { get; set; }

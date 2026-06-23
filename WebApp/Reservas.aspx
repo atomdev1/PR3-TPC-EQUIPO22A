@@ -69,7 +69,6 @@
                         <th>Horario</th>
                         <th>Estado</th>
                         <th>Pago</th>
-                        <th class="text-end pe-3">Precio</th>
                         <th class="text-end pe-3">Acciones</th>
                     </tr>
                 </thead>
@@ -94,15 +93,18 @@
                                         <%# Eval("Estado") %>
                                     </span>
                                 </td>
-                                <td>
+                                <td style="white-space:nowrap">
                                     <span class='<%# GetBadgePago(Eval("EstadoPago")) %>'>
                                         <%# GetTextoPago(Eval("EstadoPago")) %>
                                     </span>
+                                    <asp:LinkButton runat="server"
+                                        CommandName="VerPagos"
+                                        CommandArgument='<%# Eval("IdReserva") %>'
+                                        CssClass="d-block btn btn-link btn-sm p-0 mt-1 small text-decoration-none">
+                                        🧾 Detalle de pago
+                                    </asp:LinkButton>
                                 </td>
-                                <td class="text-end pe-3 fw-semibold small" style="white-space:nowrap">
-                                    <%# string.Format("{0:C0}", Eval("PrecioTotal")) %>
-                                </td>
-                                
+
                                 <td class="text-end pe-3">
                                     <% if (!EsCliente) { %>
                                     <div class="dropdown">
@@ -213,11 +215,68 @@
                             <label class="form-label small fw-semibold">Estado pago</label>
                             <p class="form-control-plaintext"><asp:Label ID="lblDetPago" runat="server" /></p>
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Pagado</label>
+                            <p class="form-control-plaintext fw-semibold text-success"><asp:Label ID="lblDetPagado" runat="server" /></p>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Saldo pendiente</label>
+                            <p class="form-control-plaintext fw-semibold"><asp:Label ID="lblDetSaldo" runat="server" /></p>
+                        </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Observaciones</label>
                             <p class="form-control-plaintext"><asp:Label ID="lblDetObs" runat="server" /></p>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- ===================== MODAL DETALLE DE PAGO ===================== --%>
+    <%-- Muestra el desglose real: cada pago (seña / saldo) con su fecha y forma. --%>
+    <div class="modal fade" id="modalDetallePago" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalle de pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <asp:Label ID="lblPagosReserva" runat="server" CssClass="fw-semibold d-block mb-2" />
+                    <div class="d-flex justify-content-between small text-muted mb-3">
+                        <span>Precio total: <asp:Label ID="lblPagosPrecio" runat="server" /></span>
+                        <span>Pagado: <asp:Label ID="lblPagosPagado" runat="server" /></span>
+                        <span>Saldo: <asp:Label ID="lblPagosSaldo" runat="server" CssClass="fw-semibold" /></span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Forma de pago</th>
+                                    <th class="text-end">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <asp:Repeater ID="rptPagos" runat="server">
+                                    <ItemTemplate>
+                                        <tr>
+                                            <td class="small"><%# ((DateTime)Eval("FechaHora")).ToString("dd/MM/yyyy HH:mm") %></td>
+                                            <td class="small"><%# GetTextoFormaPago(Eval("FormaDePago")) %></td>
+                                            <td class="text-end fw-semibold small"><%# string.Format("{0:C0}", Eval("Monto")) %></td>
+                                        </tr>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+                            </tbody>
+                        </table>
+                    </div>
+                    <asp:Label ID="lblPagosVacio" runat="server" CssClass="text-muted small" Visible="false"
+                        Text="Todavía no se registraron pagos para esta reserva." />
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>

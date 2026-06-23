@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Dominio;
+using Dominio.Enums;
 
 namespace Negocio
 {
@@ -45,6 +47,40 @@ namespace Negocio
                     return (decimal)datos.Lector["Total"];
 
                 return 0m;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // Lista los pagos individuales de una reserva (cada seña / saldo cargado),
+        // ordenados por fecha. Alimenta el modal de detalle de pago.
+        public List<Pago> ObtenerPagosPorReserva(int idReserva)
+        {
+            List<Pago> lista = new List<Pago>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT IDPago, Monto, FechaHora, IDFormaPago
+                    FROM   Pagos
+                    WHERE  IDReserva = @idReserva
+                    ORDER BY FechaHora");
+                datos.AgregarParametro("@idReserva", idReserva);
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    lista.Add(new Pago
+                    {
+                        IdPago      = (int)datos.Lector["IDPago"],
+                        Monto       = (decimal)datos.Lector["Monto"],
+                        FechaHora   = (DateTime)datos.Lector["FechaHora"],
+                        FormaDePago = (FormaPago)(int)datos.Lector["IDFormaPago"]
+                    });
+                }
+                return lista;
             }
             finally
             {

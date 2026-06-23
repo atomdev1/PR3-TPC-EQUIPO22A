@@ -64,6 +64,7 @@ namespace Negocio
             SELECT r.IDReserva, r.Fecha, r.HoraInicio, r.HoraFin,
                    r.PrecioTotal, r.Observaciones,
                    r.IDEstado, r.IDEstadoPago,
+                   ISNULL(p.TotalPagado, 0) AS TotalPagado,
                    u.IDUsuario  AS ClienteId,
                    u.Nombre     AS ClienteNombre,
                    u.Apellido   AS ClienteApellido,
@@ -73,6 +74,11 @@ namespace Negocio
             INNER JOIN Usuarios u ON u.IDUsuario = r.IDUsuario_Cliente
             INNER JOIN Canchas  c ON c.IDCancha  = r.IDCancha
             INNER JOIN Deportes d ON d.IDDeporte = c.IDDeporte
+            LEFT JOIN (
+                SELECT IDReserva, SUM(Monto) AS TotalPagado
+                FROM   Pagos
+                GROUP BY IDReserva
+            ) p ON p.IDReserva = r.IDReserva
             ORDER BY r.Fecha DESC, r.HoraInicio DESC");
                 datos.EjecutarLectura();
 
@@ -84,6 +90,7 @@ namespace Negocio
                     r.HoraInicio = (TimeSpan)datos.Lector["HoraInicio"];
                     r.HoraFin = (TimeSpan)datos.Lector["HoraFin"];
                     r.PrecioTotal = (decimal)datos.Lector["PrecioTotal"];
+                    r.TotalPagado = (decimal)datos.Lector["TotalPagado"];
                     r.Observaciones = datos.Lector["Observaciones"] is DBNull
                                       ? "" : (string)datos.Lector["Observaciones"];
                     r.Estado = (EstadoReserva)(int)datos.Lector["IDEstado"];
