@@ -39,6 +39,7 @@ namespace WebApp
                 CargarUltimasReservas();
                 CargarOcupacion();
                 CargarClientesDeudores();
+                CargarCanchasMenorUso();
             }
         }
 
@@ -90,6 +91,14 @@ namespace WebApp
             try { datos = new NegocioReservas().ObtenerOcupacionPorTurno(); }
             catch { datos = new List<OcupacionTurno>(); }   // si la vista aún no se creó, la grilla se muestra en cero
             litHeatmap.Text = GenerarHeatmap(datos);
+        }
+
+        private void CargarCanchasMenorUso()
+        {
+            List<CanchaMenorUso> lista = new NegocioReservas().ObtenerCanchasMenorUso();
+            rptCanchasMenorUso.DataSource = lista;
+            rptCanchasMenorUso.DataBind();
+            pnlSinCanchasMenorUso.Visible = lista.Count == 0;
         }
 
         private void CargarClientesDeudores()

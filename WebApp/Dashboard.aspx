@@ -190,7 +190,43 @@
         </div>
     </div>
 
-    
+    <%-- Canchas de menor uso del mes --%>
+        <div class="card-r mt-4">
+            <div class="card-head">
+                <h6>Canchas de menor uso en este mes</h6>
+                <small class="text-faint ms-auto">Reservas finalizadas en el mes actual</small>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr class="text-faint" style="font-size:.8rem;">
+                            <th class="ps-3 fw-600">#</th>
+                            <th>Cancha</th>
+                            <th>Deporte</th>
+                            <th class="text-end pe-3">Reservas del mes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <asp:Repeater ID="rptCanchasMenorUso" runat="server">
+                            <ItemTemplate>
+                                <tr>
+                                    <td class="ps-3 text-soft"><%# Eval("NroCancha") %></td>
+                                    <td class="fw-semibold"><%# Eval("NombreFantasia") %></td>
+                                    <td>
+                                        <span class="me-1"><%# GetDeporteEmoji(Eval("Deporte")) %></span>
+                                        <%# Eval("Deporte") %>
+                                    </td>
+                                    <td class="text-end pe-3 fw-semibold"><%# Eval("ReservasXMes") %></td>
+                                </tr>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </tbody>
+                </table>
+            </div>
+            <asp:Panel ID="pnlSinCanchasMenorUso" runat="server" Visible="false" CssClass="text-center text-muted py-4">
+                No hay datos de ocupación todavía este mes.
+            </asp:Panel>
+        </div>
 
     </asp:Panel>
 

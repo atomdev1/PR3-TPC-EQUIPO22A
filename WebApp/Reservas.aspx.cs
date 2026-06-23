@@ -159,12 +159,28 @@ namespace WebApp
                 lblCancelacionReserva.Text = "Reserva #" + idReserva;
                 lblCancelacionCliente.Text = reserva.Cliente.Nombre + " " + reserva.Cliente.Apellido;
                 lblCancelacionFecha.Text = reserva.Fecha.ToString("dd/MM/yyyy") + " " +
-                                                   reserva.HoraInicio.ToString(@"hh\:mm") + " – " +
-                                                   reserva.HoraFin.ToString(@"hh\:mm");
+                                               reserva.HoraInicio.ToString(@"hh\:mm") + " – " +
+                                               reserva.HoraFin.ToString(@"hh\:mm");
                 lblCancelacionPrecio.Text = string.Format("{0:C0}", reserva.PrecioTotal);
                 lblErrorCancelacion.Visible = false;
 
                 AbrirModalCancelacion();
+            }
+            else if (e.CommandName == "Finalizar")
+            {
+                Usuario u = Session["usuario"] as Usuario;
+                if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
+                try
+                {
+                    new NegocioReservas().Finalizar(int.Parse(e.CommandArgument.ToString()));
+                    CargarReservas(u);
+                }
+                catch (Exception ex)
+                {
+                    lblErrorFinalizar.Text = ex.Message;
+                    lblErrorFinalizar.Visible = true;
+                }
             }
         }
 
