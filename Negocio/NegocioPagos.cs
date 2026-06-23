@@ -12,6 +12,16 @@ namespace Negocio
         // recalcula Señado/Pagado a partir de la suma de pagos al insertar acá.
         public void RegistrarPago(Pago pago, int idReserva)
         {
+            // Defensa en profundidad: el total pagado no puede superar el precio de
+            // la reserva. La base también lo valida (TR_ValidarMontoPago), pero acá
+            // cortamos antes con un mensaje claro del saldo restante.
+            decimal precio = ObtenerPrecioTotal(idReserva);
+            decimal pagado = ObtenerTotalPagado(idReserva);
+            decimal saldo  = precio - pagado;
+            if (pago.Monto > saldo)
+                throw new Exception(string.Format(
+                    "El pago supera el saldo pendiente de la reserva (saldo: {0:C0}).", saldo));
+
             AccesoDatos datos = new AccesoDatos();
             try
             {
@@ -22,6 +32,26 @@ namespace Negocio
                 datos.AgregarParametro("@idReserva", idReserva);
                 datos.AgregarParametro("@idFormaPago", (int)pago.FormaDePago);
                 datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // Precio total de una reserva. Lo usa el guard de RegistrarPago para
+        // validar que el pago no supere el saldo pendiente.
+        private decimal ObtenerPrecioTotal(int idReserva)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta("SELECT PrecioTotal FROM Reservas WHERE IDReserva = @idReserva");
+                datos.AgregarParametro("@idReserva", idReserva);
+                datos.EjecutarLectura();
+                if (datos.Lector.Read())
+                    return (decimal)datos.Lector["PrecioTotal"];
+                return 0m;
             }
             finally
             {

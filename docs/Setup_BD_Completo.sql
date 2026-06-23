@@ -1136,9 +1136,51 @@ BEGIN
                 THEN 1   -- pagó algo pero no llega a la seña (o no hay seña): sigue Pendiente
             ELSE r.IDEstadoPago
         END
-    FROM Reservas r
-    INNER JOIN inserted i ON i.IDReserva = r.IDReserva
+    FROM Reservas r                                    -- Actualizo solo las reservas que recibieron un pago en esta
+    INNER JOIN inserted i ON i.IDReserva = r.IDReserva -- operacion. Con el Inner Join a inserted las vinculo. 
+    INNER JOIN Canchas  c ON c.IDCancha  = r.IDCancha 
+    LEFT JOIN (                                        -- Left Join a Pagos me acumula los pagos realizados en esa
+        SELECT IDReserva, SUM(Monto) AS Pagado         -- reserva
+        FROM   Pagos
+        GROUP BY IDReserva
+    ) pg ON pg.IDReserva = r.IDReserva
     WHERE r.IDEstado <> 3;   -- no tocar Canceladas
+END;
+GO
+
+-- Uso:  INSERT INTO Pagos (Monto, IDReserva, IDFormaPago) VALUES (2000, 25, 1);
+
+
+-- =========================================
+-- TRIGGER: Validar que el pago no supere el precio total
+-- Autor: Tomas Oliveres
+-- Barrera de la base: si la suma de pagos de una reserva supera su PrecioTotal,
+-- rechaza la inserción con THROW (la transacción se revierte). Trigger aparte
+-- del de sincronización para no mezclar responsabilidades.
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+CREATE OR ALTER TRIGGER TR_ValidarMontoPago
+ON Pagos
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (
+        SELECT 1
+        FROM Reservas r
+        INNER JOIN inserted i ON i.IDReserva = r.IDReserva
+        LEFT JOIN (
+            SELECT IDReserva, SUM(Monto) AS Pagado
+            FROM   Pagos
+            GROUP BY IDReserva
+        ) pg ON pg.IDReserva = r.IDReserva
+        WHERE ISNULL(pg.Pagado, 0) > r.PrecioTotal
+    )
+        THROW 50001, 'El pago supera el precio total de la reserva. No se permite pagar de más.', 1;
 END;
 GO
 

@@ -258,7 +258,18 @@ namespace WebApp
                 FormaDePago = (FormaPago)int.Parse(ddlFormaPago.SelectedValue)
             };
 
-            new NegocioPagos().RegistrarPago(pago, int.Parse(hfIdReservaPago.Value));
+            try
+            {
+                new NegocioPagos().RegistrarPago(pago, int.Parse(hfIdReservaPago.Value));
+            }
+            catch (Exception ex)
+            {
+                // Mensaje del guard de negocio o del THROW de la base (sobrepago).
+                lblErrorPago.Text = ex.Message;
+                lblErrorPago.Visible = true;
+                AbrirModalPago();
+                return;
+            }
 
             // Recargo la grilla: el badge de pago ya viene actualizado por el trigger.
             CargarReservas(u);
