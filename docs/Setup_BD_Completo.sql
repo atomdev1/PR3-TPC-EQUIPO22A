@@ -91,7 +91,9 @@ CREATE TABLE Canchas (
     MontoSena           DECIMAL(10,2)  NULL,
     Activa              BIT            NOT NULL DEFAULT 1,
     IDDeporte           INT            NOT NULL,
-    CONSTRAINT FK_Canchas_Deportes FOREIGN KEY (IDDeporte) REFERENCES Deportes(IDDeporte)
+    CONSTRAINT FK_Canchas_Deportes FOREIGN KEY (IDDeporte) REFERENCES Deportes(IDDeporte),
+    -- La seña no puede superar el precio. MontoSena NULL (sin seña) pasa solo.
+    CONSTRAINT CK_Canchas_Sena CHECK (MontoSena <= Precio)
 );
 
 CREATE TABLE DisponibilidadCanchas (

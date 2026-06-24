@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 using Dominio;
 using Dominio.Enums;
@@ -153,18 +154,40 @@ namespace WebApp
                 Activa             = true
             };
 
-            NegocioCanchas nCanchas = new NegocioCanchas();
-            if (string.IsNullOrEmpty(hfIdCancha.Value))
+            // La seña no puede superar el precio (misma regla que el CHECK CK_Canchas_Sena).
+            if (cancha.MontoSena > cancha.Precio)
             {
-                nCanchas.Agregar(cancha);
-            }
-            else
-            {
-                cancha.IdCancha = int.Parse(hfIdCancha.Value);
-                nCanchas.Modificar(cancha);
+                MostrarErrorCancha("La seña no puede ser mayor al precio total de la cancha.");
+                return;
             }
 
-            Response.Redirect("Canchas.aspx");
+            try
+            {
+                NegocioCanchas nCanchas = new NegocioCanchas();
+                if (string.IsNullOrEmpty(hfIdCancha.Value))
+                {
+                    nCanchas.Agregar(cancha);
+                }
+                else
+                {
+                    cancha.IdCancha = int.Parse(hfIdCancha.Value);
+                    nCanchas.Modificar(cancha);
+                }
+
+                Response.Redirect("Canchas.aspx");
+            }
+            catch (SqlException ex) when (ex.Number == 547)
+            {
+                // si algo esquiva la validación de arriba, el CHECK de la base frena igual.
+                MostrarErrorCancha("La seña no puede ser mayor al precio total de la cancha.");
+            }
+        }
+
+        private void MostrarErrorCancha(string mensaje)
+        {
+            lblErrorCancha.Text = mensaje;
+            lblErrorCancha.Visible = true;
+            AbrirModal("modalNuevaCancha", "Nueva cancha", "Editar cancha");
         }
 
         private void AbrirModal(string modalId, string tituloNuevo, string tituloEditar)
