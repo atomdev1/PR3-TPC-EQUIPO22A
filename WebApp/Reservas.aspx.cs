@@ -168,6 +168,32 @@ namespace WebApp
 
                 AbrirModalCanje();
             }
+            else if (e.CommandName == "PagarOnline")
+            {
+                int idReserva = int.Parse(e.CommandArgument.ToString());
+                Reserva reserva = new NegocioReservas().Listar()
+                    .FirstOrDefault(r => r.IdReserva == idReserva);
+                if (reserva == null) return;
+
+                hfIdReservaOnline.Value = idReserva.ToString();
+                lblOnlineReserva.Text   = "Reserva #" + idReserva;
+                lblOnlinePrecio.Text    = string.Format("{0:C0}", reserva.PrecioTotal);
+                lblOnlinePagado.Text    = string.Format("{0:C0}", reserva.TotalPagado);
+                lblOnlineSaldo.Text     = string.Format("{0:C0}", reserva.SaldoPendiente);
+                txtMontoOnline.Text     = reserva.SaldoPendiente.ToString("0.##");
+                ddlMetodoOnline.SelectedValue = "4";
+                txtTitular.Text       = "";
+                txtNumeroTarjeta.Text = "";
+                txtVencimiento.Text   = "";
+                txtCvv.Text           = "";
+                lblErrorOnline.Visible = false;
+                pnlFormularioOnline.Visible = true;
+                pnlExitoOnline.Visible = false;
+                btnConfirmarPagoOnline.Visible = true;
+                AplicarMetodoPagoOnline();
+
+                AbrirModalPagoOnline();
+            }
             else if (e.CommandName == "Cancelar")
             {
                 int idReserva = int.Parse(e.CommandArgument.ToString());
@@ -273,6 +299,115 @@ namespace WebApp
 
             // Recargo la grilla: el badge de pago ya viene actualizado por el trigger.
             CargarReservas(u);
+        }
+
+        // Corre por AutoPostBack dentro del UpdatePanel, así el
+        // modal no se cierra al alternar tarjeta / MP.
+        protected void ddlMetodoOnline_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AplicarMetodoPagoOnline();
+        }
+
+        // Muestra el panel de tarjeta o el de MP según el método. Si oculto el de
+        // tarjeta, sus validadores no exigen nada.
+        private void AplicarMetodoPagoOnline()
+        {
+            bool esTarjeta = ddlMetodoOnline.SelectedValue != "5";
+            pnlTarjetaOnline.Visible = esTarjeta;
+            pnlMercadoPagoOnline.Visible = !esTarjeta;
+        }
+
+        // Pago online del cliente: el mismo RegistrarPago del mostrador, solo que
+        // acá simulo la tarjeta o Mercado Pago. Los datos de tarjeta no se guardan.
+        protected void btnConfirmarPagoOnline_Click(object sender, EventArgs e)
+        {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
+            // Requeridos y formato de tarjeta ya los cubren los validadores del modal.
+            if (!Page.IsValid) return;
+
+            decimal monto;
+            if (!decimal.TryParse(txtMontoOnline.Text, out monto) || monto <= 0)
+            {
+                MostrarErrorOnline("Ingresá un monto válido mayor a cero.");
+                return;
+            }
+
+            FormaPago forma = (FormaPago)int.Parse(ddlMetodoOnline.SelectedValue);
+
+            // Lo que el validador no cubre: que la tarjeta no esté vencida.
+            if (forma == FormaPago.TarjetaDebito || forma == FormaPago.TarjetaCredito)
+            {
+                if (TarjetaVencida(txtVencimiento.Text))
+                {
+                    MostrarErrorOnline("La tarjeta está vencida.");
+                    return;
+                }
+            }
+
+            int idReserva = int.Parse(hfIdReservaOnline.Value);
+            Pago pago = new Pago { Monto = monto, FormaDePago = forma };
+
+            try
+            {
+                new NegocioPagos().RegistrarPago(pago, idReserva);
+            }
+            catch (Exception ex)
+            {
+                MostrarErrorOnline(ex.Message);
+                return;
+            }
+
+            // Pago OK: borro los datos sensibles, recargo la grilla y muestro el éxito.
+            txtNumeroTarjeta.Text = "";
+            txtCvv.Text = "";
+            CargarReservas(u);
+
+            Reserva actualizada = new NegocioReservas().Listar()
+                .FirstOrDefault(r => r.IdReserva == idReserva);
+            MostrarExitoOnline(monto, forma, actualizada);
+        }
+
+        // Paso el modal a modo éxito: oculto el formulario y muestro cómo quedó el pago.
+        private void MostrarExitoOnline(decimal monto, FormaPago forma, Reserva reserva)
+        {
+            string metodo = GetTextoFormaPago(forma).ToLower();
+            if (reserva != null)
+                lblExitoOnline.Text = string.Format(
+                    "Pagaste {0:C0} con {1}.<br />Saldo restante: <strong>{2:C0}</strong> · estado de pago: <strong>{3}</strong>.",
+                    monto, metodo, reserva.SaldoPendiente, GetTextoPago(reserva.EstadoPago));
+            else
+                lblExitoOnline.Text = string.Format("Pagaste {0:C0} con {1}.", monto, metodo);
+
+            pnlFormularioOnline.Visible = false;
+            pnlExitoOnline.Visible = true;
+            btnConfirmarPagoOnline.Visible = false;
+            AbrirModalPagoOnline();
+        }
+
+        // El formato MM/AA ya viene validado: acá solo reviso que no haya pasado.
+        private bool TarjetaVencida(string vencimiento)
+        {
+            string[] partes = vencimiento.Trim().Split('/');
+            int mes  = int.Parse(partes[0]);
+            int anio = 2000 + int.Parse(partes[1]);
+            DateTime vence = new DateTime(anio, mes, 1).AddMonths(1).AddDays(-1);
+            return vence < DateTime.Today;
+        }
+
+        private void MostrarErrorOnline(string mensaje)
+        {
+            lblErrorOnline.Text = mensaje;
+            lblErrorOnline.Visible = true;
+            AbrirModalPagoOnline();
+        }
+
+        private void AbrirModalPagoOnline()
+        {
+            string script =
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalPagoOnline')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModalPagoOnline", script, true);
         }
 
         private void AbrirModalPago()

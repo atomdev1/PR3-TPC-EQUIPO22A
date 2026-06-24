@@ -403,5 +403,135 @@ namespace WebApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnConfirmarCancelacion;
+
+        /// <summary>
+        /// upPagoOnline control.
+        /// </summary>
+        protected global::System.Web.UI.UpdatePanel upPagoOnline;
+
+        /// <summary>
+        /// hfIdReservaOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfIdReservaOnline;
+
+        /// <summary>
+        /// pnlFormularioOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel pnlFormularioOnline;
+
+        /// <summary>
+        /// lblErrorOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblErrorOnline;
+
+        /// <summary>
+        /// lblOnlineReserva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblOnlineReserva;
+
+        /// <summary>
+        /// lblOnlinePrecio control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblOnlinePrecio;
+
+        /// <summary>
+        /// lblOnlinePagado control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblOnlinePagado;
+
+        /// <summary>
+        /// lblOnlineSaldo control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblOnlineSaldo;
+
+        /// <summary>
+        /// txtMontoOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtMontoOnline;
+
+        /// <summary>
+        /// ddlMetodoOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.DropDownList ddlMetodoOnline;
+
+        /// <summary>
+        /// pnlTarjetaOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel pnlTarjetaOnline;
+
+        /// <summary>
+        /// txtTitular control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtTitular;
+
+        /// <summary>
+        /// rfvTitular control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvTitular;
+
+        /// <summary>
+        /// txtNumeroTarjeta control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtNumeroTarjeta;
+
+        /// <summary>
+        /// rfvNumero control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvNumero;
+
+        /// <summary>
+        /// revNumero control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revNumero;
+
+        /// <summary>
+        /// txtVencimiento control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtVencimiento;
+
+        /// <summary>
+        /// rfvVencimiento control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvVencimiento;
+
+        /// <summary>
+        /// revVencimiento control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revVencimiento;
+
+        /// <summary>
+        /// txtCvv control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtCvv;
+
+        /// <summary>
+        /// rfvCvv control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvCvv;
+
+        /// <summary>
+        /// revCvv control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revCvv;
+
+        /// <summary>
+        /// pnlMercadoPagoOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel pnlMercadoPagoOnline;
+
+        /// <summary>
+        /// pnlExitoOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel pnlExitoOnline;
+
+        /// <summary>
+        /// lblExitoOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblExitoOnline;
+
+        /// <summary>
+        /// btnConfirmarPagoOnline control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnConfirmarPagoOnline;
     }
 }

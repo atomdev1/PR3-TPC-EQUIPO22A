@@ -161,6 +161,13 @@
                                     </div>
                                     <% } else { %>
                                     <asp:LinkButton runat="server"
+                                        CommandName="PagarOnline"
+                                        CommandArgument='<%# Eval("IdReserva") %>'
+                                        CssClass="btn btn-sm btn-primary-r me-1"
+                                        Visible='<%# (decimal)Eval("SaldoPendiente") > 0 && (int)Eval("Estado") != 3 %>'>
+                                        💳 Pagar online
+                                    </asp:LinkButton>
+                                    <asp:LinkButton runat="server"
                                         CommandName="Canjear"
                                         CommandArgument='<%# Eval("IdReserva") %>'
                                         CssClass="btn btn-sm btn-outline-primary"
@@ -329,6 +336,143 @@
                     <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Cancelar</button>
                     <asp:Button ID="btnConfirmarPago" runat="server" Text="Registrar pago"
                         CssClass="btn-r btn-primary-r" OnClick="btnConfirmarPago_Click" CausesValidation="false" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- MODAL PAGO ONLINE (CLIENTE) --%>
+    <%-- Pago simulado. El método cambia por AutoPostBack dentro del UpdatePanel,
+         así el modal no se cierra. El número de tarjeta no se guarda. --%>
+    <div class="modal fade" id="modalPagoOnline" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pagar online</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <asp:UpdatePanel ID="upPagoOnline" runat="server">
+                        <ContentTemplate>
+                            <asp:HiddenField ID="hfIdReservaOnline" runat="server" />
+
+                            <%-- Formulario del pago. Lo oculto al confirmar. --%>
+                            <asp:Panel ID="pnlFormularioOnline" runat="server">
+                            <asp:Label ID="lblErrorOnline" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
+
+                            <div class="alert alert-warning small py-2">
+                                🔒 Pago simulado · entorno de prueba. No se realiza ningún cobro real.
+                            </div>
+
+                            <div class="mb-3">
+                                <asp:Label ID="lblOnlineReserva" runat="server" CssClass="fw-semibold d-block" />
+                                <div class="d-flex justify-content-between small text-muted mt-1">
+                                    <span>Precio total: <asp:Label ID="lblOnlinePrecio" runat="server" /></span>
+                                    <span>Pagado: <asp:Label ID="lblOnlinePagado" runat="server" /></span>
+                                    <span>Saldo: <asp:Label ID="lblOnlineSaldo" runat="server" CssClass="fw-semibold" /></span>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-1">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Monto ($)</label>
+                                    <asp:TextBox ID="txtMontoOnline" runat="server" CssClass="form-control" TextMode="Number" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Método</label>
+                                    <asp:DropDownList ID="ddlMetodoOnline" runat="server" CssClass="form-select"
+                                        AutoPostBack="true" OnSelectedIndexChanged="ddlMetodoOnline_SelectedIndexChanged">
+                                        <asp:ListItem Value="4">Tarjeta de crédito</asp:ListItem>
+                                        <asp:ListItem Value="3">Tarjeta de débito</asp:ListItem>
+                                        <asp:ListItem Value="5">Mercado Pago</asp:ListItem>
+                                    </asp:DropDownList>
+                                </div>
+                            </div>
+
+                            <%-- Datos de tarjeta: solo para la simulación, no se persisten. --%>
+                            <asp:Panel ID="pnlTarjetaOnline" runat="server" CssClass="mt-2">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold">Titular</label>
+                                        <asp:TextBox ID="txtTitular" runat="server" CssClass="form-control"
+                                            placeholder="Como figura en la tarjeta" />
+                                        <asp:RequiredFieldValidator ID="rfvTitular" runat="server"
+                                            ControlToValidate="txtTitular" ValidationGroup="PagoOnline"
+                                            CssClass="text-danger small" Display="Dynamic"
+                                            ErrorMessage="Ingresá el titular de la tarjeta." />
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold">Número de tarjeta</label>
+                                        <asp:TextBox ID="txtNumeroTarjeta" runat="server" CssClass="form-control"
+                                            placeholder="Solo números (13 a 19 dígitos)" />
+                                        <asp:RequiredFieldValidator ID="rfvNumero" runat="server"
+                                            ControlToValidate="txtNumeroTarjeta" ValidationGroup="PagoOnline"
+                                            CssClass="text-danger small" Display="Dynamic"
+                                            ErrorMessage="Ingresá el número de tarjeta." />
+                                        <asp:RegularExpressionValidator ID="revNumero" runat="server"
+                                            ControlToValidate="txtNumeroTarjeta" ValidationGroup="PagoOnline"
+                                            ValidationExpression="\d{13,19}"
+                                            CssClass="text-danger small" Display="Dynamic"
+                                            ErrorMessage="El número debe tener entre 13 y 19 dígitos." />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Vencimiento</label>
+                                        <asp:TextBox ID="txtVencimiento" runat="server" CssClass="form-control"
+                                            placeholder="MM/AA" />
+                                        <asp:RequiredFieldValidator ID="rfvVencimiento" runat="server"
+                                            ControlToValidate="txtVencimiento" ValidationGroup="PagoOnline"
+                                            CssClass="text-danger small" Display="Dynamic"
+                                            ErrorMessage="Ingresá el vencimiento." />
+                                        <asp:RegularExpressionValidator ID="revVencimiento" runat="server"
+                                            ControlToValidate="txtVencimiento" ValidationGroup="PagoOnline"
+                                            ValidationExpression="(0[1-9]|1[0-2])/\d{2}"
+                                            CssClass="text-danger small" Display="Dynamic"
+                                            ErrorMessage="El vencimiento debe tener el formato MM/AA." />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">CVV</label>
+                                        <asp:TextBox ID="txtCvv" runat="server" CssClass="form-control"
+                                            placeholder="123" />
+                                        <asp:RequiredFieldValidator ID="rfvCvv" runat="server"
+                                            ControlToValidate="txtCvv" ValidationGroup="PagoOnline"
+                                            CssClass="text-danger small" Display="Dynamic"
+                                            ErrorMessage="Ingresá el CVV." />
+                                        <asp:RegularExpressionValidator ID="revCvv" runat="server"
+                                            ControlToValidate="txtCvv" ValidationGroup="PagoOnline"
+                                            ValidationExpression="\d{3,4}"
+                                            CssClass="text-danger small" Display="Dynamic"
+                                            ErrorMessage="El CVV debe tener 3 o 4 dígitos." />
+                                    </div>
+                                </div>
+                                <p class="text-muted small mt-2 mb-0">
+                                    No guardamos los datos de tu tarjeta: se usan solo para simular el pago.
+                                </p>
+                            </asp:Panel>
+
+                            <%-- Mercado Pago: arranca oculto, lo muestra el server si se elige el método. --%>
+                            <asp:Panel ID="pnlMercadoPagoOnline" runat="server" CssClass="mt-2" Visible="false">
+                                <div class="alert alert-info small mb-0">
+                                    Al confirmar vas a ser redirigido a <strong>Mercado Pago</strong> (entorno de prueba)
+                                    y volvés con el pago acreditado.
+                                </div>
+                            </asp:Panel>
+                            </asp:Panel>
+
+                            <%-- Éxito: lo muestro al confirmar, en lugar del formulario. --%>
+                            <asp:Panel ID="pnlExitoOnline" runat="server" Visible="false">
+                                <div class="text-center py-4">
+                                    <div class="text-success mb-2" style="font-size:2.5rem; line-height:1">✓</div>
+                                    <h5 class="text-success mb-3">Pago acreditado</h5>
+                                    <asp:Label ID="lblExitoOnline" runat="server" CssClass="d-block text-muted" />
+                                </div>
+                            </asp:Panel>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Cerrar</button>
+                    <asp:Button ID="btnConfirmarPagoOnline" runat="server" Text="Confirmar pago"
+                        CssClass="btn-r btn-primary-r" OnClick="btnConfirmarPagoOnline_Click" ValidationGroup="PagoOnline" />
                 </div>
             </div>
         </div>
