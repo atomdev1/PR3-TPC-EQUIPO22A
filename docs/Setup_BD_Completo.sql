@@ -1,14 +1,25 @@
 -- =========================================================================
 -- Setup_BD_Completo.sql
--- Setup completo de la base: creación, datos, vista, SP y trigger, todo junto.
--- Orden: creación de tablas -> datos iniciales -> vista -> SP -> trigger.
+-- Recrea la base entera de cero, todo en un solo archivo:
+-- borra si existe -> crea -> tablas -> datos -> vista -> SP -> trigger.
 --
--- El reset (00_Reset_BD.sql) va aparte: este script CREA la base, así que si
--- ya existe hay que dropearla primero con el reset.
---
+-- IMPORTANTE: ejecutar parado en [master] (revisá el combo de base de datos
+-- de la barra de SSMS). Este script DROPEA la base, así que si lo corrés
+-- desde una ventana parada en BBDD2_TPI_GRUPO45 te corta tu propia conexión.
 -- =========================================================================
 
--- Creación de la Base de Datos
+USE master;
+GO
+
+-- Si la base ya existe la borro. SINGLE_USER corta las conexiones abiertas
+-- para que el DROP no falle.
+IF DB_ID('BBDD2_TPI_GRUPO45') IS NOT NULL
+BEGIN
+    ALTER DATABASE BBDD2_TPI_GRUPO45 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE BBDD2_TPI_GRUPO45;
+END
+GO
+
 CREATE DATABASE BBDD2_TPI_GRUPO45;
 GO
 
