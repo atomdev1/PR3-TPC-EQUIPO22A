@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Dominio;
 using Dominio.Enums;
 
@@ -7,8 +8,6 @@ namespace Negocio
 {
     public class NegocioReservas
     {
-        // Pendiente de IMPLEMENTACIÓN — métodos CRUD para Reservas.aspx
-
         public List<Reserva> ObtenerPorMes(int año, int mes)
         {
             List<Reserva> lista = new List<Reserva>();
@@ -196,6 +195,123 @@ namespace Negocio
             {
                 datos.SetearProcedimiento("sp_CancelarReserva");
                 datos.AgregarParametro("@IDReserva", idReserva);
+                datos.EjecutarAccion();
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
+        // Hay choque si en la misma cancha y fecha ya existe otra reserva no
+        // cancelada cuyo horario se cruza con el pedido. El cruce de rangos es
+        // HoraInicio < finPedido y HoraFin > inicioPedido. El idReservaExcluir
+        // deja afuera a la propia reserva cuando se reprograma.
+        public bool ExisteSolapamiento(int idCancha, DateTime fecha, TimeSpan horaInicio, TimeSpan horaFin, int idReservaExcluir = 0)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT COUNT(*)
+                    FROM   Reservas
+                    WHERE  IDCancha = @idCancha
+                      AND  Fecha = @fecha
+                      AND  IDEstado <> @cancelada
+                      AND  IDReserva <> @excluir
+                      AND  HoraInicio < @horaFin
+                      AND  HoraFin > @horaInicio");
+                datos.AgregarParametro("@idCancha", idCancha);
+                datos.AgregarParametro("@fecha", fecha.Date);
+                datos.AgregarParametro("@cancelada", (int)EstadoReserva.Cancelada);
+                datos.AgregarParametro("@excluir", idReservaExcluir);
+                datos.AgregarParametro("@horaInicio", horaInicio);
+                datos.AgregarParametro("@horaFin", horaFin);
+                return datos.EjecutarAccionScalar() > 0;
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
+        // Turnos no cancelados de una cancha en una fecha. Solo traigo el rango
+        // horario, alcanza para descartar los bloques ocupados.
+        public List<Reserva> ObtenerReservasDelDia(int idCancha, DateTime fecha)
+        {
+            List<Reserva> lista = new List<Reserva>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT HoraInicio, HoraFin
+                    FROM   Reservas
+                    WHERE  IDCancha = @idCancha
+                      AND  Fecha = @fecha
+                      AND  IDEstado <> @cancelada");
+                datos.AgregarParametro("@idCancha", idCancha);
+                datos.AgregarParametro("@fecha", fecha.Date);
+                datos.AgregarParametro("@cancelada", (int)EstadoReserva.Cancelada);
+                datos.EjecutarLectura();
+                while (datos.Lector.Read())
+                {
+                    lista.Add(new Reserva
+                    {
+                        HoraInicio = (TimeSpan)datos.Lector["HoraInicio"],
+                        HoraFin = (TimeSpan)datos.Lector["HoraFin"]
+                    });
+                }
+                return lista;
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
+        // Turnos de 1 hora libres de una cancha para una fecha. Corta cada franja
+        // de disponibilidad en bloques de una hora en horas exactas y descarta los
+        // que ya tienen reserva. Si la fecha es hoy, deja afuera los que ya pasaron.
+        public List<TimeSpan> ObtenerHorariosDisponibles(int idCancha, DateTime fecha, List<DisponibilidadCancha> franjas)
+        {
+            List<TimeSpan> disponibles = new List<TimeSpan>();
+            if (franjas == null || franjas.Count == 0) return disponibles;
+
+            List<Reserva> ocupadas = ObtenerReservasDelDia(idCancha, fecha);
+            TimeSpan unaHora = TimeSpan.FromHours(1);
+            bool esHoy = fecha.Date == DateTime.Today;
+
+            foreach (DisponibilidadCancha f in franjas)
+            {
+                for (TimeSpan inicio = f.HoraApertura; inicio + unaHora <= f.HoraCierre; inicio += unaHora)
+                {
+                    TimeSpan fin = inicio + unaHora;
+                    if (esHoy && inicio <= DateTime.Now.TimeOfDay) continue;
+                    bool pisa = ocupadas.Any(o => o.HoraInicio < fin && o.HoraFin > inicio);
+                    if (!pisa) disponibles.Add(inicio);
+                }
+            }
+            return disponibles;
+        }
+
+        // Alta real de una reserva. El estado arranca en Nueva y el de pago en
+        // Pendiente: no se eligen desde la UI, los pone la capa. El estado de pago
+        // despues lo sincroniza el trigger a medida que entran los pagos.
+        public void Crear(Reserva r)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    INSERT INTO Reservas
+                        (Fecha, HoraInicio, HoraFin, PrecioTotal, Observaciones,
+                         IDUsuario_Cliente, IDUsuario_Staff, IDCancha, IDEstado, IDEstadoPago)
+                    VALUES
+                        (@fecha, @horaInicio, @horaFin, @precio, @observaciones,
+                         @idCliente, @idStaff, @idCancha, @idEstado, @idEstadoPago)");
+                datos.AgregarParametro("@fecha", r.Fecha.Date);
+                datos.AgregarParametro("@horaInicio", r.HoraInicio);
+                datos.AgregarParametro("@horaFin", r.HoraFin);
+                datos.AgregarParametro("@precio", r.PrecioTotal);
+                datos.AgregarParametro("@observaciones",
+                    string.IsNullOrWhiteSpace(r.Observaciones) ? (object)DBNull.Value : r.Observaciones);
+                datos.AgregarParametro("@idCliente", r.Cliente.IdUsuario);
+                datos.AgregarParametro("@idStaff",
+                    r.Staff != null ? (object)r.Staff.IdUsuario : DBNull.Value);
+                datos.AgregarParametro("@idCancha", r.Cancha.IdCancha);
+                datos.AgregarParametro("@idEstado", (int)EstadoReserva.Nueva);
+                datos.AgregarParametro("@idEstadoPago", (int)EstadoPago.Pendiente);
                 datos.EjecutarAccion();
             }
             finally { datos.CerrarConexion(); }

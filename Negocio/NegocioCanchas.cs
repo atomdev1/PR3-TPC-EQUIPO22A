@@ -238,6 +238,38 @@ namespace Negocio
             }
         }
 
+        // Franjas horarias activas de una cancha para un dia de la semana
+        // (0=Lunes..6=Domingo). De aca salen los turnos posibles de ese dia.
+        public List<DisponibilidadCancha> ObtenerDisponibilidades(int idCancha, int diaSemana)
+        {
+            List<DisponibilidadCancha> lista = new List<DisponibilidadCancha>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT IDDisponibilidad, DiaSemana, HoraApertura, HoraCierre, Activa
+                    FROM   DisponibilidadCanchas
+                    WHERE  IDCancha = @idCancha AND DiaSemana = @dia AND Activa = 1
+                    ORDER BY HoraApertura");
+                datos.AgregarParametro("@idCancha", idCancha);
+                datos.AgregarParametro("@dia", diaSemana);
+                datos.EjecutarLectura();
+                while (datos.Lector.Read())
+                {
+                    lista.Add(new DisponibilidadCancha
+                    {
+                        IdDisponibilidad = (int)datos.Lector["IDDisponibilidad"],
+                        DiaSemana = (DiaSemana)(byte)datos.Lector["DiaSemana"],
+                        HoraApertura = (TimeSpan)datos.Lector["HoraApertura"],
+                        HoraCierre = (TimeSpan)datos.Lector["HoraCierre"],
+                        Activa = (bool)datos.Lector["Activa"]
+                    });
+                }
+                return lista;
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
         public void Modificar(Cancha c)
         {
             AccesoDatos datos = new AccesoDatos();

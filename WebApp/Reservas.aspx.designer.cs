@@ -533,5 +533,65 @@ namespace WebApp
         /// btnConfirmarPagoOnline control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Button btnConfirmarPagoOnline;
+
+        /// <summary>
+        /// upNuevaReserva control.
+        /// </summary>
+        protected global::System.Web.UI.UpdatePanel upNuevaReserva;
+
+        /// <summary>
+        /// lblErrorNueva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblErrorNueva;
+
+        /// <summary>
+        /// ddlClienteNueva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.DropDownList ddlClienteNueva;
+
+        /// <summary>
+        /// ddlCanchaNueva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.DropDownList ddlCanchaNueva;
+
+        /// <summary>
+        /// txtFechaNueva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtFechaNueva;
+
+        /// <summary>
+        /// txtPrecioNueva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtPrecioNueva;
+
+        /// <summary>
+        /// pnlSugeridos control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel pnlSugeridos;
+
+        /// <summary>
+        /// rptSugeridos control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Repeater rptSugeridos;
+
+        /// <summary>
+        /// ddlHorarioNueva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.DropDownList ddlHorarioNueva;
+
+        /// <summary>
+        /// lblSinHorarios control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblSinHorarios;
+
+        /// <summary>
+        /// txtObservacionesNueva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtObservacionesNueva;
+
+        /// <summary>
+        /// btnGuardarReserva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnGuardarReserva;
     }
 }

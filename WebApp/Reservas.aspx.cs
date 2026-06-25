@@ -21,8 +21,25 @@ namespace WebApp
             if (!IsPostBack)
             {
                 CargarCanchasFiltro();
+                if (!EsCliente) CargarCombosNuevaReserva();
                 CargarReservas(u);
             }
+        }
+
+        // Combos del alta de reserva. Solo los carga el personal del mostrador,
+        // que es el unico que ve el boton de Nueva reserva.
+        private void CargarCombosNuevaReserva()
+        {
+            ddlClienteNueva.Items.Clear();
+            ddlClienteNueva.Items.Add(new System.Web.UI.WebControls.ListItem("-- Seleccioná un cliente --", "0"));
+            foreach (Usuario c in new NegocioUsuarios().ObtenerClientes())
+                ddlClienteNueva.Items.Add(new System.Web.UI.WebControls.ListItem(c.Apellido + ", " + c.Nombre, c.IdUsuario.ToString()));
+
+            ddlCanchaNueva.DataSource = new NegocioCanchas().ObtenerTodas();
+            ddlCanchaNueva.DataValueField = "IdCancha";
+            ddlCanchaNueva.DataTextField = "NombreFantasia";
+            ddlCanchaNueva.DataBind();
+            ddlCanchaNueva.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Seleccioná una cancha --", "0"));
         }
 
         // Llena el combo de canchas del filtro con datos de la BD.
@@ -476,6 +493,196 @@ namespace WebApp
             string script =
                 "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelarReserva')).show();";
             ClientScript.RegisterStartupScript(GetType(), "abrirModalCancelacion", script, true);
+        }
+
+        // Al elegir la cancha sugiero su precio y recargo los turnos libres. Corre
+        // por AutoPostBack dentro del UpdatePanel, asi el modal no se cierra.
+        protected void ddlCanchaNueva_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddlCanchaNueva.SelectedValue == "0")
+                txtPrecioNueva.Text = "";
+            else
+            {
+                Cancha c = new NegocioCanchas().ObtenerPorId(int.Parse(ddlCanchaNueva.SelectedValue));
+                if (c != null) txtPrecioNueva.Text = c.Precio.ToString("0.##");
+            }
+            CargarHorariosNueva();
+        }
+
+        // Cambiar la fecha tambien recalcula los turnos libres.
+        protected void txtFechaNueva_TextChanged(object sender, EventArgs e)
+        {
+            CargarHorariosNueva();
+        }
+
+        // Arma la lista de turnos de 1 hora libres para la cancha y fecha elegidas.
+        // Llena el combo con todos y muestra los 3 primeros como atajo.
+        private void CargarHorariosNueva()
+        {
+            ddlHorarioNueva.Items.Clear();
+            rptSugeridos.DataSource = null;
+            rptSugeridos.DataBind();
+            pnlSugeridos.Visible = false;
+
+            DateTime fecha;
+            bool fechaOk = DateTime.TryParse(txtFechaNueva.Text, out fecha);
+            bool canchaOk = ddlCanchaNueva.SelectedValue != "0";
+
+            if (!fechaOk || !canchaOk)
+            {
+                lblSinHorarios.Text = "Elegí una cancha y una fecha para ver los turnos disponibles.";
+                lblSinHorarios.Visible = true;
+                ddlHorarioNueva.Visible = false;
+                return;
+            }
+
+            int idCancha = int.Parse(ddlCanchaNueva.SelectedValue);
+            // El enum DiaSemana va Lunes=0..Domingo=6 (ISO); DateTime.DayOfWeek
+            // arranca en Domingo=0, asi que lo corro para que coincidan.
+            int diaBd = ((int)fecha.DayOfWeek + 6) % 7;
+            List<DisponibilidadCancha> franjas = new NegocioCanchas().ObtenerDisponibilidades(idCancha, diaBd);
+            List<TimeSpan> disponibles = new NegocioReservas().ObtenerHorariosDisponibles(idCancha, fecha, franjas);
+
+            if (disponibles.Count == 0)
+            {
+                lblSinHorarios.Text = "No hay turnos disponibles para esa cancha en esa fecha.";
+                lblSinHorarios.Visible = true;
+                ddlHorarioNueva.Visible = false;
+                return;
+            }
+
+            lblSinHorarios.Visible = false;
+            ddlHorarioNueva.Visible = true;
+            foreach (TimeSpan t in disponibles)
+                ddlHorarioNueva.Items.Add(new System.Web.UI.WebControls.ListItem(FormatoTurno(t), t.ToString(@"hh\:mm")));
+
+            rptSugeridos.DataSource = disponibles.Take(3).ToList();
+            rptSugeridos.DataBind();
+            pnlSugeridos.Visible = true;
+        }
+
+        // Texto legible de un turno: "08:00 a 09:00". Lo usan el combo y los atajos.
+        protected string FormatoTurno(object inicioObj)
+        {
+            TimeSpan inicio = (TimeSpan)inicioObj;
+            TimeSpan fin = inicio + TimeSpan.FromHours(1);
+            return inicio.ToString(@"hh\:mm") + " a " + fin.ToString(@"hh\:mm");
+        }
+
+        // Un atajo solo selecciona ese turno en el combo, que es la fuente unica.
+        protected void rptSugeridos_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName != "ElegirHorario") return;
+
+            string valor = e.CommandArgument.ToString();
+            if (ddlHorarioNueva.Items.FindByValue(valor) != null)
+                ddlHorarioNueva.SelectedValue = valor;
+        }
+
+        // Alta real de la reserva. Valido todo en server antes de tocar la base y
+        // freno el solapamiento de turnos. Si algo falla, reabro el modal con el error.
+        protected void btnGuardarReserva_Click(object sender, EventArgs e)
+        {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
+            if (ddlClienteNueva.SelectedValue == "0") { MostrarErrorNueva("Elegí un cliente."); return; }
+            if (ddlCanchaNueva.SelectedValue == "0") { MostrarErrorNueva("Elegí una cancha."); return; }
+
+            DateTime fecha;
+            if (!DateTime.TryParse(txtFechaNueva.Text, out fecha))
+            {
+                MostrarErrorNueva("Ingresá una fecha válida.");
+                return;
+            }
+            if (fecha.Date < DateTime.Today)
+            {
+                MostrarErrorNueva("La fecha no puede ser anterior a hoy.");
+                return;
+            }
+
+            // El turno sale del combo de horarios libres. La reserva dura 1 hora.
+            TimeSpan horaInicio;
+            if (ddlHorarioNueva.SelectedIndex < 0 || !TimeSpan.TryParse(ddlHorarioNueva.SelectedValue, out horaInicio))
+            {
+                MostrarErrorNueva("Elegí un horario disponible.");
+                return;
+            }
+            TimeSpan horaFin = horaInicio + TimeSpan.FromHours(1);
+
+            decimal precio;
+            if (!decimal.TryParse(txtPrecioNueva.Text, out precio) || precio <= 0)
+            {
+                MostrarErrorNueva("Ingresá un precio válido mayor a cero.");
+                return;
+            }
+
+            string obs = txtObservacionesNueva.Text.Trim();
+            if (obs.Length > 255)
+            {
+                MostrarErrorNueva("Las observaciones no pueden superar los 255 caracteres.");
+                return;
+            }
+
+            int idCancha = int.Parse(ddlCanchaNueva.SelectedValue);
+
+            if (new NegocioReservas().ExisteSolapamiento(idCancha, fecha, horaInicio, horaFin))
+            {
+                MostrarErrorNueva("Ya existe una reserva para esa cancha en ese horario.");
+                return;
+            }
+
+            Reserva r = new Reserva
+            {
+                Fecha = fecha,
+                HoraInicio = horaInicio,
+                HoraFin = horaFin,
+                PrecioTotal = precio,
+                Observaciones = obs,
+                Cliente = new Usuario { IdUsuario = int.Parse(ddlClienteNueva.SelectedValue) },
+                Staff = u,
+                Cancha = new Cancha { IdCancha = idCancha }
+            };
+
+            try
+            {
+                new NegocioReservas().Crear(r);
+            }
+            catch (Exception ex)
+            {
+                MostrarErrorNueva(ex.Message);
+                return;
+            }
+
+            // Alta OK: limpio el formulario y recargo la grilla, la reserva nueva
+            // aparece arriba (Listar ordena por fecha descendente).
+            LimpiarFormularioNueva();
+            CargarReservas(u);
+        }
+
+        private void MostrarErrorNueva(string mensaje)
+        {
+            lblErrorNueva.Text = mensaje;
+            lblErrorNueva.Visible = true;
+            AbrirModalNuevaReserva();
+        }
+
+        private void LimpiarFormularioNueva()
+        {
+            ddlClienteNueva.SelectedValue = "0";
+            ddlCanchaNueva.SelectedValue = "0";
+            txtFechaNueva.Text = "";
+            txtPrecioNueva.Text = "";
+            txtObservacionesNueva.Text = "";
+            lblErrorNueva.Visible = false;
+            CargarHorariosNueva();
+        }
+
+        private void AbrirModalNuevaReserva()
+        {
+            string script =
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalNuevaReserva')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModalNueva", script, true);
         }
 
         protected string GetBadgeEstado(object estadoObj)

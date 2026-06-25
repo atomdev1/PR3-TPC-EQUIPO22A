@@ -554,62 +554,63 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Cliente</label>
-                            <select class="form-select">
-                                <option value="0">-- Seleccioná un cliente --</option>
-                                <option value="1">Fernández, Laura</option>
-                                <option value="2">Gómez, Martín</option>
-                                <option value="3">Pérez, Ana</option>
-                                <option value="4">Rodríguez, Carlos</option>
-                                <option value="5">Torres, Diego</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Cancha</label>
-                            <select class="form-select">
-                                <option value="0">-- Seleccioná una cancha --</option>
-                                <option value="1">La Bombonera (Fútbol)</option>
-                                <option value="2">El Monumental (Tenis)</option>
-                                <option value="3">Cancha Azul (Básquet)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Fecha</label>
-                            <input type="date" class="form-control" />
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Hora inicio</label>
-                            <input type="time" class="form-control" />
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Hora fin</label>
-                            <input type="time" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Estado de pago</label>
-                            <select class="form-select">
-                                <option value="1">Pendiente</option>
-                                <option value="2">Señado</option>
-                                <option value="3">Pagado</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Precio total ($)</label>
-                            <input type="number" class="form-control" placeholder="6000" />
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">
-                                Observaciones <span class="text-muted fw-normal">(opcional)</span>
-                            </label>
-                            <textarea class="form-control" rows="2" maxlength="255"></textarea>
-                        </div>
-                    </div>
+                    <asp:UpdatePanel ID="upNuevaReserva" runat="server">
+                        <ContentTemplate>
+                            <asp:Label ID="lblErrorNueva" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Cliente</label>
+                                    <asp:DropDownList ID="ddlClienteNueva" runat="server" CssClass="form-select" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Cancha</label>
+                                    <asp:DropDownList ID="ddlCanchaNueva" runat="server" CssClass="form-select"
+                                        AutoPostBack="true" OnSelectedIndexChanged="ddlCanchaNueva_SelectedIndexChanged" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Fecha</label>
+                                    <asp:TextBox ID="txtFechaNueva" runat="server" CssClass="form-control" TextMode="Date"
+                                        AutoPostBack="true" OnTextChanged="txtFechaNueva_TextChanged" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Precio total ($)</label>
+                                    <asp:TextBox ID="txtPrecioNueva" runat="server" CssClass="form-control" TextMode="Number" />
+                                    <span class="text-muted small">Se autocompleta con el precio de la cancha, lo podés ajustar.</span>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Horario <span class="text-muted fw-normal">(turnos de 1 hora)</span></label>
+                                    <%-- Atajo: los primeros turnos libres. Si no le sirve ninguno, elige del combo. --%>
+                                    <asp:Panel ID="pnlSugeridos" runat="server" CssClass="d-flex flex-wrap align-items-center gap-2 mb-2" Visible="false">
+                                        <span class="text-muted small w-100 mb-0">Turnos sugeridos:</span>
+                                        <asp:Repeater ID="rptSugeridos" runat="server" OnItemCommand="rptSugeridos_ItemCommand">
+                                            <ItemTemplate>
+                                                <asp:LinkButton runat="server" CommandName="ElegirHorario"
+                                                    CommandArgument='<%# ((TimeSpan)Container.DataItem).ToString(@"hh\:mm") %>'
+                                                    CssClass="btn btn-sm btn-outline-primary">
+                                                    <%# FormatoTurno(Container.DataItem) %>
+                                                </asp:LinkButton>
+                                            </ItemTemplate>
+                                        </asp:Repeater>
+                                    </asp:Panel>
+                                    <asp:DropDownList ID="ddlHorarioNueva" runat="server" CssClass="form-select" />
+                                    <asp:Label ID="lblSinHorarios" runat="server" CssClass="text-muted small" Visible="false"
+                                        Text="Elegí una cancha y una fecha para ver los turnos disponibles." />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">
+                                        Observaciones <span class="text-muted fw-normal">(opcional)</span>
+                                    </label>
+                                    <asp:TextBox ID="txtObservacionesNueva" runat="server" CssClass="form-control"
+                                        TextMode="MultiLine" Rows="2" MaxLength="255" />
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success">Guardar reserva</button>
+                    <asp:Button ID="btnGuardarReserva" runat="server" Text="Guardar reserva"
+                        CssClass="btn-r btn-primary-r" OnClick="btnGuardarReserva_Click" CausesValidation="false" />
                 </div>
             </div>
         </div>

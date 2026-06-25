@@ -51,6 +51,38 @@ namespace Negocio
             }
         }
 
+        // Clientes activos para el combo del alta de reserva.
+        public List<Usuario> ObtenerClientes()
+        {
+            List<Usuario> lista = new List<Usuario>();
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT IDUsuario, DNI, Nombre, Apellido
+                    FROM Usuarios
+                    WHERE Activo = 1 AND IDRol = @rolCliente
+                    ORDER BY Apellido, Nombre");
+                datos.AgregarParametro("@rolCliente", (int)RolUsuario.Cliente);
+                datos.EjecutarLectura();
+                while (datos.Lector.Read())
+                {
+                    lista.Add(new Usuario
+                    {
+                        IdUsuario = (int)datos.Lector["IDUsuario"],
+                        DNI = (string)datos.Lector["DNI"],
+                        Nombre = (string)datos.Lector["Nombre"],
+                        Apellido = (string)datos.Lector["Apellido"]
+                    });
+                }
+                return lista;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
         private static string ComputarSHA256(string texto)
         {
             using (SHA256 sha = SHA256.Create())
