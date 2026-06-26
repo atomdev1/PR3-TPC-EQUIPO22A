@@ -978,9 +978,11 @@ GO
 
 -- El orden se aplica al consultar.
 -- DiaNum y TurnoOrden se muestran para ordenar Lun->Dom y Mañana->Noche.
-SELECT Dia, Turno, CantidadReservas, PorcentajeOcupacion
-FROM vw_OcupacionPorTurno
-ORDER BY DiaNum, TurnoOrden;
+
+-- Select de prueba para mostrar la vista
+-- SELECT Dia, Turno, CantidadReservas, PorcentajeOcupacion
+-- FROM vw_OcupacionPorTurno
+-- ORDER BY DiaNum, TurnoOrden;
 
 GO
 -- ----------------------------------------------------------------------
@@ -1017,6 +1019,8 @@ LEFT JOIN Reservas r
     AND r.IDEstado  = 5                   -- RESERVAS FINALIZADAS
     AND MONTH(r.Fecha) = MONTH(GETDATE()) --FECHA Y AÑO ACTUAL
     AND YEAR(r.Fecha)  = YEAR(GETDATE())
+
+WHERE c.Activa = 1                        -- solo canchas activas: las dadas de baja no van al ranking
 
 GROUP BY
     c.IDCancha,
@@ -1254,6 +1258,8 @@ BEGIN
 
     BEGIN TRY
 
+        BEGIN TRANSACTION;   -- los dos UPDATE de abajo van juntos: o pasan los dos o no pasa ninguno
+
         -- Variables de la reserva
         DECLARE @Fecha            DATE;
         DECLARE @HoraFin          TIME;
@@ -1297,8 +1303,12 @@ BEGIN
         SET CantidadAsistencias = CantidadAsistencias + 1
         WHERE IDUsuario = @IDUsuarioCliente;
 
+        COMMIT TRANSACTION;   -- todo salió bien, confirmamos los cambios
+
     END TRY
     BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;   -- algo falló: deshacemos para no dejar la reserva a medias
         THROW;
     END CATCH
 
@@ -1495,6 +1505,13 @@ AFTER INSERT, UPDATE
 AS
 BEGIN
 
+    -- Si es un UPDATE que no toca Fecha/Hora/Cancha, no hay nada que validar.
+    -- (cancelar, finalizar y canjear cupón caen acá y se saltean).
+    -- El guard nunca bloquea altas.
+    IF NOT UPDATE(Fecha) AND NOT UPDATE(HoraInicio)
+       AND NOT UPDATE(HoraFin) AND NOT UPDATE(IDCancha)
+        RETURN;
+
     -- Cancha inactiva
     IF EXISTS (
         SELECT 1
@@ -1502,11 +1519,7 @@ BEGIN
         INNER JOIN Canchas c ON c.IDCancha = i.IDCancha
         WHERE c.Activa = 0
     )
-    BEGIN
-        RAISERROR('No se puede reservar, la cancha esta inactiva.', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END
+        THROW 50201, 'No se puede reservar, la cancha esta inactiva.', 1;
 
     -- Fuera del horario disponible de la cancha
    
@@ -1523,11 +1536,7 @@ BEGIN
               AND dc.HoraCierre   >= i.HoraFin
         )
     )
-    BEGIN
-        RAISERROR('La reserva está fuera del horario disponible.', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END
+        THROW 50202, 'La reserva está fuera del horario disponible.', 1;
 
     
     -- Superposición en la misma cancha
@@ -1545,11 +1554,7 @@ BEGIN
             AND r.HoraInicio < i.HoraFin         
             AND r.HoraFin    > i.HoraInicio      -- La canchas se solapan si: inicio_existente < fin_nueva o fin_existente > inicio_nueva               
     )
-    BEGIN
-        RAISERROR('La cancha ya tiene una reserva en ese horario.', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END
+        THROW 50203, 'La cancha ya tiene una reserva en ese horario.', 1;
 
  
     -- Mismo cliente con reserva simultánea
@@ -1564,11 +1569,7 @@ BEGIN
             AND r.HoraInicio < i.HoraFin
             AND r.HoraFin    > i.HoraInicio
     )
-    BEGIN
-        RAISERROR('El cliente ya tiene una reserva en ese horario.', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END
+        THROW 50204, 'El cliente ya tiene una reserva en ese horario.', 1;
 
 END;
 GO
