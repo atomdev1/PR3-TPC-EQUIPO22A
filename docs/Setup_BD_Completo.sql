@@ -1031,6 +1031,70 @@ GO
 -- ----------------------------------------------------------------------
 
 -- =========================================
+-- VISTA: vw_ClientesDeudores
+-- Autor: Facundo Ferreyra — Base de Datos 2 (TPI Complejo Deportivo)
+--
+-- Lista los clientes con reservas activas cuyo pago no está completo
+-- (estado Pendiente o Señado), para poder bloquearlos al momento
+-- de querer hacer una nueva reserva.
+--
+-- Por cada cliente deudor informa:
+--   - Datos de contacto (Nombre, Apellido, Email, Telefono).
+--   - ReservasConDeuda : cuántas reservas tiene sin pagar completo.
+--   - MontoDeudaTotal  : sumatoria de lo que le falta pagar en esas reservas.
+--
+-- Reglas de negocio aplicadas:
+--   - Solo usuarios con rol Cliente (IDRol = 4).
+--   - Se excluyen reservas Canceladas (IDEstado = 3): no generan deuda.
+--   - Solo se consideran reservas Pendientes (IDEstadoPago = 1)
+--     o Señadas (IDEstadoPago = 2).
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+-- Paso 1: pre-agrupamos los pagos para tener una sola fila por reserva
+-- con el total ya pagado. Así evitamos duplicar filas al hacer el JOIN.
+
+CREATE OR ALTER VIEW vw_ClientesDeudores AS
+WITH PagosPorReserva AS (
+    SELECT
+        IDReserva,
+        SUM(Monto) AS TotalPagado
+    FROM Pagos
+    GROUP BY IDReserva
+)
+
+-- Paso 2: uno clientes, sus reservas con deuda y los pagos pre-agrupados.
+SELECT
+    u.IDUsuario,
+    u.DNI,
+    u.Nombre,
+    u.Apellido,
+    u.Email,
+    u.Telefono,
+
+    -- Lo que debe = (monto reserva - pago realizado).
+    -- ISNULL cubre el caso de reservas sin ningún pago (TotalPagado = NULL → 0).
+    COUNT(r.IDReserva) AS ReservasConDeuda,
+    SUM(r.PrecioTotal - ISNULL(pag.TotalPagado, 0)) AS MontoDeudaTotal
+FROM Usuarios u
+INNER JOIN Reservas r
+    ON  r.IDUsuario_Cliente = u.IDUsuario
+    AND r.IDEstado <> 3              -- excluye Canceladas
+    AND r.IDEstadoPago IN (1, 2)     -- solo Pendiente o Señado
+LEFT JOIN PagosPorReserva pag
+    ON pag.IDReserva = r.IDReserva
+WHERE u.IDRol = 4                    -- solo Clientes
+GROUP BY u.IDUsuario, u.DNI, u.Nombre, u.Apellido, u.Email, u.Telefono;
+GO
+
+GO
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+
+-- =========================================
 -- SP: sp_CanjearCupon
 -- Autor: Tomas Oliveres
 -- Aplica un cupón de fidelidad a una reserva validando todas las
@@ -1238,6 +1302,89 @@ BEGIN
         THROW;
     END CATCH
 
+END;
+GO
+
+GO
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+
+-- =========================================
+-- SP: sp_CancelarReserva
+-- Autor: Facundo Ferreyra — Base de Datos 2 (TPI Complejo Deportivo)
+--
+-- Cancela una reserva y ajusta su estado de pago según si el cliente
+-- ya había abonado algo.
+--
+-- Parámetros:
+--   @IDReserva : la reserva que se quiere cancelar.
+--
+-- Validaciones (si una falla, la transacción se revierte):
+--   1- La reserva existe.
+--   2- La reserva no está ya Cancelada (IDEstado = 3).
+--   3- La reserva no está Finalizada (IDEstado = 5): no se puede
+--      cancelar algo que ya ocurrió.
+--
+-- Acciones (solo si pasó todo):
+--   - Cambia IDEstado a 3 (Cancelada).
+--   - Ajusta IDEstadoPago:
+--       · Pendiente (1)           - queda Pendiente  (no hubo dinero de por medio)
+--       · Señado (2) o Pagado (3) - pasa a Reembolsado (4)
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+CREATE OR ALTER PROCEDURE sp_CancelarReserva
+    @IDReserva INT
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        DECLARE @IDEstadoActual     INT,
+                @IDEstadoPagoActual INT;
+
+        -- Traemos el estado actual de la reserva.
+        SELECT @IDEstadoActual     = IDEstado,
+               @IDEstadoPagoActual = IDEstadoPago
+        FROM Reservas
+        WHERE IDReserva = @IDReserva;
+
+        -- 1) Si la variable quedó NULL no hubo coincidencia: la reserva no existe.
+        IF @IDEstadoActual IS NULL
+            THROW 50001, 'La reserva no existe.', 1;
+
+        -- 2) No tiene sentido cancelar algo ya cancelado.
+        IF @IDEstadoActual = 3
+            THROW 50002, 'La reserva ya está cancelada.', 1;
+
+        -- 3) Una reserva finalizada no puede cancelarse: el turno ya ocurrió.
+        IF @IDEstadoActual = 5
+            THROW 50003, 'No se puede cancelar una reserva finalizada.', 1;
+
+        -- Si pasó las validaciones, aplicamos los cambios.
+        UPDATE Reservas
+        SET
+            IDEstado    = 3,   -- Cancelada
+            IDEstadoPago = CASE
+                -- Si el cliente ya había pagado algo, hay que devolverle → Reembolsado.
+                WHEN @IDEstadoPagoActual IN (2, 3) THEN 4
+                -- Si todavía no había pagado nada, no hay movimiento de dinero → sin cambio.
+                ELSE @IDEstadoPagoActual
+            END
+        WHERE IDReserva = @IDReserva;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+
+        -- Relanzamos el error para que el llamador sepa qué pasó.
+        THROW;
+    END CATCH
 END;
 GO
 
