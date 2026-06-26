@@ -545,6 +545,11 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.Label lblErrorNueva;
 
         /// <summary>
+        /// pnlClienteNueva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel pnlClienteNueva;
+
+        /// <summary>
         /// ddlClienteNueva control.
         /// </summary>
         protected global::System.Web.UI.WebControls.DropDownList ddlClienteNueva;
@@ -563,6 +568,11 @@ namespace WebApp
         /// txtPrecioNueva control.
         /// </summary>
         protected global::System.Web.UI.WebControls.TextBox txtPrecioNueva;
+
+        /// <summary>
+        /// lblAyudaPrecio control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblAyudaPrecio;
 
         /// <summary>
         /// pnlSugeridos control.

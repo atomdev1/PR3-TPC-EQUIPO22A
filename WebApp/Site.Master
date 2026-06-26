@@ -48,7 +48,7 @@
                         <span class="side-ico">🏅</span> Deportes
                     </asp:HyperLink>
                     <asp:HyperLink ID="lnkReservar"  runat="server" NavigateUrl="~/CanchasCliente.aspx" CssClass="side-link">
-                        <span class="side-ico">⚽</span> Reservar cancha
+                        <span class="side-ico">🏟️</span> Canchas
                     </asp:HyperLink>
                     <asp:HyperLink ID="lnkCupones"   runat="server" NavigateUrl="~/Cupones.aspx"        CssClass="side-link">
                         <span class="side-ico">🎟️</span> Cupones

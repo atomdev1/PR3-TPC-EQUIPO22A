@@ -77,6 +77,14 @@
                                         </div>
                                     </ItemTemplate>
                                 </asp:Repeater>
+
+                                <%-- El cliente reserva esta cancha en el modal de Reservas, que llega
+                                     con la cancha ya elegida solo si tiene horarios. --%>
+                                <asp:HyperLink runat="server" CssClass="btn-r btn-primary-r w-100 mt-3"
+                                    NavigateUrl='<%# "~/Reservas.aspx?cancha=" + Eval("IdCancha") %>'
+                                    Visible='<%# ((System.Collections.ICollection)Eval("Disponibilidades")).Count > 0 %>'>
+                                    Reservar turno
+                                </asp:HyperLink>
                             </div>
 
                         </div>

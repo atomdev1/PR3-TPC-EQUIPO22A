@@ -18,28 +18,60 @@ namespace WebApp
 
             EsCliente = u.Rol == RolUsuario.Cliente;
 
+            // El cliente no elige cliente (es el de la sesion) ni toca el precio
+            // (lo fija la cancha). El mostrador si.
+            pnlClienteNueva.Visible = !EsCliente;
+            txtPrecioNueva.ReadOnly = EsCliente;
+            if (EsCliente)
+                lblAyudaPrecio.Text = "El precio lo fija la cancha.";
+
             if (!IsPostBack)
             {
                 CargarCanchasFiltro();
-                if (!EsCliente) CargarCombosNuevaReserva();
+                CargarCombosNuevaReserva();
                 CargarReservas(u);
+
+                // El cliente llega desde el catalogo con la cancha ya elegida.
+                // Abro el modal con esa cancha.
+                if (EsCliente)
+                    PreseleccionarCanchaCliente();
             }
         }
 
-        // Combos del alta de reserva. Solo los carga el personal del mostrador,
-        // que es el unico que ve el boton de Nueva reserva.
+        // Combos del alta de reserva. El combo de cliente solo lo necesita el
+        // mostrador, el de canchas lo usan los dos (mostrador y cliente).
         private void CargarCombosNuevaReserva()
         {
-            ddlClienteNueva.Items.Clear();
-            ddlClienteNueva.Items.Add(new System.Web.UI.WebControls.ListItem("-- Seleccioná un cliente --", "0"));
-            foreach (Usuario c in new NegocioUsuarios().ObtenerClientes())
-                ddlClienteNueva.Items.Add(new System.Web.UI.WebControls.ListItem(c.Apellido + ", " + c.Nombre, c.IdUsuario.ToString()));
+            if (!EsCliente)
+            {
+                ddlClienteNueva.Items.Clear();
+                ddlClienteNueva.Items.Add(new System.Web.UI.WebControls.ListItem("-- Seleccioná un cliente --", "0"));
+                foreach (Usuario c in new NegocioUsuarios().ObtenerClientes())
+                    ddlClienteNueva.Items.Add(new System.Web.UI.WebControls.ListItem(c.Apellido + ", " + c.Nombre, c.IdUsuario.ToString()));
+            }
 
             ddlCanchaNueva.DataSource = new NegocioCanchas().ObtenerTodas();
             ddlCanchaNueva.DataValueField = "IdCancha";
             ddlCanchaNueva.DataTextField = "NombreFantasia";
             ddlCanchaNueva.DataBind();
             ddlCanchaNueva.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Seleccioná una cancha --", "0"));
+        }
+
+        // Si la URL trae una cancha valida, la deja elegida con su precio, carga
+        // los turnos libres y abre el modal solo para que el cliente reserve.
+        private void PreseleccionarCanchaCliente()
+        {
+            string idCanchaTexto = Request.QueryString["cancha"];
+            if (string.IsNullOrEmpty(idCanchaTexto)) return;
+            if (ddlCanchaNueva.Items.FindByValue(idCanchaTexto) == null) return;
+
+            ddlCanchaNueva.SelectedValue = idCanchaTexto;
+
+            Cancha c = new NegocioCanchas().ObtenerPorId(int.Parse(idCanchaTexto));
+            if (c != null) txtPrecioNueva.Text = c.Precio.ToString("0.##");
+
+            CargarHorariosNueva();
+            AbrirModalNuevaReserva();
         }
 
         // Llena el combo de canchas del filtro con datos de la BD.
@@ -586,7 +618,8 @@ namespace WebApp
             Usuario u = Session["usuario"] as Usuario;
             if (u == null) { Response.Redirect("~/Login.aspx"); return; }
 
-            if (ddlClienteNueva.SelectedValue == "0") { MostrarErrorNueva("Elegí un cliente."); return; }
+            // El cliente se reserva a si mismo, el mostrador elige al cliente.
+            if (!EsCliente && ddlClienteNueva.SelectedValue == "0") { MostrarErrorNueva("Elegí un cliente."); return; }
             if (ddlCanchaNueva.SelectedValue == "0") { MostrarErrorNueva("Elegí una cancha."); return; }
 
             DateTime fecha;
@@ -610,8 +643,18 @@ namespace WebApp
             }
             TimeSpan horaFin = horaInicio + TimeSpan.FromHours(1);
 
+            int idCancha = int.Parse(ddlCanchaNueva.SelectedValue);
+
+            // El cliente no fija el precio, lo toma de la cancha.
+            // El mostrador si lo carga a mano.
             decimal precio;
-            if (!decimal.TryParse(txtPrecioNueva.Text, out precio) || precio <= 0)
+            if (EsCliente)
+            {
+                Cancha cancha = new NegocioCanchas().ObtenerPorId(idCancha);
+                if (cancha == null) { MostrarErrorNueva("La cancha elegida no existe."); return; }
+                precio = cancha.Precio;
+            }
+            else if (!decimal.TryParse(txtPrecioNueva.Text, out precio) || precio <= 0)
             {
                 MostrarErrorNueva("Ingresá un precio válido mayor a cero.");
                 return;
@@ -624,14 +667,14 @@ namespace WebApp
                 return;
             }
 
-            int idCancha = int.Parse(ddlCanchaNueva.SelectedValue);
-
             if (new NegocioReservas().ExisteSolapamiento(idCancha, fecha, horaInicio, horaFin))
             {
                 MostrarErrorNueva("Ya existe una reserva para esa cancha en ese horario.");
                 return;
             }
 
+            // Autogestion: el cliente es el de la sesion y no hay staff (Staff NULL).
+            // Mostrador: el cliente sale del combo y el staff es el operador.
             Reserva r = new Reserva
             {
                 Fecha = fecha,
@@ -639,8 +682,8 @@ namespace WebApp
                 HoraFin = horaFin,
                 PrecioTotal = precio,
                 Observaciones = obs,
-                Cliente = new Usuario { IdUsuario = int.Parse(ddlClienteNueva.SelectedValue) },
-                Staff = u,
+                Cliente = EsCliente ? u : new Usuario { IdUsuario = int.Parse(ddlClienteNueva.SelectedValue) },
+                Staff = EsCliente ? null : u,
                 Cancha = new Cancha { IdCancha = idCancha }
             };
 
@@ -669,7 +712,8 @@ namespace WebApp
 
         private void LimpiarFormularioNueva()
         {
-            ddlClienteNueva.SelectedValue = "0";
+            // El combo de cliente solo existe para el mostrador.
+            if (!EsCliente) ddlClienteNueva.SelectedValue = "0";
             ddlCanchaNueva.SelectedValue = "0";
             txtFechaNueva.Text = "";
             txtPrecioNueva.Text = "";

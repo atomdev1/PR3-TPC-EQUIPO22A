@@ -12,12 +12,12 @@
             <h2 class="mb-0">Reservas</h2>
             <small class="text-muted">Gestión de reservas del complejo</small>
         </div>
-        <% if (!EsCliente) { %>
+        <%-- El cliente abre el mismo modal para autogestionar su turno, el texto
+             cambia segun el rol. El staff lo titula "Nueva reserva". --%>
         <button type="button" class="btn-r btn-primary-r ms-auto"
             data-bs-toggle="modal" data-bs-target="#modalNuevaReserva">
-            ➕ Nueva reserva
+            ➕ <%= EsCliente ? "Reservar turno" : "Nueva reserva" %>
         </button>
-        <% } %>
     </div>
 
     <%-- Filtros (controles de servidor) --%>
@@ -558,10 +558,12 @@
                         <ContentTemplate>
                             <asp:Label ID="lblErrorNueva" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
                             <div class="row g-3">
-                                <div class="col-md-6">
+                                <%-- El combo de cliente solo lo ve el mostrador. Para el cliente
+                                     que autogestiona, el cliente es el de la sesion. --%>
+                                <asp:Panel ID="pnlClienteNueva" runat="server" CssClass="col-md-6">
                                     <label class="form-label fw-semibold">Cliente</label>
                                     <asp:DropDownList ID="ddlClienteNueva" runat="server" CssClass="form-select" />
-                                </div>
+                                </asp:Panel>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Cancha</label>
                                     <asp:DropDownList ID="ddlCanchaNueva" runat="server" CssClass="form-select"
@@ -575,7 +577,8 @@
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Precio total ($)</label>
                                     <asp:TextBox ID="txtPrecioNueva" runat="server" CssClass="form-control" TextMode="Number" />
-                                    <span class="text-muted small">Se autocompleta con el precio de la cancha, lo podés ajustar.</span>
+                                    <asp:Label ID="lblAyudaPrecio" runat="server" CssClass="text-muted small"
+                                        Text="Se autocompleta con el precio de la cancha, lo podés ajustar." />
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Horario <span class="text-muted fw-normal">(turnos de 1 hora)</span></label>
