@@ -988,6 +988,49 @@ GO
 -- ----------------------------------------------------------------------
 
 -- =========================================
+-- VISTA: Canchas de menor uso del mes
+-- Autor: Angel Medina
+-- Identifica las canchas con menos reservas en el mes,
+-- para decidir promociones o ajustes de precio.
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+CREATE OR ALTER VIEW vw_CanchasMenorUso AS
+
+-- Incluye todas las canchas activas, incluso las que no tuviero ninguna reserva finalizada en el mes actual 
+SELECT
+    c.IDCancha,
+    c.Numero                                        AS NroCancha,
+    c.NombreFantasia,
+    d.Nombre                                        AS Deporte,
+    ISNULL(COUNT(r.IDReserva), 0)                   AS ReservasXMes,
+    MONTH(GETDATE())                                AS Mes,
+    YEAR(GETDATE())                                 AS Anio
+
+FROM Canchas c
+INNER JOIN Deportes d
+    ON d.IDDeporte = c.IDDeporte
+LEFT JOIN Reservas r
+    ON  r.IDCancha  = c.IDCancha
+    AND r.IDEstado  = 5                   -- RESERVAS FINALIZADAS
+    AND MONTH(r.Fecha) = MONTH(GETDATE()) --FECHA Y AÑO ACTUAL
+    AND YEAR(r.Fecha)  = YEAR(GETDATE())
+
+GROUP BY
+    c.IDCancha,
+    c.Numero,
+    c.NombreFantasia,
+    d.Nombre;
+GO
+
+GO
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+
+-- =========================================
 -- SP: sp_CanjearCupon
 -- Autor: Tomas Oliveres
 -- Aplica un cupón de fidelidad a una reserva validando todas las
@@ -1118,6 +1161,92 @@ GO
 -- ----------------------------------------------------------------------
 
 -- =========================================
+-- SP: SP_FinalizarReserva
+-- Marca una reserva como Finalizada y suma una asistencia al cliente,
+-- Si una validación falla, no se modifica nada.
+-- Autor: Angel Medina
+--
+-- Parámetros:
+--  @IDReserva : la reserva que se quiere finalizar
+--
+-- Reglas que valida
+--  1. La reserva existe.
+--  2. El estado actual permite finalizar (Nueva o Reprogramada).
+--  3. Ya pasó la fecha y hora de finalización de la reserva.
+--  4. El pago de la reserva está confirmado (Pagado).
+--
+-- Acciones finales:
+--  - Cambia el estado de la reserva a Finalizada.
+--  - Suma 1 a CantidadAsistencias del cliente que hizo la reserva.
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+CREATE OR ALTER PROCEDURE SP_FinalizarReserva
+    @IDReserva INT
+AS
+BEGIN
+
+    BEGIN TRY
+
+        -- Variables de la reserva
+        DECLARE @Fecha            DATE;
+        DECLARE @HoraFin          TIME;
+        DECLARE @IDEstado         INT;
+        DECLARE @IDEstadoPago     INT;
+        DECLARE @IDUsuarioCliente INT;
+
+        -- 1 Traemos los datos de la reserva.
+        SELECT
+            @Fecha            = Fecha,
+            @HoraFin          = HoraFin,
+            @IDEstado         = IDEstado,
+            @IDEstadoPago     = IDEstadoPago,
+            @IDUsuarioCliente = IDUsuario_Cliente
+        FROM Reservas
+        WHERE IDReserva = @IDReserva;
+
+        -- Si la variable quedó NULL, la reserva no existe.
+        IF @Fecha IS NULL
+            THROW 50101, 'La reserva indicada no existe.', 1;
+
+        -- 2 Solo se pueden finalizar reservas Nueva o Reprogramada
+        IF @IDEstado <> 1 AND @IDEstado <> 2
+            THROW 50102, 'Solo se pueden finalizar reservas en estado Nueva o Reprogramada.', 1;
+
+        -- 3 No se puede marcar como Finalizada una reserva que todavía no terminó.
+        IF (CAST(@Fecha AS DATETIME) + CAST(@HoraFin AS DATETIME)) > GETDATE()
+            THROW 50103, 'No se puede finalizar una reserva que todavía no terminó.', 1;
+
+        -- 4 El pago debe estar confirmado. IDEstadoPago = 3 Pagado.
+        IF @IDEstadoPago <> 3
+            THROW 50104, 'No se puede finalizar una reserva con el pago pendiente.', 1;
+
+        -- Cambiamos el estado de la reserva a Finalizada.
+        UPDATE Reservas
+        SET IDEstado = 5
+        WHERE IDReserva = @IDReserva;
+
+        -- Sumamos la asistencia al cliente que hizo la reserva.
+        UPDATE Usuarios
+        SET CantidadAsistencias = CantidadAsistencias + 1
+        WHERE IDUsuario = @IDUsuarioCliente;
+
+    END TRY
+    BEGIN CATCH
+        THROW;
+    END CATCH
+
+END;
+GO
+
+GO
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+
+-- =========================================
 -- TRIGGER: Sincronizar estado de pago
 -- Autor: Tomas Oliveres
 -- Recalcula el estado de pago de la reserva al registrarse un pago.
@@ -1198,3 +1327,101 @@ END;
 GO
 
 -- Uso:  INSERT INTO Pagos (Monto, IDReserva, IDFormaPago) VALUES (2000, 25, 1);
+
+GO
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+-- =========================================
+-- TRIGGER: Validar horario de atención
+-- Autor: Angel Medina
+-- Impide registrar reservas inválidas: cancha inactiva, fuera del horario disponible
+-- de la cancha, superpuestas en la misma cancha, o del mismo cliente en simultáneo.
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+CREATE OR ALTER TRIGGER TR_ValidarHorarioAtencion
+ON Reservas
+AFTER INSERT, UPDATE
+AS
+BEGIN
+
+    -- Cancha inactiva
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        INNER JOIN Canchas c ON c.IDCancha = i.IDCancha
+        WHERE c.Activa = 0
+    )
+    BEGIN
+        RAISERROR('No se puede reservar, la cancha esta inactiva.', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+
+    -- Fuera del horario disponible de la cancha
+   
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        WHERE NOT EXISTS ( -- Si el horario no existe no es un horaio valido
+            SELECT 1
+            FROM DisponibilidadCanchas dc
+            WHERE dc.IDCancha  = i.IDCancha
+              AND dc.Activa    = 1
+              AND dc.DiaSemana = (DATEPART(WEEKDAY, i.Fecha) - 1)  -- -1 ajuste Lunes=0 como en vista
+              AND dc.HoraApertura <= i.HoraInicio
+              AND dc.HoraCierre   >= i.HoraFin
+        )
+    )
+    BEGIN
+        RAISERROR('La reserva está fuera del horario disponible.', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+
+    
+    -- Superposición en la misma cancha
+    -- Excluye Canceladas  porque liberan el horario.
+    -- Excluye la propia reserva en UPDATE.
+ 
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        INNER JOIN Reservas r
+            ON  r.IDCancha = i.IDCancha          --Mimso ID
+            AND r.Fecha    = i.Fecha             --Misma Fecha
+            AND r.IDEstado <> 3                  -- Si esta cancelada la reserva anterior se puede reservar 
+            AND r.IDReserva <> i.IDReserva       -- Se excluye a si misma si es un UPDATE
+            AND r.HoraInicio < i.HoraFin         
+            AND r.HoraFin    > i.HoraInicio      -- La canchas se solapan si: inicio_existente < fin_nueva o fin_existente > inicio_nueva               
+    )
+    BEGIN
+        RAISERROR('La cancha ya tiene una reserva en ese horario.', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+
+ 
+    -- Mismo cliente con reserva simultánea
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        INNER JOIN Reservas r
+            ON  r.IDUsuario_Cliente = i.IDUsuario_Cliente
+            AND r.Fecha             = i.Fecha
+            AND r.IDEstado          <> 3         -- excluye Canceladas
+            AND r.IDReserva         <> i.IDReserva
+            AND r.HoraInicio < i.HoraFin
+            AND r.HoraFin    > i.HoraInicio
+    )
+    BEGIN
+        RAISERROR('El cliente ya tiene una reserva en ese horario.', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+
+END;
+GO
