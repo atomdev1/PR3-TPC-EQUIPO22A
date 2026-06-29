@@ -405,6 +405,66 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.Button btnConfirmarCancelacion;
 
         /// <summary>
+        /// upReprogramar control.
+        /// </summary>
+        protected global::System.Web.UI.UpdatePanel upReprogramar;
+
+        /// <summary>
+        /// hfIdReservaReprogramar control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfIdReservaReprogramar;
+
+        /// <summary>
+        /// hfIdCanchaReprogramar control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfIdCanchaReprogramar;
+
+        /// <summary>
+        /// lblErrorReprogramar control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblErrorReprogramar;
+
+        /// <summary>
+        /// lblReprogramarReserva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblReprogramarReserva;
+
+        /// <summary>
+        /// lblReprogramarCliente control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblReprogramarCliente;
+
+        /// <summary>
+        /// lblReprogramarCancha control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblReprogramarCancha;
+
+        /// <summary>
+        /// lblReprogramarActual control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblReprogramarActual;
+
+        /// <summary>
+        /// txtFechaReprogramar control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtFechaReprogramar;
+
+        /// <summary>
+        /// ddlHorarioReprogramar control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.DropDownList ddlHorarioReprogramar;
+
+        /// <summary>
+        /// lblSinHorariosReprog control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblSinHorariosReprog;
+
+        /// <summary>
+        /// btnConfirmarReprogramar control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnConfirmarReprogramar;
+
+        /// <summary>
         /// upPagoOnline control.
         /// </summary>
         protected global::System.Web.UI.UpdatePanel upPagoOnline;

@@ -67,6 +67,7 @@ namespace Negocio
                    u.IDUsuario  AS ClienteId,
                    u.Nombre     AS ClienteNombre,
                    u.Apellido   AS ClienteApellido,
+                   c.IDCancha   AS CanchaId,
                    c.NombreFantasia AS CanchaNombre,
                    d.Nombre     AS DeporteNombre
             FROM   Reservas r
@@ -102,6 +103,7 @@ namespace Negocio
                     };
                     r.Cancha = new Cancha
                     {
+                        IdCancha = (int)datos.Lector["CanchaId"],
                         NombreFantasia = (string)datos.Lector["CanchaNombre"],
                         Deporte = new Deporte { Nombre = (string)datos.Lector["DeporteNombre"] }
                     };
@@ -230,8 +232,10 @@ namespace Negocio
         }
 
         // Turnos no cancelados de una cancha en una fecha. Solo traigo el rango
-        // horario, alcanza para descartar los bloques ocupados.
-        public List<Reserva> ObtenerReservasDelDia(int idCancha, DateTime fecha)
+        // horario, alcanza para descartar los bloques ocupados. El idReservaExcluir
+        // deja afuera a la propia reserva cuando se reprograma, asi su turno actual
+        // no aparece ocupado por ella misma.
+        public List<Reserva> ObtenerReservasDelDia(int idCancha, DateTime fecha, int idReservaExcluir = 0)
         {
             List<Reserva> lista = new List<Reserva>();
             AccesoDatos datos = new AccesoDatos();
@@ -242,10 +246,12 @@ namespace Negocio
                     FROM   Reservas
                     WHERE  IDCancha = @idCancha
                       AND  Fecha = @fecha
-                      AND  IDEstado <> @cancelada");
+                      AND  IDEstado <> @cancelada
+                      AND  IDReserva <> @excluir");
                 datos.AgregarParametro("@idCancha", idCancha);
                 datos.AgregarParametro("@fecha", fecha.Date);
                 datos.AgregarParametro("@cancelada", (int)EstadoReserva.Cancelada);
+                datos.AgregarParametro("@excluir", idReservaExcluir);
                 datos.EjecutarLectura();
                 while (datos.Lector.Read())
                 {
@@ -263,12 +269,14 @@ namespace Negocio
         // Turnos de 1 hora libres de una cancha para una fecha. Corta cada franja
         // de disponibilidad en bloques de una hora en horas exactas y descarta los
         // que ya tienen reserva. Si la fecha es hoy, deja afuera los que ya pasaron.
-        public List<TimeSpan> ObtenerHorariosDisponibles(int idCancha, DateTime fecha, List<DisponibilidadCancha> franjas)
+        // El idReservaExcluir se reenvia para que al reprogramar el turno propio
+        // siga apareciendo como disponible.
+        public List<TimeSpan> ObtenerHorariosDisponibles(int idCancha, DateTime fecha, List<DisponibilidadCancha> franjas, int idReservaExcluir = 0)
         {
             List<TimeSpan> disponibles = new List<TimeSpan>();
             if (franjas == null || franjas.Count == 0) return disponibles;
 
-            List<Reserva> ocupadas = ObtenerReservasDelDia(idCancha, fecha);
+            List<Reserva> ocupadas = ObtenerReservasDelDia(idCancha, fecha, idReservaExcluir);
             TimeSpan unaHora = TimeSpan.FromHours(1);
             bool esHoy = fecha.Date == DateTime.Today;
 
@@ -312,6 +320,32 @@ namespace Negocio
                 datos.AgregarParametro("@idCancha", r.Cancha.IdCancha);
                 datos.AgregarParametro("@idEstado", (int)EstadoReserva.Nueva);
                 datos.AgregarParametro("@idEstadoPago", (int)EstadoPago.Pendiente);
+                datos.EjecutarAccion();
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
+        // Mueve una reserva a otra fecha/horario y la deja en estado Reprogramada.
+        // No toca cancha, cliente ni precio. Reprogramar es correr el turno, no
+        // rearmar la reserva. El solapamiento (excluyendo la propia) se controla
+        // en la capa web antes de llamar a este metodo.
+        public void Reprogramar(int idReserva, DateTime nuevaFecha, TimeSpan horaInicio, TimeSpan horaFin)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    UPDATE Reservas
+                    SET    Fecha = @fecha,
+                           HoraInicio = @horaInicio,
+                           HoraFin = @horaFin,
+                           IDEstado = @idEstado
+                    WHERE  IDReserva = @idReserva");
+                datos.AgregarParametro("@fecha", nuevaFecha.Date);
+                datos.AgregarParametro("@horaInicio", horaInicio);
+                datos.AgregarParametro("@horaFin", horaFin);
+                datos.AgregarParametro("@idEstado", (int)EstadoReserva.Reprogramada);
+                datos.AgregarParametro("@idReserva", idReserva);
                 datos.EjecutarAccion();
             }
             finally { datos.CerrarConexion(); }

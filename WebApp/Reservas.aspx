@@ -141,6 +141,15 @@
                                             <li><hr class="dropdown-divider" /></li>
                                             <li>
                                                 <asp:LinkButton runat="server"
+                                                    CommandName="Reprogramar"
+                                                    CommandArgument='<%# Eval("IdReserva") %>'
+                                                    CssClass="dropdown-item"
+                                                    Visible='<%# (int)Eval("Estado") == 1 || (int)Eval("Estado") == 2 %>'>
+                                                    Reprogramar
+                                                </asp:LinkButton>
+                                            </li>
+                                            <li>
+                                                <asp:LinkButton runat="server"
                                                     CommandName="Finalizar"
                                                     CommandArgument='<%# Eval("IdReserva") %>'
                                                     CssClass="dropdown-item"
@@ -540,6 +549,57 @@
                     <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Volver</button>
                     <asp:Button ID="btnConfirmarCancelacion" runat="server" Text="Sí, cancelar reserva"
                         CssClass="btn-r btn-danger-r" OnClick="btnConfirmarCancelacion_Click" CausesValidation="false" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- ===================== MODAL REPROGRAMAR ===================== --%>
+    <%-- Mueve el turno a otra fecha/horario de la misma cancha. El error vive
+         dentro del modal y se resetea al abrir, asi nunca queda colgado. --%>
+    <div class="modal fade" id="modalReprogramar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reprogramar reserva</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <asp:UpdatePanel ID="upReprogramar" runat="server">
+                        <ContentTemplate>
+                            <asp:HiddenField ID="hfIdReservaReprogramar" runat="server" />
+                            <asp:HiddenField ID="hfIdCanchaReprogramar" runat="server" />
+                            <asp:Label ID="lblErrorReprogramar" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
+
+                            <div class="mb-3">
+                                <asp:Label ID="lblReprogramarReserva" runat="server" CssClass="fw-semibold d-block" />
+                                <div class="small text-muted mt-1">
+                                    <span>Cliente: <asp:Label ID="lblReprogramarCliente" runat="server" /></span><br />
+                                    <span>Cancha: <asp:Label ID="lblReprogramarCancha" runat="server" /></span><br />
+                                    <span>Turno actual: <asp:Label ID="lblReprogramarActual" runat="server" /></span>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Nueva fecha</label>
+                                    <asp:TextBox ID="txtFechaReprogramar" runat="server" CssClass="form-control" TextMode="Date"
+                                        AutoPostBack="true" OnTextChanged="txtFechaReprogramar_TextChanged" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Nuevo horario <span class="text-muted fw-normal">(turnos de 1 hora)</span></label>
+                                    <asp:DropDownList ID="ddlHorarioReprogramar" runat="server" CssClass="form-select" />
+                                    <asp:Label ID="lblSinHorariosReprog" runat="server" CssClass="text-muted small" Visible="false"
+                                        Text="No hay turnos disponibles para esa cancha en esa fecha." />
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Volver</button>
+                    <asp:Button ID="btnConfirmarReprogramar" runat="server" Text="Reprogramar turno"
+                        CssClass="btn-r btn-primary-r" OnClick="btnConfirmarReprogramar_Click" CausesValidation="false" />
                 </div>
             </div>
         </div>

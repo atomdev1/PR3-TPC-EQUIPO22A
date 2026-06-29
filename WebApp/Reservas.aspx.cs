@@ -261,6 +261,33 @@ namespace WebApp
 
                 AbrirModalCancelacion();
             }
+            else if (e.CommandName == "Reprogramar")
+            {
+                int idReserva = int.Parse(e.CommandArgument.ToString());
+                Reserva reserva = new NegocioReservas().Listar()
+                    .FirstOrDefault(r => r.IdReserva == idReserva);
+                if (reserva == null) return;
+
+                hfIdReservaReprogramar.Value = idReserva.ToString();
+                hfIdCanchaReprogramar.Value = reserva.Cancha.IdCancha.ToString();
+                lblReprogramarReserva.Text = "Reserva #" + idReserva;
+                lblReprogramarCliente.Text = reserva.Cliente.Nombre + " " + reserva.Cliente.Apellido;
+                lblReprogramarCancha.Text = reserva.Cancha.NombreFantasia + " · " + reserva.Cancha.Deporte.Nombre;
+                lblReprogramarActual.Text = reserva.Fecha.ToString("dd/MM/yyyy") + " " +
+                                            reserva.HoraInicio.ToString(@"hh\:mm") + " – " +
+                                            reserva.HoraFin.ToString(@"hh\:mm");
+                lblErrorReprogramar.Visible = false;
+
+                // Arranco precargado con el turno actual. Misma fecha y horario,
+                // que aparece disponible porque excluyo la propia reserva.
+                txtFechaReprogramar.Text = reserva.Fecha.ToString("yyyy-MM-dd");
+                CargarHorariosReprogramar();
+                string actual = reserva.HoraInicio.ToString(@"hh\:mm");
+                if (ddlHorarioReprogramar.Items.FindByValue(actual) != null)
+                    ddlHorarioReprogramar.SelectedValue = actual;
+
+                AbrirModalReprogramar();
+            }
             else if (e.CommandName == "Finalizar")
             {
                 Usuario u = Session["usuario"] as Usuario;
@@ -525,6 +552,116 @@ namespace WebApp
             string script =
                 "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalCancelarReserva')).show();";
             ClientScript.RegisterStartupScript(GetType(), "abrirModalCancelacion", script, true);
+        }
+
+        // Cambiar la fecha recalcula los turnos libres de la misma cancha. Corre
+        // por AutoPostBack dentro del UpdatePanel, asi el modal no se cierra.
+        protected void txtFechaReprogramar_TextChanged(object sender, EventArgs e)
+        {
+            CargarHorariosReprogramar();
+        }
+
+        // Turnos de 1 hora libres para reprogramar. Cancha fija (la de la reserva),
+        // fecha del propio modal, y excluyo la reserva que estoy moviendo para que
+        // su turno actual no figure ocupado por ella misma.
+        private void CargarHorariosReprogramar()
+        {
+            ddlHorarioReprogramar.Items.Clear();
+
+            DateTime fecha;
+            bool fechaOk = DateTime.TryParse(txtFechaReprogramar.Text, out fecha);
+            int idCancha = int.Parse(hfIdCanchaReprogramar.Value);
+            int idReserva = int.Parse(hfIdReservaReprogramar.Value);
+
+            if (!fechaOk)
+            {
+                lblSinHorariosReprog.Text = "Elegí una fecha para ver los turnos disponibles.";
+                lblSinHorariosReprog.Visible = true;
+                ddlHorarioReprogramar.Visible = false;
+                return;
+            }
+
+            // El enum DiaSemana va Lunes=0..Domingo=6. DateTime.DayOfWeek
+            // arranca en Domingo=0, asi que lo corro para que coincidan.
+            int diaBd = ((int)fecha.DayOfWeek + 6) % 7;
+            List<DisponibilidadCancha> franjas = new NegocioCanchas().ObtenerDisponibilidades(idCancha, diaBd);
+            List<TimeSpan> disponibles = new NegocioReservas().ObtenerHorariosDisponibles(idCancha, fecha, franjas, idReserva);
+
+            if (disponibles.Count == 0)
+            {
+                lblSinHorariosReprog.Text = "No hay turnos disponibles para esa cancha en esa fecha.";
+                lblSinHorariosReprog.Visible = true;
+                ddlHorarioReprogramar.Visible = false;
+                return;
+            }
+
+            lblSinHorariosReprog.Visible = false;
+            ddlHorarioReprogramar.Visible = true;
+            foreach (TimeSpan t in disponibles)
+                ddlHorarioReprogramar.Items.Add(new System.Web.UI.WebControls.ListItem(FormatoTurno(t), t.ToString(@"hh\:mm")));
+        }
+
+        // Confirma la reprogramacion. Valida fecha futura y horario elegido, controla
+        // el solapamiento excluyendo la propia reserva y recien ahi mueve el turno.
+        protected void btnConfirmarReprogramar_Click(object sender, EventArgs e)
+        {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
+            int idReserva = int.Parse(hfIdReservaReprogramar.Value);
+            int idCancha = int.Parse(hfIdCanchaReprogramar.Value);
+
+            DateTime fecha;
+            if (!DateTime.TryParse(txtFechaReprogramar.Text, out fecha))
+            {
+                MostrarErrorReprogramar("Ingresá una fecha válida.");
+                return;
+            }
+            if (fecha.Date < DateTime.Today)
+            {
+                MostrarErrorReprogramar("La fecha no puede ser anterior a hoy.");
+                return;
+            }
+
+            TimeSpan horaInicio;
+            if (ddlHorarioReprogramar.SelectedIndex < 0 || !TimeSpan.TryParse(ddlHorarioReprogramar.SelectedValue, out horaInicio))
+            {
+                MostrarErrorReprogramar("Elegí un horario disponible.");
+                return;
+            }
+            TimeSpan horaFin = horaInicio + TimeSpan.FromHours(1);
+
+            if (new NegocioReservas().ExisteSolapamiento(idCancha, fecha, horaInicio, horaFin, idReserva))
+            {
+                MostrarErrorReprogramar("Ya existe una reserva para esa cancha en ese horario.");
+                return;
+            }
+
+            try
+            {
+                new NegocioReservas().Reprogramar(idReserva, fecha, horaInicio, horaFin);
+            }
+            catch (Exception ex)
+            {
+                MostrarErrorReprogramar(ex.Message);
+                return;
+            }
+
+            CargarReservas(u);
+        }
+
+        private void MostrarErrorReprogramar(string mensaje)
+        {
+            lblErrorReprogramar.Text = mensaje;
+            lblErrorReprogramar.Visible = true;
+            AbrirModalReprogramar();
+        }
+
+        private void AbrirModalReprogramar()
+        {
+            string script =
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalReprogramar')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModalReprogramar", script, true);
         }
 
         // Al elegir la cancha sugiero su precio y recargo los turnos libres. Corre
