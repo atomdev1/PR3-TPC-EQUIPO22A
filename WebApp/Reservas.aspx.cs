@@ -290,20 +290,51 @@ namespace WebApp
             }
             else if (e.CommandName == "Finalizar")
             {
-                Usuario u = Session["usuario"] as Usuario;
-                if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+                int idReserva = int.Parse(e.CommandArgument.ToString());
+                Reserva reserva = new NegocioReservas().Listar()
+                    .FirstOrDefault(r => r.IdReserva == idReserva);
+                if (reserva == null) return;
 
-                try
-                {
-                    new NegocioReservas().Finalizar(int.Parse(e.CommandArgument.ToString()));
-                    CargarReservas(u);
-                }
-                catch (Exception ex)
-                {
-                    lblErrorFinalizar.Text = ex.Message;
-                    lblErrorFinalizar.Visible = true;
-                }
+                hfIdReservaFinalizar.Value = idReserva.ToString();
+                lblFinalizarReserva.Text = "Reserva #" + idReserva;
+                lblFinalizarCliente.Text = reserva.Cliente.Nombre + " " + reserva.Cliente.Apellido;
+                lblFinalizarFecha.Text = reserva.Fecha.ToString("dd/MM/yyyy") + " " +
+                                         reserva.HoraInicio.ToString(@"hh\:mm") + " – " +
+                                         reserva.HoraFin.ToString(@"hh\:mm");
+                lblFinalizarPrecio.Text = string.Format("{0:C0}", reserva.PrecioTotal);
+                lblErrorFinalizar.Visible = false;
+
+                AbrirModalFinalizar();
             }
+        }
+
+        // Confirma la finalizacion. Si el SP la rechaza (ej pago pendiente), el
+        // mensaje llega como excepcion y se muestra dentro del modal.
+        protected void btnConfirmarFinalizar_Click(object sender, EventArgs e)
+        {
+            Usuario u = Session["usuario"] as Usuario;
+            if (u == null) { Response.Redirect("~/Login.aspx"); return; }
+
+            try
+            {
+                new NegocioReservas().Finalizar(int.Parse(hfIdReservaFinalizar.Value));
+            }
+            catch (Exception ex)
+            {
+                lblErrorFinalizar.Text = ex.Message;
+                lblErrorFinalizar.Visible = true;
+                AbrirModalFinalizar();
+                return;
+            }
+
+            CargarReservas(u);
+        }
+
+        private void AbrirModalFinalizar()
+        {
+            string script =
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalFinalizarReserva')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModalFinalizar", script, true);
         }
 
         // Confirma el canje. Si el SP rechaza por una regla, hace THROW: el

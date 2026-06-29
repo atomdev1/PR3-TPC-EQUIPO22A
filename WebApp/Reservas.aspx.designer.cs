@@ -405,6 +405,36 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.Button btnConfirmarCancelacion;
 
         /// <summary>
+        /// hfIdReservaFinalizar control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfIdReservaFinalizar;
+
+        /// <summary>
+        /// lblFinalizarReserva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblFinalizarReserva;
+
+        /// <summary>
+        /// lblFinalizarCliente control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblFinalizarCliente;
+
+        /// <summary>
+        /// lblFinalizarFecha control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblFinalizarFecha;
+
+        /// <summary>
+        /// lblFinalizarPrecio control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblFinalizarPrecio;
+
+        /// <summary>
+        /// btnConfirmarFinalizar control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnConfirmarFinalizar;
+
+        /// <summary>
         /// upReprogramar control.
         /// </summary>
         protected global::System.Web.UI.UpdatePanel upReprogramar;

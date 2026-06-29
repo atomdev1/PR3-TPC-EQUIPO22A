@@ -55,8 +55,6 @@
     <div class="card-r">
         <div class="card-head">
             <asp:Label ID="lblTotal" runat="server" CssClass="fw-semibold" />
-            <asp:Label ID="lblErrorFinalizar" runat="server"
-    CssClass="alert alert-danger d-block mt-3" Visible="false" />
         </div>
         <div class="table-responsive">
             <table class="table table-hover mb-0 align-middle">
@@ -549,6 +547,39 @@
                     <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Volver</button>
                     <asp:Button ID="btnConfirmarCancelacion" runat="server" Text="Sí, cancelar reserva"
                         CssClass="btn-r btn-danger-r" OnClick="btnConfirmarCancelacion_Click" CausesValidation="false" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- MODAL FINALIZAR RESERVA --%>
+    <%-- Confirmacion antes de finalizar. El error vive dentro del
+         modal y se resetea al abrir, asi nunca queda colgado. --%>
+    <div class="modal fade" id="modalFinalizarReserva" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Finalizar reserva</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <asp:HiddenField ID="hfIdReservaFinalizar" runat="server" />
+                    <asp:Label ID="lblErrorFinalizar" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
+
+                    <p>¿Confirmás que el turno se jugó y querés finalizar la reserva?</p>
+                    <div class="mb-2">
+                        <asp:Label ID="lblFinalizarReserva" runat="server" CssClass="fw-semibold d-block" />
+                        <div class="small text-muted mt-1">
+                            <span>Cliente: <asp:Label ID="lblFinalizarCliente" runat="server" /></span><br />
+                            <span>Fecha: <asp:Label ID="lblFinalizarFecha" runat="server" /></span><br />
+                            <span>Precio: <asp:Label ID="lblFinalizarPrecio" runat="server" /></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-r btn-ghost-r" data-bs-dismiss="modal">Volver</button>
+                    <asp:Button ID="btnConfirmarFinalizar" runat="server" Text="Sí, finalizar"
+                        CssClass="btn-r btn-primary-r" OnClick="btnConfirmarFinalizar_Click" CausesValidation="false" />
                 </div>
             </div>
         </div>
