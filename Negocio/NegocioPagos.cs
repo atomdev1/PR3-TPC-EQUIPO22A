@@ -84,6 +84,31 @@ namespace Negocio
             }
         }
 
+        // Total cobrado en el día de hoy. Suma de los pagos cuya Fecha cae hoy.
+        // Es plata real que entró, no precio teorico de los turnos. Alimenta el KPI
+        // "Ingresos del día" del Panel.
+        public decimal ObtenerIngresosDelDia()
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT ISNULL(SUM(Monto), 0) AS Total
+                    FROM   Pagos
+                    WHERE  CAST(FechaHora AS DATE) = CAST(GETDATE() AS DATE)");
+                datos.EjecutarLectura();
+
+                if (datos.Lector.Read())
+                    return (decimal)datos.Lector["Total"];
+
+                return 0m;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
         // Lista los pagos individuales de una reserva (cada seña / saldo cargado),
         // ordenados por fecha. Alimenta el modal de detalle de pago.
         public List<Pago> ObtenerPagosPorReserva(int idReserva)

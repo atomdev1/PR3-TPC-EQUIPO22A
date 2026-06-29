@@ -35,8 +35,11 @@ namespace WebApp
                 CargarInicioCliente();
             else
             {
-                CargarResumen();
-                CargarUltimasReservas();
+                // Una sola lectura de reservas. La comparten el resumen (turnos de
+                // hoy) y la tabla de ultimas reservas.
+                List<Reserva> reservas = new NegocioReservas().Listar();
+                CargarResumen(reservas);
+                CargarUltimasReservas(reservas);
                 CargarOcupacion();
                 CargarClientesDeudores();
                 CargarCanchasMenorUso();
@@ -50,37 +53,29 @@ namespace WebApp
         }
 
 
-        // NOTA: datos de demostración hardcodeados. Todavía no hay conexión a la BBDD.
-        private void CargarResumen()
+        private void CargarResumen(List<Reserva> reservas)
         {
             CultureInfo ar = new CultureInfo("es-AR");
             lblFecha.Text = DateTime.Today.ToString("dddd d 'de' MMMM 'de' yyyy", ar);
-            
+
             lblCanchasActivas.Text = new NegocioCanchas().ObtenerTodas().Count(c => c.Activa).ToString();
             lblCuponesVigentes.Text = new NegocioCupones().ObtenerTodas().Count(c => c.Estado == EstadoCupon.Activo).ToString();
 
+            // Turnos de hoy: reservas con fecha de hoy que no esten canceladas.
+            lblTurnosHoy.Text = reservas
+                .Count(r => r.Fecha.Date == DateTime.Today && r.Estado != EstadoReserva.Cancelada)
+                .ToString();
 
-            // PENDIENTE HASTA IMPLEMENTAR NegocioReservas.cs
-            lblTurnosHoy.Text = "12";
-            lblIngresosHoy.Text = (48500m).ToString("C0", ar);
+            // Ingresos del dia: lo realmente cobrado hoy, segun la fecha de cada pago.
+            lblIngresosHoy.Text = new NegocioPagos().ObtenerIngresosDelDia().ToString("C0", ar);
         }
 
-        
-        
-        
-        // NOTA: datos de demostración hardcodeados. Todavía no hay conexión a la BBDD.
-        private void CargarUltimasReservas()
-        {
-            List<ReservaDemo> reservas = new List<ReservaDemo>
-            {
-                new ReservaDemo { Cliente = "Lucía Fernández", Cancha = "Cancha Tenis Central", Deporte = "Tenis",  Horario = "Hoy 18:00", Estado = "Confirmada" },
-                new ReservaDemo { Cliente = "Martín Gómez",    Cancha = "Fútbol 5 - Norte",    Deporte = "Fútbol", Horario = "Hoy 19:00", Estado = "Pendiente" },
-                new ReservaDemo { Cliente = "Sofía Ramírez",   Cancha = "Pádel 1",             Deporte = "Pádel",  Horario = "Hoy 20:00", Estado = "Confirmada" },
-                new ReservaDemo { Cliente = "Diego Sosa",      Cancha = "Básquet Techada",     Deporte = "Básquet",Horario = "Hoy 21:00", Estado = "Cancelada" },
-                new ReservaDemo { Cliente = "Camila Torres",   Cancha = "Fútbol 5 - Sur",      Deporte = "Fútbol", Horario = "Mañana 10:00", Estado = "Pendiente" },
-            };
 
-            rptReservas.DataSource = reservas;
+        // Las ultimas reservas cargadas. Listar ya ordena por fecha descendente,
+        // asi que las primeras son las mas recientes.
+        private void CargarUltimasReservas(List<Reserva> reservas)
+        {
+            rptReservas.DataSource = reservas.Take(5).ToList();
             rptReservas.DataBind();
         }
 
@@ -184,21 +179,27 @@ namespace WebApp
 
         protected string GetEstadoBadge(object estadoObj)
         {
-            string estado = (estadoObj ?? "").ToString().ToLower();
-            if (estado == "confirmada") return "badge fw-normal text-success bg-success-subtle";
-            if (estado == "pendiente") return "badge fw-normal text-warning bg-warning-subtle";
-            if (estado == "cancelada") return "badge fw-normal text-danger bg-danger-subtle";
-            return "badge fw-normal text-secondary bg-secondary-subtle";
+            EstadoReserva estado = (EstadoReserva)estadoObj;
+            switch (estado)
+            {
+                case EstadoReserva.Nueva:        return "badge fw-normal text-success bg-success-subtle";
+                case EstadoReserva.Reprogramada: return "badge fw-normal text-warning bg-warning-subtle";
+                case EstadoReserva.Cancelada:    return "badge fw-normal text-danger bg-danger-subtle";
+                case EstadoReserva.Finalizada:   return "badge fw-normal text-primary bg-primary-subtle";
+                default:                         return "badge fw-normal text-secondary bg-secondary-subtle";
+            }
         }
-    }
 
-    // solo para la vista del Panel (datos de demo, sin BBDD).
-    public class ReservaDemo
-    {
-        public string Cliente { get; set; }
-        public string Cancha { get; set; }
-        public string Deporte { get; set; }
-        public string Horario { get; set; }
-        public string Estado { get; set; }
+        // Horario legible de una reserva para la tabla del Panel:
+        // "Hoy 18:00", "Mañana 10:00" o la fecha corta si cae mas lejos.
+        protected string FormatoHorarioReserva(object item)
+        {
+            Reserva r = (Reserva)item;
+            string hora = r.HoraInicio.ToString(@"hh\:mm");
+            if (r.Fecha.Date == DateTime.Today) return "Hoy " + hora;
+            if (r.Fecha.Date == DateTime.Today.AddDays(1)) return "Mañana " + hora;
+            if (r.Fecha.Date == DateTime.Today.AddDays(-1)) return "Ayer " + hora;
+            return r.Fecha.ToString("dd/MM") + " " + hora;
+        }
     }
 }

@@ -79,12 +79,12 @@
                             <asp:Repeater ID="rptReservas" runat="server">
                                 <ItemTemplate>
                                     <tr>
-                                        <td class="ps-3 fw-semibold"><%# Eval("Cliente") %></td>
+                                        <td class="ps-3 fw-semibold"><%# Eval("Cliente.Nombre") %> <%# Eval("Cliente.Apellido") %></td>
                                         <td>
-                                            <span class="me-1"><%# GetDeporteEmoji(Eval("Deporte")) %></span>
-                                            <%# Eval("Cancha") %>
+                                            <span class="me-1"><%# GetDeporteEmoji(Eval("Cancha.Deporte.Nombre")) %></span>
+                                            <%# Eval("Cancha.NombreFantasia") %>
                                         </td>
-                                        <td class="text-soft"><%# Eval("Horario") %></td>
+                                        <td class="text-soft"><%# FormatoHorarioReserva(Container.DataItem) %></td>
                                         <td class="text-end pe-3">
                                             <span class='<%# GetEstadoBadge(Eval("Estado")) %>'>
                                                 <%# Eval("Estado") %>
