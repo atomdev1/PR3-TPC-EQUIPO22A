@@ -238,6 +238,99 @@
             <p class="mb-3">Reservá tu próxima cancha en segundos.</p>
             <a href="CanchasCliente.aspx" class="btn btn-light fw-semibold">⚽ Reservar ahora</a>
         </div>
-        <a href="CuponesCliente.aspx" class="btn btn-outline-success">Ver mis cupones</a>
+
+        <%-- Tarjetas KPI del cliente --%>
+        <div class="row row-cols-1 row-cols-sm-3 g-3 mb-4">
+            <div class="col">
+                <div class="kpi card-hover">
+                    <div class="kpi-top">
+                        <div class="kpi-ico">📅</div>
+                    </div>
+                    <div class="kpi-value"><asp:Label ID="lblClTurnos" runat="server" /></div>
+                    <div class="kpi-label">Próximos turnos</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="kpi card-hover">
+                    <div class="kpi-top">
+                        <div class="kpi-ico">🎟️</div>
+                    </div>
+                    <div class="kpi-value"><asp:Label ID="lblClCupones" runat="server" /></div>
+                    <div class="kpi-label">Cupones disponibles</div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="kpi card-hover">
+                    <div class="kpi-top">
+                        <div class="kpi-ico">💰</div>
+                    </div>
+                    <div class="kpi-value"><asp:Label ID="lblClDeuda" runat="server" /></div>
+                    <div class="kpi-label">Deuda pendiente</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <%-- Mis próximas reservas --%>
+            <div class="col-lg-8">
+                <div class="card-r h-100">
+                    <div class="card-head">
+                        <h6>Mis próximas reservas</h6>
+                        <asp:HyperLink runat="server" NavigateUrl="~/Reservas.aspx"
+                            CssClass="btn-r btn-ghost-r btn-sm-r ms-auto">Ver todas</asp:HyperLink>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-faint" style="font-size:.8rem;">
+                                    <th class="ps-3 fw-600">Cancha</th>
+                                    <th>Horario</th>
+                                    <th class="text-end pe-3">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <asp:Repeater ID="rptMisReservas" runat="server">
+                                    <ItemTemplate>
+                                        <tr>
+                                            <td class="ps-3 fw-semibold">
+                                                <span class="me-1"><%# GetDeporteEmoji(Eval("Cancha.Deporte.Nombre")) %></span>
+                                                <%# Eval("Cancha.NombreFantasia") %>
+                                            </td>
+                                            <td class="text-soft"><%# FormatoHorarioReserva(Container.DataItem) %></td>
+                                            <td class="text-end pe-3">
+                                                <span class='<%# GetEstadoBadge(Eval("Estado")) %>'>
+                                                    <%# Eval("Estado") %>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+                            </tbody>
+                        </table>
+                    </div>
+                    <asp:Panel ID="pnlSinReservas" runat="server" Visible="false" CssClass="text-center text-muted py-4">
+                        No tenés turnos próximos. ¡Reservá tu próxima cancha!
+                    </asp:Panel>
+                </div>
+            </div>
+
+            <%-- Accesos rápidos --%>
+            <div class="col-lg-4">
+                <div class="card-r card-r-pad h-100">
+                    <h6 class="mb-3">Accesos rápidos</h6>
+                    <div class="d-flex flex-column gap-2">
+                        <asp:HyperLink runat="server" NavigateUrl="~/CanchasCliente.aspx" CssClass="btn-r btn-ghost-r">
+                            <span>➕</span> Reservar ahora
+                        </asp:HyperLink>
+                        <asp:HyperLink runat="server" NavigateUrl="~/Reservas.aspx" CssClass="btn-r btn-ghost-r">
+                            <span>📋</span> Mis reservas
+                        </asp:HyperLink>
+                        <asp:HyperLink runat="server" NavigateUrl="~/CuponesCliente.aspx" CssClass="btn-r btn-ghost-r">
+                            <span>🎟️</span> Mis cupones
+                        </asp:HyperLink>
+                    </div>
+                </div>
+            </div>
+        </div>
     </asp:Panel>
 </asp:Content>

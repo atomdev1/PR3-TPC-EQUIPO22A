@@ -49,7 +49,44 @@ namespace WebApp
         private void CargarInicioCliente()
         {
             Usuario u = (Usuario)Session["usuario"];
+            CultureInfo ar = new CultureInfo("es-AR");
             lblBienvenida.Text = "¡Hola, " + u.Nombre + "! ¿Listo para jugar?";
+
+            // Se filtra la lista completa por IdUsuario.
+            List<Reserva> mias = new NegocioReservas().Listar()
+                .Where(r => r.Cliente.IdUsuario == u.IdUsuario)
+                .ToList();
+
+            // Proximos turnos: futuros, sin contar cancelados ni finalizados.
+            List<Reserva> proximas = mias
+                .Where(r => r.Fecha.Date >= DateTime.Today
+                         && r.Estado != EstadoReserva.Cancelada
+                         && r.Estado != EstadoReserva.Finalizada)
+                .OrderBy(r => r.Fecha).ThenBy(r => r.HoraInicio)
+                .ToList();
+
+            lblClTurnos.Text = proximas.Count.ToString();
+
+            // Cupones disponibles: activos del cliente.
+            lblClCupones.Text = new NegocioCupones().ObtenerPorUsuario(u.IdUsuario)
+                .Count(c => c.Estado == EstadoCupon.Activo)
+                .ToString();
+
+            // Deuda pendiente: se reutiliza el listado de deudores filtrando por el cliente.
+            decimal deuda = 0m;
+            try
+            {
+                ClienteDeudor d = new NegocioReservas().ObtenerClientesDeudores()
+                    .FirstOrDefault(x => x.IdUsuario == u.IdUsuario);
+                if (d != null) deuda = d.MontoDeudaTotal;
+            }
+            catch { /* si la vista aun no existe, queda en cero */ }
+            lblClDeuda.Text = deuda.ToString("C0", ar);
+
+            // Tabla con las proximas reservas mas cercanas.
+            rptMisReservas.DataSource = proximas.Take(5).ToList();
+            rptMisReservas.DataBind();
+            pnlSinReservas.Visible = proximas.Count == 0;
         }
 
 
