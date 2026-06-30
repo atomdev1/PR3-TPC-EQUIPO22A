@@ -106,25 +106,30 @@
                                 <td class="text-end pe-3">
                                     <% if (!EsCliente) { %>
                                     <div class="dropdown">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <%--Acciones--%>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary lh-1 fw-bold"
+                                            data-bs-toggle="dropdown" aria-expanded="false"
+                                            style="font-size:1.25rem">
+                                            ⋮
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><h6 class="dropdown-header">Consultar</h6></li>
                                             <li>
                                                 <asp:LinkButton runat="server"
                                                     CommandName="Ver"
                                                     CommandArgument='<%# Eval("IdReserva") %>'
                                                     CssClass="dropdown-item">
-                                                    Ver detalle
+                                                    👁️ Ver detalle
                                                 </asp:LinkButton>
                                             </li>
+
+                                            <li><hr class="dropdown-divider" /></li>
+                                            <li><h6 class="dropdown-header">Pago</h6></li>
                                             <li>
                                                 <asp:LinkButton runat="server"
                                                     CommandName="RegistrarPago"
                                                     CommandArgument='<%# Eval("IdReserva") %>'
                                                     CssClass="dropdown-item">
-                                                    Registrar pago
+                                                    💳 Registrar pago
                                                 </asp:LinkButton>
                                             </li>
                                             <li>
@@ -133,17 +138,19 @@
                                                     CommandArgument='<%# Eval("IdReserva") %>'
                                                     CssClass="dropdown-item"
                                                     Visible='<%# (int)Eval("EstadoPago") != 3 %>'>
-                                                    Canjear cupón
+                                                    🎟️ Canjear cupón
                                                 </asp:LinkButton>
                                             </li>
-                                            <li><hr class="dropdown-divider" /></li>
+
+                                            <li runat="server" Visible='<%# (int)Eval("Estado") == 1 || (int)Eval("Estado") == 2 %>'><hr class="dropdown-divider" /></li>
+                                            <li runat="server" Visible='<%# (int)Eval("Estado") == 1 || (int)Eval("Estado") == 2 %>'><h6 class="dropdown-header">Turno</h6></li>
                                             <li>
                                                 <asp:LinkButton runat="server"
                                                     CommandName="Reprogramar"
                                                     CommandArgument='<%# Eval("IdReserva") %>'
                                                     CssClass="dropdown-item"
                                                     Visible='<%# (int)Eval("Estado") == 1 || (int)Eval("Estado") == 2 %>'>
-                                                    Reprogramar
+                                                    🔄 Reprogramar
                                                 </asp:LinkButton>
                                             </li>
                                             <li>
@@ -152,16 +159,18 @@
                                                     CommandArgument='<%# Eval("IdReserva") %>'
                                                     CssClass="dropdown-item"
                                                     Visible='<%# (int)Eval("Estado") == 1 || (int)Eval("Estado") == 2 %>'>
-                                                    Finalizar
+                                                    ✅ Finalizar
                                                 </asp:LinkButton>
                                             </li>
+
+                                            <li runat="server" Visible='<%# (int)Eval("Estado") != 3 && (int)Eval("Estado") != 5 %>'><hr class="dropdown-divider" /></li>
                                             <li>
                                                 <asp:LinkButton runat="server"
                                                     CommandName="Cancelar"
                                                     CommandArgument='<%# Eval("IdReserva") %>'
                                                     CssClass="dropdown-item text-danger"
                                                     Visible='<%# (int)Eval("Estado") != 3 && (int)Eval("Estado") != 5 %>'>
-                                                    Cancelar reserva
+                                                    ❌ Cancelar reserva
                                                 </asp:LinkButton>
                                             </li>
                                         </ul>
