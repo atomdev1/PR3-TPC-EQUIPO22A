@@ -1,10 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Web.UI.WebControls;
 using Dominio;
 using Dominio.Enums;
 using Negocio;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace WebApp
 {
@@ -18,6 +19,7 @@ namespace WebApp
 
             if (!IsPostBack)
             {
+                CargarFiltros();
                 CargarCanchas();
                 CargarDeportes();
             }
@@ -25,13 +27,26 @@ namespace WebApp
 
         private void CargarCanchas()
         {
-            NegocioCanchas nCanchas = new NegocioCanchas();
-            List<Cancha> canchas = nCanchas.ObtenerTodas();
+            List<Cancha> lista = new NegocioCanchas().ObtenerTodas();
 
-            rptCanchas.DataSource = canchas;
+            if (ddlFiltroDeporte.SelectedValue != "0")
+            {
+                int idDeporte = int.Parse(ddlFiltroDeporte.SelectedValue);
+                lista = lista.Where(c => c.Deporte.IdDeporte == idDeporte).ToList();
+            }
+
+            if (ddlFiltroEstado.SelectedValue != "0")
+            {
+                bool activa = ddlFiltroEstado.SelectedValue == "1";
+                lista = lista.Where(c => c.Activa == activa).ToList();
+            }
+
+            rptCanchas.DataSource = lista;
             rptCanchas.DataBind();
 
-            lblTotal.Text = canchas.Count + " canchas registradas";
+            lblTotal.Text = lista.Count == 1
+                ? "1 cancha registrada"
+                : lista.Count + " canchas registradas";
         }
 
         protected void rptCanchas_ItemCommand(object source, RepeaterCommandEventArgs e)
@@ -109,6 +124,32 @@ namespace WebApp
             ddlDeporte.DataValueField = "IdDeporte";
             ddlDeporte.DataBind();
             ddlDeporte.Items.Insert(0, new ListItem("-- Seleccioná un deporte --", "0"));
+        }
+
+        private void CargarFiltros()
+        {
+            ddlFiltroDeporte.DataSource = new NegocioCanchas().ObtenerDeportes();
+            ddlFiltroDeporte.DataTextField = "Nombre";
+            ddlFiltroDeporte.DataValueField = "IdDeporte";
+            ddlFiltroDeporte.DataBind();
+            ddlFiltroDeporte.Items.Insert(0, new ListItem("Todos los deportes", "0"));
+
+            ddlFiltroEstado.Items.Clear();
+            ddlFiltroEstado.Items.Add(new ListItem("Todos los estados", "0"));
+            ddlFiltroEstado.Items.Add(new ListItem("Disponible", "1"));
+            ddlFiltroEstado.Items.Add(new ListItem("Mantenimiento", "2"));
+        }
+
+        protected void Filtrar(object sender, EventArgs e)
+        {
+            CargarCanchas();
+        }
+
+        protected void LimpiarFiltros(object sender, EventArgs e)
+        {
+            ddlFiltroDeporte.SelectedValue = "0";
+            ddlFiltroEstado.SelectedValue = "0";
+            CargarCanchas();
         }
 
         protected string GetDeporteEmoji(object nombreObj)

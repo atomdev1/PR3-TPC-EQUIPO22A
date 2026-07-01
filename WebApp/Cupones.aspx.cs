@@ -5,6 +5,8 @@ using System.Web.UI.WebControls;
 using Dominio;
 using Dominio.Enums;
 using Negocio;
+using System.Linq;
+using System.Web.UI;
 
 namespace WebApp
 {
@@ -30,12 +32,34 @@ namespace WebApp
         private void CargarCupones()
         {
             NegocioCupones nCupones = new NegocioCupones();
-            List<Cupon> cupones = nCupones.ObtenerTodas();
+            List<Cupon> lista = nCupones.ObtenerTodas();
 
-            rptCupones.DataSource = cupones;
+            if (ddlFiltroTipo.SelectedValue != "0")
+            {
+                int tipo = int.Parse(ddlFiltroTipo.SelectedValue);
+                lista = lista.Where(c => (int)c.TipoDescuento == tipo).ToList();
+            }
+
+            if (ddlFiltroEstado.SelectedValue != "0")
+            {
+                int estado = int.Parse(ddlFiltroEstado.SelectedValue);
+                lista = lista.Where(c => (int)c.Estado == estado).ToList();
+            }
+
+            rptCupones.DataSource = lista;
             rptCupones.DataBind();
         }
 
+        protected void Filtrar(Object sender, EventArgs e)
+        {
+            CargarCupones();
+        }
+        protected void LimpiarFiltros(Object sender, EventArgs e)
+        {
+            ddlFiltroTipo.SelectedValue = "0";
+            ddlFiltroEstado.SelectedValue = "0";
+            CargarCupones();
+        }
         private void CargarUsuarios()
         {
             NegocioCupones nCupones = new NegocioCupones();

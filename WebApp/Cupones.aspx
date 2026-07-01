@@ -14,6 +14,40 @@
             Text="+ Nuevo cupón" OnClick="btnNuevoCupon_Click" CausesValidation="false" />
     </div>
 
+    <%-- Filtros --%>
+    <div class="card-r mb-4 p-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold mb-1">Tipo de Descuento</label>
+                 <asp:DropDownList ID="ddlFiltroTipo" runat="server"
+                    CssClass="form-select form-select-sm"
+                    AutoPostBack="true" OnSelectedIndexChanged="Filtrar">
+                    <asp:ListItem Value="0">Todos</asp:ListItem>
+                    <asp:ListItem Value="1">Porcentaje (%)</asp:ListItem>
+                    <asp:ListItem Value="2">Reserva gratis</asp:ListItem>
+                </asp:DropDownList>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold mb-1">Estado</label>
+                <asp:DropDownList ID="ddlFiltroEstado" runat="server"
+                    CssClass="form-select form-select-sm"
+                    AutoPostBack="true" OnSelectedIndexChanged="Filtrar" >
+                    <asp:ListItem Value="0">Todos los estados</asp:ListItem>
+                    <asp:ListItem Value="1">Activo</asp:ListItem>
+                    <asp:ListItem Value="2">Canjeado</asp:ListItem>
+                    <asp:ListItem Value="3">Vencido</asp:ListItem>
+                    <asp:ListItem Value="4">Agotado</asp:ListItem>
+                    <asp:ListItem Value="5">Anulado</asp:ListItem>
+                </asp:DropDownList>
+            </div>
+            <div class="col-md-4">
+                <asp:LinkButton ID="btnLimpiarFiltros" runat="server"
+                    CssClass="btn btn-sm btn-outline-secondary w-100"
+                    OnClick="LimpiarFiltros">Limpiar filtros</asp:LinkButton>
+            </div>
+        </div>
+    </div>
+
     <%-- Banner sistema de fidelidad --%>
     <div class="banner-soft d-flex align-items-start gap-3 mb-4">
         <div class="kpi-ico flex-shrink-0">🎫</div>

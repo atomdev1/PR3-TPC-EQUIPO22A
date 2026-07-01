@@ -16,6 +16,29 @@
             Text="+ Nueva cancha" OnClick="btnNueva_Click" CausesValidation="false" />
     </div>
 
+    <%-- Filtros --%>
+    <div class="card-r mb-4 p-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold mb-1">Deporte</label>
+                 <asp:DropDownList ID="ddlFiltroDeporte" runat="server"
+                    CssClass="form-select form-select-sm"
+                    AutoPostBack="true" OnSelectedIndexChanged="Filtrar" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold mb-1">Estado</label>
+                <asp:DropDownList ID="ddlFiltroEstado" runat="server"
+                    CssClass="form-select form-select-sm"
+                    AutoPostBack="true" OnSelectedIndexChanged="Filtrar" />
+            </div>
+            <div class="col-md-4">
+                <asp:LinkButton ID="btnLimpiarFiltros" runat="server"
+                    CssClass="btn btn-sm btn-outline-secondary w-100"
+                    OnClick="LimpiarFiltros">Limpiar filtros</asp:LinkButton>
+            </div>
+        </div>
+    </div>
+
     <%-- Confirmación de baja --%>
     <asp:Panel ID="pnlConfirmarBaja" runat="server" Visible="false"
         CssClass="alert alert-warning d-flex justify-content-between align-items-center mb-4">

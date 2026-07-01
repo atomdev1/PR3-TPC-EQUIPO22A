@@ -24,6 +24,33 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.Button btnNuevoCupon;
 
         /// <summary>
+        /// Control ddlFiltroTipo.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlFiltroTipo;
+
+        /// <summary>
+        /// Control ddlFiltroEstado.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlFiltroEstado;
+
+        /// <summary>
+        /// Control btnLimpiarFiltros.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnLimpiarFiltros;
+
+        /// <summary>
         /// Control pnlConfirmarBaja.
         /// </summary>
         /// <remarks>
