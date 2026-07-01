@@ -59,6 +59,7 @@ namespace WebApp
             lnkMisCupones.Visible = esCliente;
 
             lnkBeneficios.Visible = esAdmin;
+            lnkUsuarios.Visible = esAdmin;
         }
 
         protected void btnCerrarSesion_Click(object sender, EventArgs e)
@@ -82,6 +83,7 @@ namespace WebApp
                 { "Cupones.aspx", lnkCupones },
                 { "CuponesCliente.aspx", lnkMisCupones },
                 { "Beneficios.aspx",     lnkBeneficios },
+                { "Usuarios.aspx",       lnkUsuarios },
                 { "Calendario.aspx", lnkCalendario },
             };
 

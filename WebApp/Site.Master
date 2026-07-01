@@ -59,6 +59,9 @@
                     <asp:HyperLink ID="lnkBeneficios" runat="server" NavigateUrl="~/Beneficios.aspx"    CssClass="side-link">
                         <span class="side-ico">⭐</span> Beneficios
                     </asp:HyperLink>
+                    <asp:HyperLink ID="lnkUsuarios"  runat="server" NavigateUrl="~/Usuarios.aspx"        CssClass="side-link">
+                        <span class="side-ico">👥</span> Usuarios
+                    </asp:HyperLink>
                 </nav>
 
                 <div class="side-foot">

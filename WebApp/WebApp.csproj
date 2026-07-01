@@ -80,6 +80,7 @@
     <Content Include="Cupones.aspx" />
     <Content Include="CuponesCliente.aspx" />
     <Content Include="Beneficios.aspx" />
+    <Content Include="Usuarios.aspx" />
     <Content Include="Calendario.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="NotFound.aspx" />
@@ -107,6 +108,13 @@
     </Compile>
     <Compile Include="RecuperarContrasenia.aspx.designer.cs">
       <DependentUpon>RecuperarContrasenia.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Usuarios.aspx.cs">
+      <DependentUpon>Usuarios.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Usuarios.aspx.designer.cs">
+      <DependentUpon>Usuarios.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
