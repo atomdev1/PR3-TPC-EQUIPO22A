@@ -133,6 +133,16 @@
                             <asp:HiddenField ID="hfIdCupon" runat="server" />
                             <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
                             <div class="row g-3">
+                                
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">
+                                        Seleccionar beneficio
+                                        <span class="text-muted fw-normal">(opcional)</span>
+                                </label>
+                                <asp:DropDownList ID="ddlBeneficio" runat="server" CssClass="form-select"
+                                        AutoPostBack="true" OnSelectedIndexChanged="ddlBeneficio_SelectedIndexChanged" />
+                                <small class="text-muted">Elegí un beneficio para completar los campos automáticamente.</small>
+                            </div>
 
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Código</label>

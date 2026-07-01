@@ -60,6 +60,14 @@ namespace WebApp
             txtDescripcion.Text        = "";
             ddlUsuario.SelectedValue   = "0";
             lblError.Visible           = false;
+       
+            List<BeneficioFidelidad> beneficios = new NegocioBeneficios().ObtenerActivos();
+            ddlBeneficio.DataSource = beneficios;
+            ddlBeneficio.DataTextField = "Nombre";
+            ddlBeneficio.DataValueField = "IdBeneficio";
+            ddlBeneficio.DataBind();
+            ddlBeneficio.Items.Insert(0, new ListItem("Cupón personalizado", "0"));
+            ddlBeneficio.SelectedValue = "0";
 
             AplicarEstadoValor();
             AbrirModal("Nuevo cupón");
@@ -83,6 +91,40 @@ namespace WebApp
         protected void ddlTipoDescuento_SelectedIndexChanged(object sender, EventArgs e)
         {
             AplicarEstadoValor();
+        }
+
+        protected void ddlBeneficio_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddlBeneficio.SelectedValue == "0")
+            {
+                ddlTipoDescuento.SelectedValue = "1";
+                txtValorDescuento.Text = "";
+                txtReservasRequeridas.Text = "";
+                txtDescripcion.Text = "";
+
+                ddlTipoDescuento.Enabled = true;
+                txtValorDescuento.Enabled = true;
+                txtReservasRequeridas.Enabled = true;
+                txtDescripcion.Enabled = true;
+
+                AplicarEstadoValor();
+                return;
+            }
+
+            int idBeneficio = int.Parse(ddlBeneficio.SelectedValue);
+            BeneficioFidelidad b = new NegocioBeneficios().ObtenerPorId(idBeneficio);
+            if (b == null) return;
+
+            ddlTipoDescuento.SelectedValue = ((int)b.TipoDescuento).ToString();
+            txtValorDescuento.Text = b.ValorDescuento.HasValue ? b.ValorDescuento.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "";
+            txtReservasRequeridas.Text = b.ReservasRequeridas.ToString();
+            txtDescripcion.Text = b.Descripcion;
+
+            ddlTipoDescuento.Enabled = false;
+            txtValorDescuento.Enabled = false;
+            txtReservasRequeridas.Enabled = false;
+            txtDescripcion.Enabled = false;
+
         }
 
         private void AplicarEstadoValor()
@@ -112,7 +154,7 @@ namespace WebApp
                 hfIdCupon.Value                    = c.IdCupon.ToString();
                 txtCodigo.Text                     = c.Codigo;
                 ddlTipoDescuento.SelectedValue     = ((int)c.TipoDescuento).ToString();
-                txtValorDescuento.Text             = c.ValorDescuento.HasValue ? c.ValorDescuento.Value.ToString() : "";
+                txtValorDescuento.Text             = c.ValorDescuento.HasValue ? c.ValorDescuento.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "";
                 txtReservasRequeridas.Text         = c.ReservasRequeridas.ToString();
                 txtValidoHasta.Text                = c.ValidoHasta.HasValue ? c.ValidoHasta.Value.ToString("yyyy-MM-dd") : "";
                 txtLimiteUsos.Text                 = c.LimiteUsos.HasValue ? c.LimiteUsos.Value.ToString() : "";
