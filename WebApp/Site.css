@@ -958,6 +958,88 @@ h1, h2, h3, h4, h5, h6, .font-display {
     padding-left: 4px;
 }
 
+/* Links del calendario (dia, "+N más" y eventos): sin look de link */
+a.mcal-num,
+a.mcal-more,
+a.mcal-ev {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Numero de dia en color de acento: señal a simple vista de que es clickeable */
+a.mcal-num {
+    color: var(--accent);
+}
+
+    a.mcal-num:hover {
+        background: var(--surface);
+        box-shadow: var(--shadow-sm);
+    }
+
+    a.mcal-more:hover {
+        color: var(--accent);
+    }
+
+/* Los eventos ya son barras de color: mantengo el texto blanco y aclaro al hover */
+a.mcal-ev {
+    color: #fff;
+}
+
+    a.mcal-ev:hover {
+        filter: brightness(1.12);
+    }
+
+/* Vista Semana: columna de horas + 7 dias */
+.wcal-grid {
+    display: grid;
+    grid-template-columns: 56px repeat(7, 1fr);
+    gap: 4px;
+}
+
+.wcal-corner {
+    background: transparent;
+}
+
+.wcal-dayhead {
+    text-align: center;
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    padding: 6px 0;
+}
+
+    .wcal-dayhead.is-today {
+        color: var(--accent);
+    }
+
+.wcal-hour {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 6px 8px 0 0;
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+}
+
+.wcal-cell {
+    min-height: 44px;
+    border-radius: 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-subtle);
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.wcal-empty {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: .9rem;
+}
+
 .mcal-dot {
     width: 9px;
     height: 9px;
@@ -1296,7 +1378,8 @@ h1, h2, h3, h4, h5, h6, .font-display {
     padding: 3px;
 }
 
-    .seg button {
+    .seg button,
+    .seg a {
         border: 0;
         background: transparent;
         font-weight: 600;
@@ -1306,9 +1389,12 @@ h1, h2, h3, h4, h5, h6, .font-display {
         border-radius: 8px;
         cursor: pointer;
         transition: all .12s ease;
+        display: inline-block;
+        text-decoration: none;
     }
 
-        .seg button.active {
+        .seg button.active,
+        .seg a.active {
             background: var(--surface);
             color: var(--ink);
             box-shadow: var(--shadow-sm);

@@ -14,10 +14,10 @@
             </small>
         </div>
         <div class="ms-auto d-flex align-items-center gap-2">
-            <%-- Toggle de vista (Por cancha pendiente) --%>
+            <%-- Toggle de vista Mes / Semana --%>
             <div class="seg">
-                <button type="button" class="active" disabled>📅 Mes</button>
-                <button type="button" disabled title="Próximamente">⊞ Por cancha</button>
+                <asp:LinkButton ID="btnVistaMes" runat="server" OnClick="btnVistaMes_Click" Text="📅 Mes" />
+                <asp:LinkButton ID="btnVistaSemana" runat="server" OnClick="btnVistaSemana_Click" Text="📆 Semana" />
             </div>
             <%-- Navegación --%>
             <asp:LinkButton ID="btnAnterior" runat="server" OnClick="btnAnterior_Click"
@@ -26,6 +26,29 @@
                 CssClass="btn-r btn-sm-r btn-ghost-r" Text="Hoy" />
             <asp:LinkButton ID="btnSiguiente" runat="server" OnClick="btnSiguiente_Click"
                 CssClass="btn-r btn-sm-r btn-ghost-r" Text="&#8250;" />
+        </div>
+    </div>
+
+    <%-- Filtros --%>
+    <div class="card-r card-r-pad mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold mb-1">Estado</label>
+                <asp:DropDownList ID="ddlFiltroEstado" runat="server" CssClass="form-select form-select-sm"
+                    AutoPostBack="true" OnSelectedIndexChanged="Filtros_SelectedIndexChanged">
+                    <asp:ListItem Value="0">Todos los estados</asp:ListItem>
+                    <asp:ListItem Value="1">Nueva</asp:ListItem>
+                    <asp:ListItem Value="2">Reprogramada</asp:ListItem>
+                    <asp:ListItem Value="3">Cancelada</asp:ListItem>
+                    <asp:ListItem Value="4">No Asistió</asp:ListItem>
+                    <asp:ListItem Value="5">Finalizada</asp:ListItem>
+                </asp:DropDownList>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold mb-1">Cancha</label>
+                <asp:DropDownList ID="ddlFiltroCancha" runat="server" CssClass="form-select form-select-sm"
+                    AutoPostBack="true" OnSelectedIndexChanged="Filtros_SelectedIndexChanged" />
+            </div>
         </div>
     </div>
 
