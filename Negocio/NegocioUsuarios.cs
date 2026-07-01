@@ -91,5 +91,63 @@ namespace Negocio
                 return BitConverter.ToString(bytes).Replace("-", "").ToLower();
             }
         }
+
+        public Usuario VerificarIdentidad(string dni, string email, DateTime fechaNacimiento)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+                    SELECT IDUsuario, DNI, Nombre, Apellido, Telefono, Email,
+                           FechaNacimiento, FechaRegistro, Activo, CantidadAsistencias, IDRol
+                    FROM Usuarios
+                    WHERE DNI = @dni AND Email = @email
+                          AND CONVERT(date, FechaNacimiento) = CONVERT(date, @fechaNacimiento)
+                          AND Activo = 1");
+                datos.AgregarParametro("@dni", dni);
+                datos.AgregarParametro("@email", email);
+                datos.AgregarParametro("@fechaNacimiento", fechaNacimiento);
+                datos.EjecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    return new Usuario
+                    {
+                        IdUsuario = (int)datos.Lector["IDUsuario"],
+                        DNI = (string)datos.Lector["DNI"],
+                        Nombre = (string)datos.Lector["Nombre"],
+                        Apellido = (string)datos.Lector["Apellido"],
+                        Telefono = datos.Lector["Telefono"] is DBNull ? "" : (string)datos.Lector["Telefono"],
+                        Email = (string)datos.Lector["Email"],
+                        FechaNacimiento = (DateTime)datos.Lector["FechaNacimiento"],
+                        FechaRegistro = (DateTime)datos.Lector["FechaRegistro"],
+                        Activo = (bool)datos.Lector["Activo"],
+                        CantidadAsistencias = (int)datos.Lector["CantidadAsistencias"],
+                        Rol = (RolUsuario)(int)datos.Lector["IDRol"]
+                    };
+                }
+                return null;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        public void ActualizarPassword(int idUsuario, string nuevaPassword)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta("UPDATE Usuarios SET Password = @password WHERE IDUsuario = @id");
+                datos.AgregarParametro("@password", ComputarSHA256(nuevaPassword));
+                datos.AgregarParametro("@id", idUsuario);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
     }
 }

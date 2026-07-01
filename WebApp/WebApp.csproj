@@ -75,6 +75,7 @@
     <Content Include="Canchas.aspx" />
     <Content Include="Deportes.aspx" />
     <Content Include="CanchasCliente.aspx" />
+    <Content Include="RecuperarContrasenia.aspx" />
     <Content Include="Reservas.aspx" />
     <Content Include="Cupones.aspx" />
     <Content Include="CuponesCliente.aspx" />
@@ -99,6 +100,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CuponPageBase.cs">
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RecuperarContrasenia.aspx.cs">
+      <DependentUpon>RecuperarContrasenia.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RecuperarContrasenia.aspx.designer.cs">
+      <DependentUpon>RecuperarContrasenia.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>

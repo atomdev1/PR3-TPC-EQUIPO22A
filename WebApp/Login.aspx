@@ -43,6 +43,9 @@
                 CssClass="btn btn-success w-100" OnClick="btnLogin_Click"
                 ValidationGroup="Login" />
 
+            <div class="text-center mt-3">
+                <a href="RecuperarContrasenia.aspx" class="small">¿Olvidaste tu contraseña?</a>
+            </div>
         </div>
     </form>
 </body>
