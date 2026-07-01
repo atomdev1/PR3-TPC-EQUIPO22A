@@ -311,6 +311,7 @@ namespace WebApp
                 if (reserva == null) return;
 
                 hfIdReservaFinalizar.Value = idReserva.ToString();
+                hfIdClienteFinalizar.Value = reserva.Cliente.IdUsuario.ToString();
                 lblFinalizarReserva.Text = "Reserva #" + idReserva;
                 lblFinalizarCliente.Text = reserva.Cliente.Nombre + " " + reserva.Cliente.Apellido;
                 lblFinalizarFecha.Text = reserva.Fecha.ToString("dd/MM/yyyy") + " " +
@@ -330,9 +331,22 @@ namespace WebApp
             Usuario u = Session["usuario"] as Usuario;
             if (u == null) { Response.Redirect("~/Login.aspx"); return; }
 
+            int idReserva = int.Parse(hfIdReservaFinalizar.Value);
+            int idCliente = int.Parse(hfIdClienteFinalizar.Value);
+            NegocioCupones negCupones = new NegocioCupones();
+            pnlCuponGanado.Visible = false;
+
             try
             {
-                new NegocioReservas().Finalizar(int.Parse(hfIdReservaFinalizar.Value));
+                // Cuento los cupones del cliente antes y despues: si al sumar la
+                // asistencia el trigger TR_EmitirCuponFidelidad emite un cupon, el
+                // total aumenta. Asi detecto la emision sin acoplarme al trigger.
+                int cuponesAntes = negCupones.ContarPorUsuario(idCliente);
+                new NegocioReservas().Finalizar(idReserva);
+                int cuponesDespues = negCupones.ContarPorUsuario(idCliente);
+
+                if (cuponesDespues > cuponesAntes)
+                    MostrarCuponGanado(negCupones, idCliente);
             }
             catch (Exception ex)
             {
@@ -343,6 +357,28 @@ namespace WebApp
             }
 
             CargarReservas(u);
+        }
+
+        // Arma el aviso con el cupon de fidelidad recien emitido. El mas nuevo con
+        // codigo 'FID-' entre los cupones vigentes del cliente. El nombre del cliente
+        // ya quedo cargado en el modal al abrirlo.
+        private void MostrarCuponGanado(NegocioCupones negCupones, int idCliente)
+        {
+            Cupon nuevo = negCupones.ObtenerPorUsuario(idCliente)
+                .Where(c => (c.Codigo ?? "").StartsWith("FID-"))
+                .OrderByDescending(c => c.IdCupon)
+                .FirstOrDefault();
+
+            string cliente = Server.HtmlEncode(lblFinalizarCliente.Text);
+            if (nuevo != null)
+                lblCuponGanado.Text = string.Format(
+                    "¡{0} sumó una asistencia y ganó un cupón de fidelidad: <strong>{1}</strong> (código {2})!",
+                    cliente, Server.HtmlEncode(nuevo.Descripcion), Server.HtmlEncode(nuevo.Codigo));
+            else
+                lblCuponGanado.Text = string.Format(
+                    "¡{0} sumó una asistencia y ganó un cupón de fidelidad!", cliente);
+
+            pnlCuponGanado.Visible = true;
         }
 
         private void AbrirModalFinalizar()

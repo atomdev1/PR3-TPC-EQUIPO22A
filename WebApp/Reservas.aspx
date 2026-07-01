@@ -20,6 +20,15 @@
         </button>
     </div>
 
+    <%-- Aviso de cupón de fidelidad: aparece cuando al finalizar una reserva el
+         cliente alcanza un umbral y el trigger le emite el cupón automáticamente. --%>
+    <asp:Panel ID="pnlCuponGanado" runat="server" Visible="false"
+        CssClass="alert alert-success alert-dismissible d-flex align-items-center mb-4">
+        <span class="me-2" style="font-size:1.4rem; line-height:1">🎉</span>
+        <asp:Label ID="lblCuponGanado" runat="server" />
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </asp:Panel>
+
     <%-- Filtros (controles de servidor) --%>
     <div class="card-r card-r-pad mb-4">
         <div class="row g-2 align-items-end">
@@ -573,6 +582,7 @@
                 </div>
                 <div class="modal-body">
                     <asp:HiddenField ID="hfIdReservaFinalizar" runat="server" />
+                    <asp:HiddenField ID="hfIdClienteFinalizar" runat="server" />
                     <asp:Label ID="lblErrorFinalizar" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
 
                     <p>¿Confirmás que el turno se jugó y querés finalizar la reserva?</p>

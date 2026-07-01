@@ -1573,3 +1573,76 @@ BEGIN
 
 END;
 GO
+
+-- ----------------------------------------------------------------------
+-- (siguiente script)
+-- ----------------------------------------------------------------------
+
+-- =========================================
+-- TRIGGER: Emitir cupón de fidelidad
+-- Autor: Facundo Ferreyra — Base de Datos 2 (TPI Complejo Deportivo)
+--
+-- Cuando SP_FinalizarReserva suma una asistencia al cliente, este trigger
+-- detecta si el nuevo total alcanza exactamente un umbral definido en
+-- BeneficiosFidelidad y, de ser así, genera el cupón correspondiente
+-- de forma automática en la tabla Cupones.
+--
+-- Disparo: AFTER UPDATE en Usuarios.
+-- Condición de entrada:  CantidadAsistencias debe haber cambiado.
+-- Condición de emisión:  el nuevo valor coincide con ReservasRequeridas
+--   de algún beneficio activo, y el cliente todavía no tiene un cupón
+--   para ese umbral (evita duplicados si el campo se edita manualmente).
+-- =========================================
+
+USE BBDD2_TPI_GRUPO45;
+GO
+
+CREATE OR ALTER TRIGGER TR_EmitirCuponFidelidad
+ON Usuarios
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Si el UPDATE no tocó CantidadAsistencias no hay beneficio que evaluar.
+    IF NOT UPDATE(CantidadAsistencias)
+        RETURN;
+
+    INSERT INTO Cupones (
+        Codigo, Descripcion,
+        IDEstadoCupon, IDTipoDescuento, ValorDescuento,
+        ReservasRequeridas, ValidoDesde, ValidoHasta,
+        LimiteUsos, UsosActuales, IDUsuario
+    )
+    SELECT
+        -- Código: FID + 3 letras del nombre + IDUsuario + umbral con cero a la izquierda.
+        CONCAT('FID-', UPPER(LEFT(i.Nombre, 3)), CAST(i.IDUsuario AS VARCHAR(10)),
+               '-', RIGHT('0' + CAST(b.ReservasRequeridas AS VARCHAR(3)), 2)),
+        b.Descripcion,
+        1,                               -- IDEstadoCupon = Activo
+        b.IDTipoDescuento,
+        b.ValorDescuento,
+        b.ReservasRequeridas,
+        CAST(GETDATE() AS DATE),         -- ValidoDesde = hoy
+        CASE
+            WHEN b.DiasValidez IS NOT NULL
+            THEN DATEADD(DAY, b.DiasValidez, CAST(GETDATE() AS DATE))
+            ELSE NULL
+        END,                             -- ValidoHasta = hoy + DiasValidez (NULL = sin vencimiento)
+        1,                               -- LimiteUsos = 1 (un uso por cupón de fidelidad)
+        0,                               -- UsosActuales arranca en 0
+        i.IDUsuario
+    FROM inserted i
+    INNER JOIN deleted d ON d.IDUsuario = i.IDUsuario
+    INNER JOIN BeneficiosFidelidad b ON b.ReservasRequeridas = i.CantidadAsistencias
+    WHERE i.CantidadAsistencias <> d.CantidadAsistencias  -- la asistencia efectivamente cambió
+      AND b.Activo = 1
+      AND NOT EXISTS (                   -- evito duplicado si el cliente ya tiene el cupón de ese umbral
+          SELECT 1
+          FROM Cupones c
+          WHERE c.IDUsuario          = i.IDUsuario
+            AND c.ReservasRequeridas = b.ReservasRequeridas
+      );
+END;
+GO
+GO

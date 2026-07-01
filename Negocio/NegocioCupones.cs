@@ -147,6 +147,25 @@ namespace Negocio
             }
         }
 
+        // Cantidad de cupones vigentes (no anulados) de un cliente. La capa web
+        // lo usa antes y después de finalizar una reserva, si el número sube, el
+        // trigger TR_EmitirCuponFidelidad acaba de emitir un cupón de fidelidad.
+        public int ContarPorUsuario(int idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(
+                    "SELECT COUNT(*) FROM Cupones WHERE IDUsuario = @id AND IDEstadoCupon <> 5");
+                datos.AgregarParametro("@id", idUsuario);
+                return datos.EjecutarAccionScalar();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
         public Cupon ObtenerPorId(int idCupon)
         {
             AccesoDatos datos = new AccesoDatos();

@@ -410,6 +410,21 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.HiddenField hfIdReservaFinalizar;
 
         /// <summary>
+        /// hfIdClienteFinalizar control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfIdClienteFinalizar;
+
+        /// <summary>
+        /// pnlCuponGanado control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Panel pnlCuponGanado;
+
+        /// <summary>
+        /// lblCuponGanado control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblCuponGanado;
+
+        /// <summary>
         /// lblFinalizarReserva control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Label lblFinalizarReserva;
