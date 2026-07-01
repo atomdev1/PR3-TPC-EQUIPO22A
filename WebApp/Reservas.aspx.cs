@@ -29,7 +29,19 @@ namespace WebApp
             {
                 CargarCanchasFiltro();
                 CargarCombosNuevaReserva();
+
+                // Si llego desde el Calendario, dejo en los filtros lo que venga por la
+                // URL (fecha + estado + cancha) antes de cargar, asi la grilla aparece
+                // con el mismo filtro que tenia el calendario.
+                PreseleccionarFiltros();
                 CargarReservas(u);
+
+                // Si vengo del Calendario clickeando una franja ocupada, abro el
+                // detalle de esa reserva directamente.
+                string verReserva = Request.QueryString["verReserva"];
+                int idVer;
+                if (!string.IsNullOrEmpty(verReserva) && int.TryParse(verReserva, out idVer))
+                    MostrarDetalle(idVer);
 
                 // El cliente llega desde el catalogo con la cancha ya elegida.
                 // Abro el modal con esa cancha.
@@ -72,6 +84,25 @@ namespace WebApp
 
             CargarHorariosNueva();
             AbrirModalNuevaReserva();
+        }
+
+        // Drill-down desde el Calendario: dejo en los filtros lo que venga por la URL.
+        // Los filtros que ya tiene CargarReservas hacen el resto. Las claves festado/
+        // fcancha son propias del calendario para no chocar con el ?cancha= del alta.
+        private void PreseleccionarFiltros()
+        {
+            string fechaTexto = Request.QueryString["fecha"];
+            DateTime fecha;
+            if (!string.IsNullOrEmpty(fechaTexto) && DateTime.TryParse(fechaTexto, out fecha))
+                txtFiltroFecha.Text = fecha.ToString("yyyy-MM-dd");
+
+            string estado = Request.QueryString["festado"];
+            if (!string.IsNullOrEmpty(estado) && ddlFiltroEstado.Items.FindByValue(estado) != null)
+                ddlFiltroEstado.SelectedValue = estado;
+
+            string cancha = Request.QueryString["fcancha"];
+            if (!string.IsNullOrEmpty(cancha) && ddlFiltroCancha.Items.FindByValue(cancha) != null)
+                ddlFiltroCancha.SelectedValue = cancha;
         }
 
         // Llena el combo de canchas del filtro con datos de la BD.
@@ -140,23 +171,7 @@ namespace WebApp
         {
             if (e.CommandName == "Ver")
             {
-                int idReserva = int.Parse(e.CommandArgument.ToString());
-                Reserva r = new NegocioReservas().Listar()
-                    .FirstOrDefault(x => x.IdReserva == idReserva);
-                if (r == null) return;
-
-                lblDetCliente.Text = r.Cliente.Nombre + " " + r.Cliente.Apellido;
-                lblDetCancha.Text  = r.Cancha.NombreFantasia + " · " + r.Cancha.Deporte.Nombre;
-                lblDetFecha.Text   = r.Fecha.ToString("dd/MM/yyyy");
-                lblDetHorario.Text = r.HoraInicio.ToString(@"hh\:mm") + " – " + r.HoraFin.ToString(@"hh\:mm");
-                lblDetPrecio.Text  = string.Format("{0:C0}", r.PrecioTotal);
-                lblDetEstado.Text  = r.Estado.ToString();
-                lblDetPago.Text    = GetTextoPago(r.EstadoPago);
-                lblDetPagado.Text  = string.Format("{0:C0}", r.TotalPagado);
-                lblDetSaldo.Text   = string.Format("{0:C0}", r.SaldoPendiente);
-                lblDetObs.Text     = string.IsNullOrEmpty(r.Observaciones) ? "Sin observaciones" : r.Observaciones;
-
-                AbrirModalDetalle();
+                MostrarDetalle(int.Parse(e.CommandArgument.ToString()));
             }
             else if (e.CommandName == "RegistrarPago")
             {
@@ -522,6 +537,29 @@ namespace WebApp
             string script =
                 "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalRegistrarPago')).show();";
             ClientScript.RegisterStartupScript(GetType(), "abrirModalPago", script, true);
+        }
+
+        // Arma y abre el modal de detalle de una reserva. Lo usan el boton "Ver" de la
+        // grilla y el drill-down del Calendario (?verReserva=). Antes esto vivia dentro
+        // del comando "Ver". Lo saque a un metodo para no duplicarlo.
+        private void MostrarDetalle(int idReserva)
+        {
+            Reserva r = new NegocioReservas().Listar()
+                .FirstOrDefault(x => x.IdReserva == idReserva);
+            if (r == null) return;
+
+            lblDetCliente.Text = r.Cliente.Nombre + " " + r.Cliente.Apellido;
+            lblDetCancha.Text  = r.Cancha.NombreFantasia + " · " + r.Cancha.Deporte.Nombre;
+            lblDetFecha.Text   = r.Fecha.ToString("dd/MM/yyyy");
+            lblDetHorario.Text = r.HoraInicio.ToString(@"hh\:mm") + " – " + r.HoraFin.ToString(@"hh\:mm");
+            lblDetPrecio.Text  = string.Format("{0:C0}", r.PrecioTotal);
+            lblDetEstado.Text  = r.Estado.ToString();
+            lblDetPago.Text    = GetTextoPago(r.EstadoPago);
+            lblDetPagado.Text  = string.Format("{0:C0}", r.TotalPagado);
+            lblDetSaldo.Text   = string.Format("{0:C0}", r.SaldoPendiente);
+            lblDetObs.Text     = string.IsNullOrEmpty(r.Observaciones) ? "Sin observaciones" : r.Observaciones;
+
+            AbrirModalDetalle();
         }
 
         private void AbrirModalDetalle()
