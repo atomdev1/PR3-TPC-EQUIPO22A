@@ -60,6 +60,22 @@ namespace WebApp
 
             lnkBeneficios.Visible = esAdmin;
             lnkUsuarios.Visible = esAdmin;
+
+            switch (rol)
+            {
+                case RolUsuario.Recepcionista:
+                    lblSeccion1.Text = "Mostrador";
+                    lblSeccion2.Text = "Consulta";
+                    break;
+                case RolUsuario.Cliente:
+                    lblSeccion1.Text = "Jugar";
+                    lblSeccion2.Text = "Recompensas";
+                    break;
+                default:
+                    lblSeccion1.Text = "General";
+                    lblSeccion2.Text = "Gestión";
+                    break;
+            }
         }
 
         protected void btnCerrarSesion_Click(object sender, EventArgs e)

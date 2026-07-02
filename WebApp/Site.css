@@ -466,6 +466,20 @@ h1, h2, h3, h4, h5, h6, .font-display {
     padding: 4px 12px;
 }
 
+.side-nav-label {
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 16px 12px 2px;
+    opacity: .55;
+}
+
+    .side-nav-label:first-child {
+        padding-top: 4px;
+    }
+
 .side-link {
     display: flex;
     align-items: center;

@@ -32,8 +32,10 @@
                 </div>
 
                 <nav class="side-nav">
+                    <asp:Label ID="lblSeccion1" runat="server" CssClass="side-nav-label" />
+
                     <asp:HyperLink ID="lnkPanel"     runat="server" NavigateUrl="~/Dashboard.aspx"      CssClass="side-link">
-                        <span class="side-ico">🏠</span> Panel
+                        <span class="side-ico">🏠</span> Panel general
                     </asp:HyperLink>
                     <asp:HyperLink ID="lnkReservas"  runat="server" NavigateUrl="~/Reservas.aspx"       CssClass="side-link">
                         <span class="side-ico">📋</span> Reservas
@@ -41,26 +43,29 @@
                     <asp:HyperLink ID="lnkCalendario" runat="server" NavigateUrl="~/Calendario.aspx"    CssClass="side-link">
                         <span class="side-ico">🗓️</span> Calendario
                     </asp:HyperLink>
+                    <asp:HyperLink ID="lnkReservar"  runat="server" NavigateUrl="~/CanchasCliente.aspx" CssClass="side-link">
+                        <span class="side-ico">🏟️</span> Canchas
+                    </asp:HyperLink>
+
+                    <asp:Label ID="lblSeccion2" runat="server" CssClass="side-nav-label" />
+
                     <asp:HyperLink ID="lnkCanchas"   runat="server" NavigateUrl="~/Canchas.aspx"        CssClass="side-link">
                         <span class="side-ico">🏟️</span> Canchas
                     </asp:HyperLink>
                     <asp:HyperLink ID="lnkDeportes"  runat="server" NavigateUrl="~/Deportes.aspx"       CssClass="side-link">
                         <span class="side-ico">🏅</span> Deportes
                     </asp:HyperLink>
-                    <asp:HyperLink ID="lnkReservar"  runat="server" NavigateUrl="~/CanchasCliente.aspx" CssClass="side-link">
-                        <span class="side-ico">🏟️</span> Canchas
-                    </asp:HyperLink>
                     <asp:HyperLink ID="lnkCupones"   runat="server" NavigateUrl="~/Cupones.aspx"        CssClass="side-link">
                         <span class="side-ico">🎟️</span> Cupones
-                    </asp:HyperLink>
-                    <asp:HyperLink ID="lnkMisCupones" runat="server" NavigateUrl="~/CuponesCliente.aspx" CssClass="side-link">
-                        <span class="side-ico">🎟️</span> Mis cupones
                     </asp:HyperLink>
                     <asp:HyperLink ID="lnkBeneficios" runat="server" NavigateUrl="~/Beneficios.aspx"    CssClass="side-link">
                         <span class="side-ico">⭐</span> Beneficios
                     </asp:HyperLink>
-                    <asp:HyperLink ID="lnkUsuarios"  runat="server" NavigateUrl="~/Usuarios.aspx"        CssClass="side-link">
+                    <asp:HyperLink ID="lnkUsuarios"  runat="server" NavigateUrl="~/Usuarios.aspx"       CssClass="side-link">
                         <span class="side-ico">👥</span> Usuarios
+                    </asp:HyperLink>
+                    <asp:HyperLink ID="lnkMisCupones" runat="server" NavigateUrl="~/CuponesCliente.aspx" CssClass="side-link">
+                        <span class="side-ico">🎟️</span> Mis cupones
                     </asp:HyperLink>
                 </nav>
 
