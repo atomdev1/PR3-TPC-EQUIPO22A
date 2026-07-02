@@ -139,6 +139,11 @@
                                     <asp:RequiredFieldValidator ID="rfvReservas" runat="server"
                                         ControlToValidate="txtReservasRequeridas" ValidationGroup="Beneficio"
                                         CssClass="text-danger small" ErrorMessage="Campo obligatorio." Display="Dynamic" />
+                                    <asp:RangeValidator ID="rvReservas" runat="server"
+                                        ControlToValidate="txtReservasRequeridas" ValidationGroup="Beneficio"
+                                        CssClass="text-danger small" Display="Dynamic"
+                                        MinimumValue="1" MaximumValue="9999" Type="Integer"
+                                        ErrorMessage="Debe ser entre 1 y 9999." />
                                 </div>
 
                                 <div class="col-md-4">

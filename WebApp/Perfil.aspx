@@ -117,6 +117,9 @@
                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtPasswordNueva"
                             ValidationGroup="Password" CssClass="text-danger small"
                             ErrorMessage="Ingresá la nueva contraseña." Display="Dynamic" />
+                        <asp:RegularExpressionValidator runat="server" ControlToValidate="txtPasswordNueva"
+                            ValidationGroup="Password" CssClass="text-danger small" Display="Dynamic"
+                            ValidationExpression=".{6,}" ErrorMessage="Mínimo 6 caracteres." />
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Confirmar contraseña</label>
@@ -124,6 +127,10 @@
                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtPasswordConfirm"
                             ValidationGroup="Password" CssClass="text-danger small"
                             ErrorMessage="Confirmá la nueva contraseña." Display="Dynamic" />
+                        <asp:CompareValidator runat="server" ControlToValidate="txtPasswordConfirm"
+                            ControlToCompare="txtPasswordNueva" ValidationGroup="Password"
+                            CssClass="text-danger small" Display="Dynamic"
+                            ErrorMessage="Las contraseñas no coinciden." />
                     </div>
                 </div>
                 <div class="mt-3">

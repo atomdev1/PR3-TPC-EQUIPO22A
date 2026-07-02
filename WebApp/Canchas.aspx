@@ -148,6 +148,11 @@
                             <asp:RequiredFieldValidator ID="rfvNumero" runat="server"
                                 ControlToValidate="txtNumero" ValidationGroup="NuevaCancha"
                                 CssClass="text-danger small" ErrorMessage="El número es obligatorio." Display="Dynamic" />
+                            <asp:RangeValidator ID="rvNumero" runat="server"
+                                ControlToValidate="txtNumero" ValidationGroup="NuevaCancha"
+                                CssClass="text-danger small" Display="Dynamic"
+                                MinimumValue="1" MaximumValue="9999" Type="Integer"
+                                ErrorMessage="El número debe estar entre 1 y 9999." />
                         </div>
 
                         <div class="col-md-6">
@@ -164,6 +169,11 @@
                             <asp:RequiredFieldValidator ID="rfvCapacidad" runat="server"
                                 ControlToValidate="txtCapacidad" ValidationGroup="NuevaCancha"
                                 CssClass="text-danger small" ErrorMessage="La capacidad es obligatoria." Display="Dynamic" />
+                            <asp:RangeValidator ID="rvCapacidad" runat="server"
+                                ControlToValidate="txtCapacidad" ValidationGroup="NuevaCancha"
+                                CssClass="text-danger small" Display="Dynamic"
+                                MinimumValue="1" MaximumValue="100" Type="Integer"
+                                ErrorMessage="La capacidad debe estar entre 1 y 100." />
                         </div>
 
                         <div class="col-md-6">
@@ -172,6 +182,11 @@
                             <asp:RequiredFieldValidator ID="rfvPrecio" runat="server"
                                 ControlToValidate="txtPrecio" ValidationGroup="NuevaCancha"
                                 CssClass="text-danger small" ErrorMessage="El precio es obligatorio." Display="Dynamic" />
+                            <asp:RangeValidator ID="rvPrecio" runat="server"
+                                ControlToValidate="txtPrecio" ValidationGroup="NuevaCancha"
+                                CssClass="text-danger small" Display="Dynamic"
+                                MinimumValue="1" MaximumValue="9999999" Type="Double"
+                                ErrorMessage="El precio debe ser mayor a 0." />
                         </div>
 
                         <div class="col-md-6">
@@ -180,6 +195,11 @@
                             <asp:RequiredFieldValidator ID="rfvSena" runat="server"
                                 ControlToValidate="txtSena" ValidationGroup="NuevaCancha"
                                 CssClass="text-danger small" ErrorMessage="El monto de seña es obligatorio." Display="Dynamic" />
+                            <asp:RangeValidator ID="rvSena" runat="server"
+                                ControlToValidate="txtSena" ValidationGroup="NuevaCancha"
+                                CssClass="text-danger small" Display="Dynamic"
+                                MinimumValue="0" MaximumValue="9999999" Type="Double"
+                                ErrorMessage="El monto de seña no puede ser negativo." />
                         </div>
 
                         <div class="col-12">

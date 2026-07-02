@@ -191,10 +191,23 @@
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Contraseña</label>
                                     <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" MaxLength="100" />
+                                    <asp:RequiredFieldValidator ID="rfvPassword" runat="server" ControlToValidate="txtPassword"
+                                        ValidationGroup="Usuario" CssClass="text-danger small" Display="Dynamic"
+                                        ErrorMessage="La contraseña es obligatoria." />
+                                    <asp:RegularExpressionValidator ID="revPassword" runat="server" ControlToValidate="txtPassword"
+                                        ValidationGroup="Usuario" CssClass="text-danger small" Display="Dynamic"
+                                        ValidationExpression=".{6,}" ErrorMessage="Mínimo 6 caracteres." />
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Repetir contraseña</label>
                                     <asp:TextBox ID="txtRepetirPassword" runat="server" CssClass="form-control" TextMode="Password" MaxLength="100" />
+                                    <asp:RequiredFieldValidator ID="rfvRepetirPassword" runat="server" ControlToValidate="txtRepetirPassword"
+                                        ValidationGroup="Usuario" CssClass="text-danger small" Display="Dynamic"
+                                        ErrorMessage="Repetí la contraseña." />
+                                    <asp:CompareValidator ID="cvRepetirPassword" runat="server" ControlToValidate="txtRepetirPassword"
+                                        ControlToCompare="txtPassword" ValidationGroup="Usuario"
+                                        CssClass="text-danger small" Display="Dynamic"
+                                        ErrorMessage="Las contraseñas no coinciden." />
                                 </div>
                                 <div class="col-12">
                                     <small class="text-muted">Mínimo 6 caracteres. Se pide solo al crear el usuario.</small>
