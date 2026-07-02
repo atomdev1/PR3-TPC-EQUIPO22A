@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="img\home.jpg" />
     <Content Include="Login.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Dashboard.aspx" />
@@ -77,6 +78,7 @@
     <Content Include="CanchasCliente.aspx" />
     <Content Include="Perfil.aspx" />
     <Content Include="RecuperarContrasenia.aspx" />
+    <Content Include="Registrarse.aspx" />
     <Content Include="Reservas.aspx" />
     <Content Include="Cupones.aspx" />
     <Content Include="CuponesCliente.aspx" />
@@ -116,6 +118,13 @@
     </Compile>
     <Compile Include="RecuperarContrasenia.aspx.designer.cs">
       <DependentUpon>RecuperarContrasenia.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Registrarse.aspx.cs">
+      <DependentUpon>Registrarse.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Registrarse.aspx.designer.cs">
+      <DependentUpon>Registrarse.aspx</DependentUpon>
     </Compile>
     <Compile Include="Usuarios.aspx.cs">
       <DependentUpon>Usuarios.aspx</DependentUpon>

@@ -11,6 +11,11 @@ namespace WebApp
         {
             if (Session["usuario"] != null)
                 Response.Redirect("~/Dashboard.aspx");
+            if (Request.QueryString["registro"] == "ok")
+            {
+                litExito.Text = "<div class='auth-alert-success'>¡Cuenta creada! Ya podés iniciar sesión.</div>";
+                litExito.Visible = true;
+            }
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
@@ -27,8 +32,8 @@ namespace WebApp
             }
             else
             {
-                lblError.Text = "Email o contraseña incorrectos.";
-                lblError.Visible = true;
+                litError.Text = "<div class='auth-alert-error'>Email o contraseña incorrectos.</div>";
+                litError.Visible = true;
             }
         }
     }

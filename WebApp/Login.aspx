@@ -9,43 +9,86 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link href="Site.css" rel="stylesheet" />
 </head>
-<body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
+    <body>
     <form id="form1" runat="server">
-        <div class="card app-card p-4" style="width: 380px;">
+        <div class="auth-split">
 
-            <div class="text-center mb-4">
-                <h4 class="fw-semibold mb-1">Complejo Deportivo</h4>
-                <p class="text-muted small mb-0">Ingresá con tu cuenta</p>
+            <%-- Panel izquierdo: hero --%>
+            <div class="auth-hero">
+                <div class="auth-hero-brand">
+                    <div class="auth-brand-mark">CD</div>
+                    <div>
+                        <div class="auth-brand-name">Complejo Deportivo</div>
+                        <div class="auth-brand-sub">Sistema de gestión</div>
+                    </div>
+                </div>
+
+                <div class="auth-hero-body">
+                    <p class="auth-eyebrow">Complejo Deportivo</p>
+                    <h1 class="auth-headline">Tu cancha,<br />tu juego,<br />en un clic.</h1>
+                    <p class="auth-desc">Reservá, gestioná y jugá. Una plataforma para clientes, recepción, encargados y administración.</p>
+                </div>
+
+                <div class="auth-stats">
+                    <div>
+                        <div class="auth-stat-val">+200</div>
+                        <div class="auth-stat-lbl">reservas / mes</div>
+                    </div>
+                    <div>
+                        <div class="auth-stat-val">4</div>
+                        <div class="auth-stat-lbl">roles de acceso</div>
+                    </div>
+                </div>
             </div>
 
-            <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block mb-3"
-                Visible="false" />
+            <%-- Panel derecho: formulario --%>
+            <div class="auth-panel">
+                <div class="auth-box">
 
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Email</label>
-                <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control"
-                    TextMode="Email" placeholder="usuario@complejo.com" />
-                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtEmail"
-                    ValidationGroup="Login" CssClass="text-danger small"
-                    ErrorMessage="El email es obligatorio." Display="Dynamic" />
+                    <h2>Iniciar sesión</h2>
+                    <p class="auth-subtitle">Ingresá con tu cuenta del complejo.</p>
+
+                    <asp:Literal ID="litExito" runat="server" Visible="false" />
+                    <asp:Literal ID="litError" runat="server" Visible="false" />
+
+                    <div class="mb-3">
+                        <label class="auth-label">Email</label>
+                        <asp:TextBox ID="txtEmail" runat="server" CssClass="auth-input"
+                            TextMode="Email" placeholder="usuario@complejo.com" />
+                        <asp:RequiredFieldValidator runat="server" ControlToValidate="txtEmail"
+                            ValidationGroup="Login" CssClass="text-danger small"
+                            ErrorMessage="El email es obligatorio." Display="Dynamic" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="auth-label">Contraseña</label>
+                        <asp:TextBox ID="txtPassword" runat="server" CssClass="auth-input"
+                            TextMode="Password" placeholder="••••••••" />
+                        <asp:RequiredFieldValidator runat="server" ControlToValidate="txtPassword"
+                            ValidationGroup="Login" CssClass="text-danger small"
+                            ErrorMessage="La contraseña es obligatoria." Display="Dynamic" />
+                    </div>
+
+                    <asp:Button ID="btnLogin" runat="server" Text="Iniciar sesión"
+                        CssClass="auth-btn" OnClick="btnLogin_Click" ValidationGroup="Login" />
+
+                    <div class="text-end mt-2">
+                        <a href="RecuperarContrasenia.aspx" class="auth-link">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <div class="auth-divider">¿Sos cliente?</div>
+
+                    <a href="Registrarse.aspx" class="auth-register-cta">
+                        <div>
+                            <strong>Crear cuenta</strong>
+                            <span>Registrate y reservá tu cancha</span>
+                        </div>
+                        <span class="auth-register-cta-arrow">›</span>
+                    </a>
+
+                </div>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label fw-semibold">Contraseña</label>
-                <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control"
-                    TextMode="Password" placeholder="••••••••" />
-                <asp:RequiredFieldValidator runat="server" ControlToValidate="txtPassword"
-                    ValidationGroup="Login" CssClass="text-danger small"
-                    ErrorMessage="La contraseña es obligatoria." Display="Dynamic" />
-            </div>
-
-            <asp:Button ID="btnLogin" runat="server" Text="Iniciar sesión"
-                CssClass="btn btn-success w-100" OnClick="btnLogin_Click"
-                ValidationGroup="Login" />
-
-            <div class="text-center mt-3">
-                <a href="RecuperarContrasenia.aspx" class="small">¿Olvidaste tu contraseña?</a>
-            </div>
         </div>
     </form>
 </body>
