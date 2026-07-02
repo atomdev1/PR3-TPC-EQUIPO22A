@@ -89,6 +89,10 @@
                     <div class="col-12">
                         <label class="form-label fw-semibold">Teléfono <span class="text-muted fw-normal">(opcional)</span></label>
                         <asp:TextBox ID="txtTelefono" runat="server" CssClass="form-control" MaxLength="20" />
+                        <asp:RegularExpressionValidator runat="server" ControlToValidate="txtTelefono"
+                        ValidationGroup="Editar" CssClass="text-danger small" Display="Dynamic"
+                        ValidationExpression="^\d{6,20}$"
+                        ErrorMessage="El teléfono solo puede contener números (6 a 20 dígitos)." />
                     </div>
                 </div>
                 <div class="mt-3">

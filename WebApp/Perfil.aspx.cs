@@ -102,6 +102,7 @@ namespace WebApp
             Usuario u = Session["usuario"] as Usuario;
             if (u == null) { Response.Redirect("~/Login.aspx"); return; }
 
+
             if (txtPasswordNueva.Text != txtPasswordConfirm.Text)
             {
                 lblErrorPassword.Text = "La nueva contraseña y la confirmación no coinciden.";
