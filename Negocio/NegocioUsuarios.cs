@@ -123,17 +123,8 @@ namespace Negocio
                 datos.CerrarConexion();
 
                 if (coincide == 0) return false;
-
-                // Actualizar 
-                datos = new AccesoDatos();
-                datos.SetearConsulta(@"
-                UPDATE Usuarios
-                SET Password = @passwordNueva
-                WHERE IDUsuario = @id");
-
-                datos.AgregarParametro("@passwordNueva", ComputarSHA256(passwordNueva));
-                datos.AgregarParametro("@id", idUsuario);
-                datos.EjecutarAccion();
+                //Actualizar
+                ActualizarPassword(idUsuario, passwordNueva);
 
                 return true;
             }
