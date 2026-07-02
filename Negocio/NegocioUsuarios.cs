@@ -83,6 +83,62 @@ namespace Negocio
             }
         }
 
+        public void ActualizarPerfil(Usuario u)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.SetearConsulta(@"
+            UPDATE Usuarios
+            SET Nombre    = @nombre,
+                Apellido  = @apellido,
+                Telefono  = @telefono
+            WHERE IDUsuario = @id");
+
+                datos.AgregarParametro("@nombre", u.Nombre);
+                datos.AgregarParametro("@apellido", u.Apellido);
+                datos.AgregarParametro("@telefono", string.IsNullOrEmpty(u.Telefono) ? (object)DBNull.Value : u.Telefono);
+                datos.AgregarParametro("@id", u.IdUsuario);
+
+                datos.EjecutarAccion();
+            }
+            finally { datos.CerrarConexion(); }
+        }
+
+        public bool CambiarContrasenia(int idUsuario, string passwordActual, string passwordNueva)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                // Verificar 
+                datos.SetearConsulta(@"
+                SELECT COUNT(*)
+                FROM Usuarios
+                WHERE IDUsuario = @id AND Password = @passwordActual");
+
+                datos.AgregarParametro("@id", idUsuario);
+                datos.AgregarParametro("@passwordActual", ComputarSHA256(passwordActual));
+
+                int coincide = datos.EjecutarAccionScalar();
+                datos.CerrarConexion();
+
+                if (coincide == 0) return false;
+
+                // Actualizar 
+                datos = new AccesoDatos();
+                datos.SetearConsulta(@"
+                UPDATE Usuarios
+                SET Password = @passwordNueva
+                WHERE IDUsuario = @id");
+
+                datos.AgregarParametro("@passwordNueva", ComputarSHA256(passwordNueva));
+                datos.AgregarParametro("@id", idUsuario);
+                datos.EjecutarAccion();
+
+                return true;
+            }
+            finally { datos.CerrarConexion(); }
+        }
         private static string ComputarSHA256(string texto)
         {
             using (SHA256 sha = SHA256.Create())

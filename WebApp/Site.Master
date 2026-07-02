@@ -65,7 +65,7 @@
                 </nav>
 
                 <div class="side-foot">
-                    <div class="side-user">
+                    <a href="Perfil.aspx" class="side-user" style="text-decoration:none">
                         <div class="side-avatar">
                             <asp:Label ID="lblInicialUsuario" runat="server" />
                         </div>
@@ -73,8 +73,9 @@
                             <div class="side-user-name">
                                 <asp:Label ID="lblUsuario" runat="server" />
                             </div>
+                            <div style="font-size:0.7rem; color:var(--text-faint)">Ver Perfil</div>
                         </div>
-                    </div>
+                        </a>
                     <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="btn-logout"
                         OnClick="btnCerrarSesion_Click">🚪 Cerrar sesión</asp:LinkButton>
                 </div>
