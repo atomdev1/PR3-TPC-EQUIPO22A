@@ -34,7 +34,7 @@ namespace Negocio
                         DNI = (string)datos.Lector["DNI"],
                         Nombre = (string)datos.Lector["Nombre"],
                         Apellido = (string)datos.Lector["Apellido"],
-                        Telefono = (string)datos.Lector["Telefono"],
+                        Telefono = datos.Lector["Telefono"] is DBNull ? "" : (string)datos.Lector["Telefono"],
                         Email = (string)datos.Lector["Email"],
                         FechaNacimiento = (DateTime)datos.Lector["FechaNacimiento"],
                         FechaRegistro = (DateTime)datos.Lector["FechaRegistro"],
@@ -97,7 +97,7 @@ namespace Negocio
 
                 datos.AgregarParametro("@nombre", u.Nombre);
                 datos.AgregarParametro("@apellido", u.Apellido);
-                datos.AgregarParametro("@telefono", string.IsNullOrEmpty(u.Telefono) ? (object)DBNull.Value : u.Telefono);
+                datos.AgregarParametro("@telefono", string.IsNullOrEmpty(u.Telefono) ? "" : u.Telefono);
                 datos.AgregarParametro("@id", u.IdUsuario);
 
                 datos.EjecutarAccion();
