@@ -425,6 +425,26 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.Label lblCuponGanado;
 
         /// <summary>
+        /// lblResultadoCuponIcono control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblResultadoCuponIcono;
+
+        /// <summary>
+        /// lblResultadoCuponTitulo control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblResultadoCuponTitulo;
+
+        /// <summary>
+        /// lblResultadoCuponMsg control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblResultadoCuponMsg;
+
+        /// <summary>
+        /// lblResultadoCuponPrecio control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblResultadoCuponPrecio;
+
+        /// <summary>
         /// lblFinalizarReserva control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Label lblFinalizarReserva;
@@ -703,6 +723,16 @@ namespace WebApp
         /// txtObservacionesNueva control.
         /// </summary>
         protected global::System.Web.UI.WebControls.TextBox txtObservacionesNueva;
+
+        /// <summary>
+        /// txtCuponNueva control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.TextBox txtCuponNueva;
+
+        /// <summary>
+        /// lblAyudaCupon control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblAyudaCupon;
 
         /// <summary>
         /// btnGuardarReserva control.

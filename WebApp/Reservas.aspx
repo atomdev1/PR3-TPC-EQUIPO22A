@@ -539,6 +539,29 @@
         </div>
     </div>
 
+    <%-- MODAL RESULTADO DEL CANJE DEL CUPÓN AL CREAR: aparece centrado apenas se guarda una
+         reserva con código de cupón, para que el cliente confirme si se aplicó y con que precio quedó.--%>
+    <div class="modal fade" id="modalResultadoCupon" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <asp:Label ID="lblResultadoCuponIcono" runat="server" CssClass="d-block mb-2"
+                        style="font-size:2.8rem; line-height:1" />
+                    <asp:Label ID="lblResultadoCuponTitulo" runat="server" CssClass="d-block h5 mb-2" />
+                    <asp:Label ID="lblResultadoCuponMsg" runat="server" CssClass="d-block text-muted mb-3" />
+                    <div class="border-top pt-3">
+                        <div class="text-muted small">Precio final de la reserva</div>
+                        <asp:Label ID="lblResultadoCuponPrecio" runat="server" CssClass="d-block fw-bold"
+                            style="font-size:1.8rem" />
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn-r btn-primary-r" data-bs-dismiss="modal">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%-- MODAL CANCELAR RESERVA --%>
     <div class="modal fade" id="modalCancelarReserva" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -715,6 +738,14 @@
                                     </label>
                                     <asp:TextBox ID="txtObservacionesNueva" runat="server" CssClass="form-control"
                                         TextMode="MultiLine" Rows="2" MaxLength="255" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">
+                                        Cupón <span class="text-muted fw-normal">(opcional)</span>
+                                    </label>
+                                    <asp:TextBox ID="txtCuponNueva" runat="server" CssClass="form-control" MaxLength="50" />
+                                    <asp:Label ID="lblAyudaCupon" runat="server" CssClass="text-muted small"
+                                        Text="Si tenés un cupón, ingresá el código. Al guardar se verifica que sea válido antes de aplicar el descuento." />
                                 </div>
                             </div>
                         </ContentTemplate>

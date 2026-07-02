@@ -296,7 +296,9 @@ namespace Negocio
         // Alta real de una reserva. El estado arranca en Nueva y el de pago en
         // Pendiente: no se eligen desde la UI, los pone la capa. El estado de pago
         // despues lo sincroniza el trigger a medida que entran los pagos.
-        public void Crear(Reserva r)
+        // Devuelve el IDReserva recien generado para poder encadenar el canje de
+        // un cupon sobre la reserva recien creada.
+        public int Crear(Reserva r)
         {
             AccesoDatos datos = new AccesoDatos();
             try
@@ -307,7 +309,8 @@ namespace Negocio
                          IDUsuario_Cliente, IDUsuario_Staff, IDCancha, IDEstado, IDEstadoPago)
                     VALUES
                         (@fecha, @horaInicio, @horaFin, @precio, @observaciones,
-                         @idCliente, @idStaff, @idCancha, @idEstado, @idEstadoPago)");
+                         @idCliente, @idStaff, @idCancha, @idEstado, @idEstadoPago);
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);");
                 datos.AgregarParametro("@fecha", r.Fecha.Date);
                 datos.AgregarParametro("@horaInicio", r.HoraInicio);
                 datos.AgregarParametro("@horaFin", r.HoraFin);
@@ -320,7 +323,7 @@ namespace Negocio
                 datos.AgregarParametro("@idCancha", r.Cancha.IdCancha);
                 datos.AgregarParametro("@idEstado", (int)EstadoReserva.Nueva);
                 datos.AgregarParametro("@idEstadoPago", (int)EstadoPago.Pendiente);
-                datos.EjecutarAccion();
+                return datos.EjecutarAccionScalar();
             }
             finally { datos.CerrarConexion(); }
         }

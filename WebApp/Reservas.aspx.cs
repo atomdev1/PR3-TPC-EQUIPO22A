@@ -929,9 +929,10 @@ namespace WebApp
                 Cancha = new Cancha { IdCancha = idCancha }
             };
 
+            int idNueva;
             try
             {
-                new NegocioReservas().Crear(r);
+                idNueva = new NegocioReservas().Crear(r);
             }
             catch (Exception ex)
             {
@@ -939,10 +940,60 @@ namespace WebApp
                 return;
             }
 
+            // Canje encadenado (no atómico): la reserva ya quedó creada. Si el
+            // cliente cargó un cupon, lo aplico sobre la reserva recién creada.
+            // Si el SP lo rechaza no perdemos la reserva, aviso el motivo y sigo
+            // (la reserva fue efectiva).
+            string codigoCupon = txtCuponNueva.Text.Trim();
+            if (codigoCupon.Length > 0)
+            {
+                try
+                {
+                    new NegocioCupones().Canjear(idNueva, codigoCupon);
+                    // El SP recalculo PrecioTotal: releo la reserva para mostrar
+                    // el precio ya con el descuento aplicado.
+                    Reserva creada = new NegocioReservas().Listar()
+                        .FirstOrDefault(x => x.IdReserva == idNueva);
+                    decimal precioFinal = creada != null ? creada.PrecioTotal : precio;
+                    MostrarResultadoCupon(true, "El descuento ya quedó aplicado en tu reserva.", precioFinal);
+                }
+                catch (Exception ex)
+                {
+                    // ex.Message trae el mensaje del THROW del SP. El precio no
+                    // cambió, la reserva queda con su total original.
+                    MostrarResultadoCupon(false, ex.Message, precio);
+                }
+            }
+
             // Alta OK: limpio el formulario y recargo la grilla, la reserva nueva
             // aparece arriba (Listar ordena por fecha descendente).
             LimpiarFormularioNueva();
             CargarReservas(u);
+        }
+
+        // Resultado del canje al crear, en un modal centrado para que el cliente
+        // lo vea si o si: verde con tilde si se aplicó, amariñlo con alerta si el
+        // cupón se rechazó. Siempre muestra el precio con el que quedó la reserva.
+        private void MostrarResultadoCupon(bool exito, string mensaje, decimal precioFinal)
+        {
+            if (exito)
+            {
+                lblResultadoCuponIcono.Text = "✅";
+                lblResultadoCuponTitulo.Text = "¡Cupón aplicado!";
+                lblResultadoCuponTitulo.CssClass = "d-block h5 mb-2 text-success";
+            }
+            else
+            {
+                lblResultadoCuponIcono.Text = "⚠️";
+                lblResultadoCuponTitulo.Text = "El cupón no se aplicó";
+                lblResultadoCuponTitulo.CssClass = "d-block h5 mb-2 text-warning";
+            }
+            lblResultadoCuponMsg.Text = Server.HtmlEncode(mensaje);
+            lblResultadoCuponPrecio.Text = string.Format("{0:C0}", precioFinal);
+
+            string script =
+                "bootstrap.Modal.getOrCreateInstance(document.getElementById('modalResultadoCupon')).show();";
+            ClientScript.RegisterStartupScript(GetType(), "abrirModalResultadoCupon", script, true);
         }
 
         private void MostrarErrorNueva(string mensaje)
@@ -960,6 +1011,7 @@ namespace WebApp
             txtFechaNueva.Text = "";
             txtPrecioNueva.Text = "";
             txtObservacionesNueva.Text = "";
+            txtCuponNueva.Text = "";
             lblErrorNueva.Visible = false;
             CargarHorariosNueva();
         }
