@@ -20,7 +20,28 @@ namespace WebApp
 
             if (!IsPostBack)
             {
-                CargarDatos(u);
+                string idParam = Request.QueryString["id"];
+                if (!string.IsNullOrEmpty(idParam))
+                {
+                    if (u.Rol == RolUsuario.Cliente)
+                    {
+                        Response.Redirect("~/Perfil.aspx");
+                        return;
+                    }
+
+                    int idUsuario = int.Parse(idParam);
+                    Usuario uVisto = new NegocioUsuarios().ObtenerPorId(idUsuario);
+                    if (uVisto == null) { Response.Redirect("~/Usuarios.aspx"); return; }
+
+                    CargarDatos(uVisto);
+
+                    pnlEditarDatos.Visible = false;
+                    pnlCambiarPassword.Visible = false;
+                }
+                else
+                {
+                    CargarDatos(u);
+                }
             }
         }
 

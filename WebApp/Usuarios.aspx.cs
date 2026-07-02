@@ -1,9 +1,11 @@
-using System;
-using System.Data.SqlClient;
-using System.Web.UI.WebControls;
 using Dominio;
 using Dominio.Enums;
 using Negocio;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Web.UI.WebControls;
+using System.Linq;
 
 namespace WebApp
 {
@@ -28,8 +30,34 @@ namespace WebApp
 
         private void CargarUsuarios()
         {
-            rptUsuarios.DataSource = new NegocioUsuarios().ObtenerTodos();
+            List<Usuario> lista = new NegocioUsuarios().ObtenerTodos();
+
+            if (ddlFiltroRol.SelectedValue != "0")
+            {
+                int rol = int.Parse(ddlFiltroRol.SelectedValue);
+                lista = lista.Where(u => (int)u.Rol == rol).ToList();
+            }
+
+            if (ddlFiltroEstado.SelectedValue != "0")
+            {
+                bool activo = ddlFiltroEstado.SelectedValue == "1";
+                lista = lista.Where(u => u.Activo == activo).ToList();
+            }
+
+            rptUsuarios.DataSource = lista;
             rptUsuarios.DataBind();
+        }
+
+        protected void Filtrar(object sender, EventArgs e)
+        {
+            CargarUsuarios();
+        }
+
+        protected void LimpiarFiltros(object sender, EventArgs e)
+        {
+            ddlFiltroRol.SelectedValue = "0";
+            ddlFiltroEstado.SelectedValue = "0";
+            CargarUsuarios();
         }
 
         // Alta: limpia el formulario, muestra los campos de contraseña y abre el modal.
@@ -56,7 +84,12 @@ namespace WebApp
         {
             int idUsuario = int.Parse(e.CommandArgument.ToString());
 
-            if (e.CommandName == "Editar")
+            if (e.CommandName == "VerPerfil")
+            {
+                Response.Redirect("~/Perfil.aspx?id=" + idUsuario);
+                return;
+            }
+            else if (e.CommandName == "Editar")
             {
                 Usuario u = new NegocioUsuarios().ObtenerPorId(idUsuario);
                 if (u == null) return;

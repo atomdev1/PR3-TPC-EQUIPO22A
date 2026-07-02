@@ -14,6 +14,39 @@
             Text="+ Nuevo usuario" OnClick="btnNuevoUsuario_Click" CausesValidation="false" />
     </div>
 
+    <%-- Filtros --%>
+    <div class="card-r mb-4 p-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold mb-1">Rol</label>
+                <asp:DropDownList ID="ddlFiltroRol" runat="server"
+                    CssClass="form-select form-select-sm"
+                    AutoPostBack="true" OnSelectedIndexChanged="Filtrar">
+                    <asp:ListItem Value="0">Todos los roles</asp:ListItem>
+                    <asp:ListItem Value="1">Administrador</asp:ListItem>
+                    <asp:ListItem Value="2">Recepcionista</asp:ListItem>
+                    <asp:ListItem Value="3">Encargado de Cancha</asp:ListItem>
+                    <asp:ListItem Value="4">Cliente</asp:ListItem>
+                </asp:DropDownList>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold mb-1">Estado</label>
+                <asp:DropDownList ID="ddlFiltroEstado" runat="server"
+                    CssClass="form-select form-select-sm"
+                    AutoPostBack="true" OnSelectedIndexChanged="Filtrar">
+                    <asp:ListItem Value="0">Todos los estados</asp:ListItem>
+                    <asp:ListItem Value="1">Activo</asp:ListItem>
+                    <asp:ListItem Value="2">Inactivo</asp:ListItem>
+                </asp:DropDownList>
+            </div>
+            <div class="col-md-4">
+                <asp:LinkButton ID="btnLimpiarFiltros" runat="server"
+                    CssClass="btn btn-sm btn-outline-secondary w-100"
+                    OnClick="LimpiarFiltros">Limpiar filtros</asp:LinkButton>
+            </div>
+        </div>
+    </div>
+
     <%-- Confirmación de baja --%>
     <asp:Panel ID="pnlConfirmarBaja" runat="server" Visible="false"
         CssClass="alert alert-warning d-flex justify-content-between align-items-center mb-4">
@@ -54,6 +87,11 @@
                     <td><span class="badge bg-primary"><%# GetRolNombre(Eval("Rol")) %></span></td>
                     <td><span class='<%# GetEstadoBadgeClass(Eval("Activo")) %>'><%# GetEstadoTexto(Eval("Activo")) %></span></td>
                     <td class="text-end">
+                        <asp:LinkButton runat="server" CommandName="VerPerfil"
+                            CommandArgument='<%# Eval("IdUsuario") %>'
+                            CssClass="btn-r btn-sm-r btn-ghost-r">
+                            Ver perfil
+                        </asp:LinkButton>
                         <asp:LinkButton runat="server" CommandName="Editar" CommandArgument='<%# Eval("IdUsuario") %>'
                             CssClass="btn-r btn-sm-r btn-ghost-r">Editar</asp:LinkButton>
                         <asp:LinkButton runat="server" CommandName="Baja" CommandArgument='<%# Eval("IdUsuario") %>'

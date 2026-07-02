@@ -114,6 +114,15 @@ namespace WebApp
         protected global::System.Web.UI.WebControls.Label lblAsistencias;
 
         /// <summary>
+        /// Control pnlEditarDatos.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlEditarDatos;
+
+        /// <summary>
         /// Control lblErrorEditar.
         /// </summary>
         /// <remarks>
@@ -157,6 +166,15 @@ namespace WebApp
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnGuardarDatos;
+
+        /// <summary>
+        /// Control pnlCambiarPassword.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlCambiarPassword;
 
         /// <summary>
         /// Control lblErrorPassword.

@@ -66,6 +66,7 @@
         <div class="col-md-6">
 
             <%-- Editar datos --%>
+            <asp:Panel ID="pnlEditarDatos" runat="server">
             <div class="card-r p-4 mb-4">
                 <h5 class="fw-semibold mb-3">Editar datos</h5>
                 <asp:Label ID="lblErrorEditar" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
@@ -77,6 +78,7 @@
                             ValidationGroup="Editar" CssClass="text-danger small"
                             ErrorMessage="El nombre es obligatorio." Display="Dynamic" />
                     </div>
+
                     <div class="col-6">
                         <label class="form-label fw-semibold">Apellido</label>
                         <asp:TextBox ID="txtApellido" runat="server" CssClass="form-control" MaxLength="100" />
@@ -95,8 +97,9 @@
                         ValidationGroup="Editar" />
                 </div>
             </div>
-
+            </asp:Panel>
             <%-- Cambiar contraseña --%>
+            <asp:Panel ID="pnlCambiarPassword" runat="server">
             <div class="card-r p-4">
                 <h5 class="fw-semibold mb-3">Cambiar contraseña</h5>
                 <asp:Label ID="lblErrorPassword" runat="server" CssClass="alert alert-danger d-block" Visible="false" />
@@ -129,7 +132,7 @@
                         ValidationGroup="Password" />
                 </div>
             </div>
-
+            </asp:Panel>
         </div>
     </div>
 
