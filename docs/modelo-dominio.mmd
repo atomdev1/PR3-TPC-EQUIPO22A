@@ -36,7 +36,7 @@ classDiagram
 
     class DisponibilidadCancha {
         +int IdDisponibilidad
-        +DayOfWeek DiaSemana
+        +DiaSemana DiaSemana
         +TimeSpan HoraApertura
         +TimeSpan HoraCierre
         +bool Activa
@@ -48,7 +48,9 @@ classDiagram
         +TimeSpan HoraInicio
         +TimeSpan HoraFin
         +decimal PrecioTotal
+        +decimal TotalPagado
         +string Observaciones
+        +decimal SaldoPendiente
         +Usuario Cliente
         +Usuario Staff
         +Cancha Cancha
@@ -78,6 +80,20 @@ classDiagram
         +decimal Monto
         +DateTime FechaHora
         +FormaPago FormaDePago
+    }
+
+    class BeneficioFidelidad {
+        +int IdBeneficio
+        +string Nombre
+        +string Descripcion
+        +int ReservasRequeridas
+        +TipoDescuento TipoDescuento
+        +decimal? ValorDescuento
+        +int? DiasValidez
+        +bool Activo
+        +ReservasFaltantes(int) int
+        +YaAlcanzado(int) bool
+        +PorcentajeProgreso(int) int
     }
 
     class RolUsuario {
@@ -129,6 +145,17 @@ classDiagram
         Anulado
     }
 
+    class DiaSemana {
+        <<enumeration>>
+        Lunes
+        Martes
+        Miercoles
+        Jueves
+        Viernes
+        Sabado
+        Domingo
+    }
+
     Cancha "1" *-- "*" DisponibilidadCancha : Disponibilidades
     Reserva "1" *-- "*" Pago : Pagos
 
@@ -145,3 +172,5 @@ classDiagram
     Cupon ..> EstadoCupon
     Cupon ..> TipoDescuento
     Pago ..> FormaPago
+    DisponibilidadCancha ..> DiaSemana
+    BeneficioFidelidad ..> TipoDescuento
