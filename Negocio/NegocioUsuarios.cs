@@ -120,7 +120,6 @@ namespace Negocio
                 datos.AgregarParametro("@passwordActual", ComputarSHA256(passwordActual));
 
                 int coincide = datos.EjecutarAccionScalar();
-                datos.CerrarConexion();
 
                 if (coincide == 0) return false;
                 //Actualizar

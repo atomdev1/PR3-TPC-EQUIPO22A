@@ -50,6 +50,7 @@ namespace WebApp
                 return;
             }
 
+
             int idUsuario = int.Parse(hfIdUsuario.Value);
             new NegocioUsuarios().ActualizarPassword(idUsuario, txtNuevaPassword.Text);
 
